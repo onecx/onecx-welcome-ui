@@ -1,0 +1,310 @@
+---
+openapi: 3.0.3
+info:
+  title: onecx-welcome-bff
+  description: welcome bff
+  version: 1.0.0
+  contact:
+    email: "tkit_dev@1000kit.org"
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: "http://onecx-welcome-bff:8080"
+tags:
+  - name: OneCX Welcome Bff
+paths:
+  /images/info/{id}:
+    get:
+      x-onecx:
+        permissions:
+          welcome:
+            - read
+      tags:
+        - imagesInternal
+      description: get Image information by id
+      operationId: getImageInfoById
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageInfo"
+        "404":
+          description: NOT FOUND
+    put:
+      x-onecx:
+        permissions:
+          welcome:
+            - write
+      tags:
+        - imagesInternal
+      description: update Image information
+      operationId: updateImageInfo
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageInfo'
+      responses:
+        "200":
+          description: UPDATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageInfo'
+        "400":
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+    delete:
+      x-onecx:
+        permissions:
+          welcome:
+            - delete
+      tags:
+        - imagesInternal
+      description: delete image information
+      operationId: deleteImageInfoById
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        "204":
+          description: DELETED
+        "404":
+          description: NOT FOUND
+  /images/info:
+    post:
+      x-onecx:
+        permissions:
+          welcome:
+            - write
+      tags:
+        - imagesInternal
+      description: create image info
+      operationId: createImageInfo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageInfo'
+      responses:
+        "201":
+          description: CREATED
+        "400":
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+    get:
+      x-onecx:
+        permissions:
+          welcome:
+            - read
+      tags:
+        - imagesInternal
+      description: get all existing image-infos
+      operationId: getAllImageInfos
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ImageInfo'
+  /images:
+    post:
+      x-onecx:
+        permissions:
+          welcome:
+            - write
+      tags:
+        - imagesInternal
+      description: create image
+      operationId: createImage
+      parameters:
+        - in: header
+          name: Content-Length
+          required: true
+          schema:
+            minimum: 1
+            maximum: 110000
+            type: integer
+      requestBody:
+        content:
+          image/*:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "201":
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageDataResponse'
+        "400":
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /images/{id}:
+    get:
+      x-onecx:
+        permissions:
+          welcome:
+            - read
+      tags:
+        - imagesInternal
+      description: get Image by id
+      operationId: getImageById
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageDataResponse'
+        "404":
+          description: NOT FOUND
+    put:
+      x-onecx:
+        permissions:
+          welcome:
+            - write
+      tags:
+        - imagesInternal
+      description: update Image by id
+      operationId: updateImageById
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - in: header
+          name: Content-Length
+          required: true
+          schema:
+            minimum: 1
+            maximum: 110000
+            type: integer
+      requestBody:
+        content:
+          image/*:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageDataResponse'
+        "400":
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+components:
+  schemas:
+    ImageDataResponse:
+      type: object
+      properties:
+        imageId:
+          type: string
+        imageData:
+          type: string
+          format: binary
+        dataLength:
+          type: integer
+        mimeType:
+          type: string
+        modificationCount:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
+          type: string
+    ImageInfo:
+      type: object
+      properties:
+        position:
+          type: string
+        visible:
+          type: boolean
+        url:
+          type: string
+        imageId:
+          type: string
+        id:
+          type: string
+        modificationCount:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
+          type: string
+    OffsetDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50-04:00
+    ProblemDetailResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        detail:
+          type: string
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailParam'
+        invalidParams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailInvalidParam'
+    ProblemDetailParam:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    ProblemDetailInvalidParam:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string

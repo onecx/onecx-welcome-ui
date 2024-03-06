@@ -1,0 +1,44 @@
+{
+  "ACTIONS": {
+    "CONFIRMATION": {
+      "NO": "Nein",
+      "YES": "Ja",
+      "NO.TOOLTIP": "Abbruch der Aktion",
+      "YES.TOOLTIP": "Fortfahren mit der Aktion"
+    },
+  "GENERAL": {
+    "CLOSE": "Schließen",
+    "CANCEL": "Abbrechen",
+    "SAVE": "Speichern",
+    "VIEW": "Ansehen",
+    "WORKSPACES.NOT_FOUND": "Workspaces konnten nicht geladen werden",
+    "TOOLTIPS": {
+      "CLOSE": "Dialog verlassen",
+      "CANCEL": "Die Aktion abbrechen",
+      "CANCEL_EDIT": "Den Änderungsmodus verlassen",
+      "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
+      "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
+      "EDIT": "Daten bearbeiten",
+      "SAVE": "Die Änderungen speichern"
+    }
+  },
+  "BREADCRUMBS": {
+    "CREATE": "Neu",
+    "DETAILS": "Details",
+    "RELOAD": "Neu Laden",
+    "SWITCH_TO_EDIT_MODE": "Bearbeiten"
+  },
+  "VALIDATION": {
+    "HINTS": {
+      "FORMAT_URL": "Format: "
+    },
+    "ERRORS": {
+      "INTERNAL_ERROR": "Interner Fehler",
+      "INVALID_DATE_RANGE": "Das Startdatum liegt nach dem Enddatum. Es muss davor liegen.",
+      "EMPTY_REQUIRED_FIELD": "Dieses Feld ist ein Pflichtfeld.",
+      "MAXIMUM_LENGTH": "Es sind nur {{chars}} Zeichen erlaubt.",
+      "MINIMUM_LENGTH": "Es sind mindestens {{chars}} Zeichen erforderlich.",
+      "PATTERN_ERROR": "Ihre Eingabe entspricht nicht dem benötigten Format."
+    }
+  }
+}

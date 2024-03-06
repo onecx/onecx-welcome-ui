@@ -1,0 +1,36 @@
+app:
+  name: ui
+  image:
+    repository: 'onecx/onecx-welcome-ui'
+  routing:
+    enabled: true
+    path: /mfe/welcome/
+  
+  operator:
+    # Microfrontend
+    microfrontend:
+      enabled: true
+      spec:
+        exposedModule: "./OneCXWelcomeModule"
+        description: "OneCX Welcome UI"
+        note: "OneCX Welcome UI auto import via MF operator"
+    # Permission
+    permission:
+      enabled: true
+      spec:
+        permissions:
+          WELCOME:
+            CREATE: Create welcome images
+            DELETE: Delete welcome images
+            EDIT: Edit welcome
+            SAVE: Update and save welcome images
+            VIEW: View mode for welcome
+    # Keycloak
+    keycloak:
+      client:
+        enabled: true
+        spec:
+          kcConfig:
+            clientId: "onecx-welcome-ui"
+            
+# PIPE Config
