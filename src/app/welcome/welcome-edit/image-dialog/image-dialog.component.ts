@@ -92,10 +92,11 @@ export class ImageDialogComponent implements OnInit {
                         }
                       })
                   },
-                  error: (err) => console.log('error' + err)
+                  error: () => {
+                    this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+                  }
                 })
             } else {
-              console.log('hitted else')
               this.msgService.success({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
               this.formGroup.controls['url'].reset()
               this.hideDialogAndChanged.emit(true)
@@ -104,23 +105,6 @@ export class ImageDialogComponent implements OnInit {
           error: () => this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
         })
     }
-  }
-
-  public uploadImage(event: any) {
-    let imageToUpload = event.files[0]
-    console.log(imageToUpload)
-  }
-
-  public createImageInfo() {
-    const imageInfo: ImageInfo = { ...this.formGroup.value }
-    this.imageApiService.createImageInfo({ imageInfo }).subscribe({
-      next: (response) => {
-        console.log(response)
-      },
-      error: (err) => {
-        console.log(err)
-      }
-    })
   }
 
   public handleFileSelected(selectedFile: any) {

@@ -41,6 +41,7 @@
     "CLOSE": "Close",
     "CANCEL": "Cancel",
     "SAVE": "Save",
+    "SAVE_ORDER": "Save order",
     "VIEW": "View",
     "IMAGES.NOT_FOUND": "Images could not be loaded",
     "TOOLTIPS": {

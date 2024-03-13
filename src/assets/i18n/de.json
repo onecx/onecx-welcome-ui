@@ -41,6 +41,7 @@
     "CLOSE": "Schließen",
     "CANCEL": "Abbrechen",
     "SAVE": "Speichern",
+    "SAVE_ORDER": "Anordnung speichern",
     "VIEW": "Ansehen",
     "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
     "TOOLTIPS": {

@@ -48,7 +48,9 @@
         <span class="pi pi-plus plus"></span>
       </div>
     </div>
-    <p-button [disabled]="!this.isReordered" (onClick)="this.onSaveOrder()">Save order</p-button>
+    <p-button [disabled]="!this.isReordered" (onClick)="this.onSaveOrder()"
+      >{{ 'GENERAL.SAVE_ORDER' | translate }}</p-button
+    >
   </div>
 </ocx-portal-page>
 <app-image-dialog
