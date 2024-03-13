@@ -6,12 +6,43 @@
       "NO.TOOLTIP": "Abbruch der Aktion",
       "YES.TOOLTIP": "Fortfahren mit der Aktion"
     },
+    "VISIBILITY": {
+      "TOOLTIP": "Sichtbarkeit ändern",
+      "SUCCESS": "Sichtbarkeit erfolgreich geändert",
+      "ERROR": "Sichtbarkeit konnte nicht geändert werden"
+    },
+    "DELETE": {
+      "TOOLTIP": "Bild löschen",
+      "SUCCESS": "Bild erfolgreich gelöscht",
+      "ERROR": "Bild konnte nicht gelöscht werden"
+    },
+    "REORDER": {
+      "SAVE": "Anordnung speichern",
+      "SUCCESS": "Anordnung erfolgreich geändert",
+      "ERROR": "Anordnung konnte nicht geändert werden"
+    },
+    "CREATE": {
+      "TITLE": "Bild erstellen",
+      "UPLOAD": "Bild hochladen",
+      "VISIBILITY": {
+        "TRUE": "Sichtbar",
+        "FALSE": "Unsichtbar"
+      },
+      "URL": "Externe URL",
+      "SELECT": "Bild auswählen",
+      "SUCCESS": "Bild erfolgreich erstellt",
+      "ERROR": "Bild konnte nicht erstellt werden"
+    }
+  },
+  "LANDING": {
+    "TITLE": "Willkommen"
+  },
   "GENERAL": {
     "CLOSE": "Schließen",
     "CANCEL": "Abbrechen",
     "SAVE": "Speichern",
     "VIEW": "Ansehen",
-    "WORKSPACES.NOT_FOUND": "Workspaces konnten nicht geladen werden",
+    "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
     "TOOLTIPS": {
       "CLOSE": "Dialog verlassen",
       "CANCEL": "Die Aktion abbrechen",

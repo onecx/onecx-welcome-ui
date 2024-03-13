@@ -6,12 +6,43 @@
       "NO.TOOLTIP": "Cancel the action",
       "YES.TOOLTIP": "Proceed with the action"
     },
+    "VISIBILITY": {
+      "TOOLTIP": "Change visiblity",
+      "SUCCESS": "Visibility successfully changed",
+      "ERROR": "Visibility could not be updated"
+    },
+    "DELETE": {
+      "TOOLTIP": "Delete Image",
+      "SUCCESS": "Image deleted successfully",
+      "ERROR": "Image could not be deleted"
+    },
+    "REORDER": {
+      "SAVE": "Save arrangement",
+      "SUCCESS": "Arrangement successfully changed",
+      "ERROR": "Arrangement could not be changed"
+    },
+    "CREATE": {
+      "TITLE": "Create image",
+      "UPLOAD": "Upload image",
+      "VISIBILITY": {
+        "TRUE": "Visible",
+        "FALSE": "Hidden"
+      },
+      "URL": "External URL",
+      "SELECT": "Select Image",
+      "SUCCESS": "Image successfully created",
+      "ERROR": "Image could not be created"
+    }
+  },
+  "LANDING": {
+    "TITLE": "Welcome"
+  },
   "GENERAL": {
     "CLOSE": "Close",
     "CANCEL": "Cancel",
     "SAVE": "Save",
     "VIEW": "View",
-    "WORKSPACES.NOT_FOUND": "Workspaces could not be loaded",
+    "IMAGES.NOT_FOUND": "Images could not be loaded",
     "TOOLTIPS": {
       "CLOSE": "Leave dialog",
       "CANCEL": "Cancel action",

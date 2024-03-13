@@ -1,0 +1,97 @@
+<p-dialog
+  header="{{ 'ACTIONS.CREATE.TITLE' | translate }}"
+  [(visible)]="displayDetailDialog"
+  (onHide)="onDialogHide()"
+  [baseZIndex]="10000"
+  [draggable]="true"
+  [resizable]="true"
+  [closable]="true"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [showHeader]="true"
+  [breakpoints]="{
+    '992px': '65vw',
+    '700px': '80vw',
+    '600px': '90vw',
+    '500px': '100vw',
+      }"
+>
+  <form [formGroup]="formGroup" errorTailor>
+    <div class="flex flex-wrap flex-column justify-content-between gap-2">
+      <div class="flex flex-wrap align-items-center justify-content-between mt-2">
+        <div class="w-full mb-2">
+          <span class="p-float-label">
+            <p-fileUpload
+              #fileUpload
+              (onSelect)="this.handleFileSelected($event.files[0])"
+              [maxFileSize]="1000000"
+              [showUploadButton]="false"
+              [showCancelButton]="false"
+              [disabled]="this.uploadDisabled"
+              id="image_form_upload"
+              class="w-full"
+              rows="3"
+              [multiple]="false"
+              [autoResize]="true"
+              [chooseLabel]="'ACTIONS.CREATE.SELECT' | translate"
+              appendTo="body"
+              [title]="'ACTIONS.CREATE.SELECT' | translate"
+            ></p-fileUpload>
+          </span>
+        </div>
+        <div class="w-12 mt-1 sm:mt-2">
+          <span class="p-float-label" controlErrorAnchor>
+            <input
+              pInputText
+              id="image_form_url"
+              style="min-height: 2.5rem"
+              class="w-full textarea-sm"
+              formControlName="url"
+              rows="1"
+              [autoResize]="true"
+              appendTo="body"
+              [title]="'ACTIONS.CREATE.URL' | translate"
+            />
+            <label class="ocx-required-label" for="image_form_url"> {{ 'ACTIONS.CREATE.URL' | translate }} </label>
+          </span>
+        </div>
+      </div>
+
+      <div class="grid col-12 row-gap-3 sm:row-gap-1 sm:mt-2">
+        <div class="w-1 flex flex-column row-gap-2 mr-2">
+          <p-inputSwitch
+            id="image_detail_form_visible"
+            class="input-switch-xl"
+            formControlName="visible"
+            trueValue="TRUE"
+            falseValue="FALSE"
+            [title]="'ACTIONS.VISIBILITY.TOOLTIP' | translate"
+          ></p-inputSwitch>
+          <label class="text-xs text-center float-label mr-2" for="image_detail_form_visible">
+            {{ 'ACTIONS.CREATE.VISIBILITY.' + formGroup.controls['visible'].value | uppercase | translate }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex flex-wrap justify-content-end gap-2 mb-1">
+      <p-button
+        id="image_button_cancel"
+        [label]="'GENERAL.CANCEL' | translate"
+        [title]="'GENERAL.TOOLTIPS.CANCEL' | translate"
+        (onClick)="onDialogHide()"
+        icon="pi pi-times"
+      ></p-button>
+      <p-button
+        id="image_button_save"
+        [label]="'GENERAL.SAVE' | translate"
+        [title]="'GENERAL.TOOLTIPS.SAVE' | translate"
+        (onClick)="this.onSave()"
+        icon="pi pi-save"
+        [disabled]="!formGroup.valid"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

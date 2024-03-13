@@ -5,12 +5,12 @@ info:
   description: welcome bff
   version: 1.0.0
   contact:
-    email: "tkit_dev@1000kit.org"
+    email: 'tkit_dev@1000kit.org'
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 servers:
-  - url: "http://onecx-welcome-bff:8080"
+  - url: 'http://onecx-welcome-bff:8080'
 tags:
   - name: OneCX Welcome Bff
 paths:
@@ -27,13 +27,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ImageInfo"
-        "404":
+                $ref: '#/components/schemas/ImageInfo'
+        '404':
           description: NOT FOUND
     put:
       x-onecx:
@@ -53,13 +53,13 @@ paths:
             schema:
               $ref: '#/components/schemas/ImageInfo'
       responses:
-        "200":
+        '200':
           description: UPDATED
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageInfo'
-        "400":
+        '400':
           description: BAD REQUEST
           content:
             application/json:
@@ -77,9 +77,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        "204":
+        '204':
           description: DELETED
-        "404":
+        '404':
           description: NOT FOUND
   /images/info:
     post:
@@ -98,9 +98,13 @@ paths:
             schema:
               $ref: '#/components/schemas/ImageInfo'
       responses:
-        "201":
+        '201':
           description: CREATED
-        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageInfo'
+        '400':
           description: BAD REQUEST
           content:
             application/json:
@@ -116,7 +120,7 @@ paths:
       description: get all existing image-infos
       operationId: getAllImageInfos
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
@@ -124,6 +128,31 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ImageInfo'
+  /images/info/reorder:
+    post:
+      x-onecx:
+        permissions:
+          welcome:
+            - write
+      tags:
+        - imagesInternal
+      description: update order of Images
+      operationId: updateImageOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageInfoReorderRequest'
+      responses:
+        '200':
+          description: UPDATED
+        '400':
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /images:
     post:
       x-onecx:
@@ -149,13 +178,13 @@ paths:
               type: string
               format: binary
       responses:
-        "201":
+        '201':
           description: CREATED
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageDataResponse'
-        "400":
+        '400':
           description: BAD REQUEST
           content:
             application/json:
@@ -174,13 +203,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageDataResponse'
-        "404":
+        '404':
           description: NOT FOUND
     put:
       x-onecx:
@@ -207,13 +236,13 @@ paths:
               type: string
               format: binary
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageDataResponse'
-        "400":
+        '400':
           description: BAD REQUEST
           content:
             application/json:
@@ -268,6 +297,13 @@ components:
           $ref: '#/components/schemas/OffsetDateTime'
         modificationUser:
           type: string
+    ImageInfoReorderRequest:
+      type: object
+      properties:
+        imageInfos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageInfo'
     OffsetDateTime:
       format: date-time
       type: string
