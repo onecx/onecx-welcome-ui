@@ -61,16 +61,9 @@
     "SWITCH_TO_EDIT_MODE": "Edit"
   },
   "VALIDATION": {
-    "HINTS": {
-      "FORMAT_URL": "Format: "
-    },
     "ERRORS": {
       "INTERNAL_ERROR": "Internal error",
-      "INVALID_DATE_RANGE": "The start date is after the end date. It must be before that.",
-      "EMPTY_REQUIRED_FIELD": "This field is required.",
-      "MAXIMUM_LENGTH": "Only {{chars}} characters are allowed.",
-      "MINIMUM_LENGTH": "At least {{chars}} characters are required.",
-      "PATTERN_ERROR": "Your input does not match the required pattern"
+      "MISSING_IMG_SRC": "Upload an image or add an external url"
     }
   }
 }

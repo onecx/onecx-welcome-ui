@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms'
-import { TranslateService } from '@ngx-translate/core'
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn } from '@angular/forms'
 
-import { Action, PortalMessageService, UserService } from '@onecx/portal-integration-angular'
+import { Action, PortalMessageService } from '@onecx/portal-integration-angular'
 import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
@@ -18,24 +17,21 @@ export class ImageDialogComponent implements OnInit {
 
   actions: Action[] = []
   public isLoading = false
-  // form
   formGroup: FormGroup
   autoResize!: boolean
   selectedFile: any
   uploadDisabled: boolean = false
 
   constructor(
-    private user: UserService,
     private imageApiService: ImagesInternalAPIService,
     private fb: FormBuilder,
-    private translate: TranslateService,
     private msgService: PortalMessageService
   ) {
     this.formGroup = fb.nonNullable.group({
       id: new FormControl(null),
       imageId: new FormControl(null),
       modificationCount: new FormControl(null),
-      url: new FormControl(null),
+      url: new FormControl(null, this.imageSrcValidator()),
       image: new FormControl(null),
       visible: new FormControl(false)
     })
@@ -50,6 +46,10 @@ export class ImageDialogComponent implements OnInit {
   public onDialogHide() {
     this.displayDetailDialog = false
     this.hideDialogAndChanged.emit(false)
+  }
+  imageSrcValidator(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null =>
+      control.value !== null && control.value != '' ? null : { srcMissing: 'image src missing' }
   }
 
   public onSave(): void {
@@ -77,15 +77,15 @@ export class ImageDialogComponent implements OnInit {
                     imageInfo.position = (this.imageInfoCount + 1).toString()
                     this.imageApiService
                       .updateImageInfo({
-                        id: data.id || '',
+                        id: data.id!,
                         imageInfo: imageInfo
                       })
                       .subscribe({
                         next: () => {
                           this.msgService.success({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
                           this.hideDialogAndChanged.emit(true)
-                          this.fileUpload.clear()
                           this.selectedFile = undefined
+                          this.fileUpload.clear()
                         },
                         error: () => {
                           this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })

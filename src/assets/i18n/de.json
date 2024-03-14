@@ -61,16 +61,9 @@
     "SWITCH_TO_EDIT_MODE": "Bearbeiten"
   },
   "VALIDATION": {
-    "HINTS": {
-      "FORMAT_URL": "Format: "
-    },
     "ERRORS": {
       "INTERNAL_ERROR": "Interner Fehler",
-      "INVALID_DATE_RANGE": "Das Startdatum liegt nach dem Enddatum. Es muss davor liegen.",
-      "EMPTY_REQUIRED_FIELD": "Dieses Feld ist ein Pflichtfeld.",
-      "MAXIMUM_LENGTH": "Es sind nur {{chars}} Zeichen erlaubt.",
-      "MINIMUM_LENGTH": "Es sind mindestens {{chars}} Zeichen erforderlich.",
-      "PATTERN_ERROR": "Ihre Eingabe entspricht nicht dem benötigten Format."
+      "MISSING_IMG_SRC": "Laden Sie ein Bild hoch oder geben sie eine externe Bild-URL an"
     }
   }
 }

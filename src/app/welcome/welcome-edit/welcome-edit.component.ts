@@ -39,14 +39,14 @@ export class WelcomeEditComponent implements OnInit {
 
   public fetchImageData() {
     this.imageInfos.map((info) => {
-      this.imageService.getImageById({ id: info.imageId || '' }).subscribe({
-        next: (imageData: ImageDataResponse) => {
-          this.images.push(imageData)
-        },
-        error: () => {
-          this.msgService.error({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
-        }
-      })
+      if (info.imageId) {
+        this.imageService.getImageById({ id: info.imageId }).subscribe({
+          next: (imageData: ImageDataResponse) => {
+            this.images.push(imageData)
+          },
+          error: () => this.msgService.error({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
+        })
+      }
     })
   }
 
@@ -56,25 +56,36 @@ export class WelcomeEditComponent implements OnInit {
     })
     if (currentImage) {
       return 'data:' + currentImage.mimeType + ';base64,' + currentImage.imageData
-    } else if (imageInfo.url !== null && imageInfo.url !== '') {
-      return imageInfo.url
     } else {
-      return ''
+      return imageInfo.url
     }
   }
 
   public handleDelete(id: string | undefined) {
     if (id) {
+      const indexOfItem = this.imageInfos.findIndex((i) => i.id === id)
+      this.imageInfos.splice(indexOfItem, 1)
       this.imageService.deleteImageInfoById({ id: id }).subscribe({
         next: () => {
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.SUCCESS' })
-          this.fetchImageInfos()
+          this.updatePositions()
         },
         error: () => {
           this.msgService.error({ summaryKey: 'ACTIONS.DELETE.ERROR' })
         }
       })
     }
+  }
+
+  updatePositions() {
+    this.imageInfos.map((info, index) => {
+      info.position = (index + 1).toString()
+    })
+    this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: this.imageInfos } }).subscribe({
+      next: () => {
+        this.fetchImageInfos()
+      }
+    })
   }
 
   public updateVisibility(info: ImageInfo) {
@@ -100,7 +111,9 @@ export class WelcomeEditComponent implements OnInit {
             this.fetchImageInfos()
             this.msgService.success({ summaryKey: 'ACTIONS.VISIBILITY.SUCCESS' })
           },
-          error: () => this.msgService.error({ summaryKey: 'ACTIONS.VISIBILITY.ERROR' })
+          error: () => {
+            this.msgService.error({ summaryKey: 'ACTIONS.VISIBILITY.ERROR' })
+          }
         })
     }
   }

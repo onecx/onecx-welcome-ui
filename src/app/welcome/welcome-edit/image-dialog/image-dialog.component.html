@@ -23,6 +23,7 @@
           <span class="p-float-label">
             <p-fileUpload
               #fileUpload
+              (onRemove)="this.formGroup.controls['url'].enable()"
               (onSelect)="this.handleFileSelected($event.files[0])"
               [maxFileSize]="1000000"
               [showUploadButton]="false"
@@ -52,9 +53,17 @@
               appendTo="body"
               [title]="'ACTIONS.CREATE.URL' | translate"
             />
-            <label class="ocx-required-label" for="image_form_url"> {{ 'ACTIONS.CREATE.URL' | translate }} </label>
+            <label for="image_form_url"> {{ 'ACTIONS.CREATE.URL' | translate }} </label>
           </span>
         </div>
+        <label
+          *ngIf="
+            formGroup.controls['url'].errors?.hasOwnProperty('srcMissing') && formGroup.controls['url'].value === ''
+          "
+          class="col-12 control-error pl-0"
+        >
+          {{ 'VALIDATION.ERRORS.MISSING_IMG_SRC' | translate }}
+        </label>
       </div>
 
       <div class="grid col-12 row-gap-3 sm:row-gap-1 sm:mt-2">

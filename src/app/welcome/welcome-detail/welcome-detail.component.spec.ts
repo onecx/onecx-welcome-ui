@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { By } from '@angular/platform-browser'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import {
   AppStateService,
@@ -10,7 +12,7 @@ import {
   UserService
 } from '@onecx/portal-integration-angular'
 import { of, throwError } from 'rxjs'
-import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
+import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 import { WelcomeDetailComponent } from '../welcome-detail/welcome-detail.component'
 describe('WelcomeDetailComponent', () => {
   let component: WelcomeDetailComponent
@@ -49,7 +51,8 @@ describe('WelcomeDetailComponent', () => {
             useFactory: createTranslateLoader,
             deps: [HttpClient, AppStateService]
           }
-        })
+        }),
+        BrowserAnimationsModule
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
@@ -77,8 +80,21 @@ describe('WelcomeDetailComponent', () => {
   })
 
   it('should get all imageinfos onInit', () => {
-    const imageInfos = [{ id: '123', url: 'http://onecx.de', visible: true, position: '1' } as ImageInfo]
-    apiServiceSpy.getAllImageInfos.and.returnValue(of(imageInfos))
+    apiServiceSpy.getAllImageInfos.and.returnValue(
+      of([
+        { id: '123', imageId: '123', visible: true, position: '1' },
+        { id: '1234', imageId: '1234', visible: true, position: '2' },
+        { id: '12345', imageId: '12345', visible: true, position: '4' },
+        { id: '123456', imageId: '123456', visible: true, position: '3' },
+        { id: '123', url: 'http://onecx.de', visible: true, position: '1' }
+      ])
+    )
+    apiServiceSpy.getImageById.and.returnValues(
+      of({ imageId: '123', imageData: new Blob() } as ImageDataResponse),
+      of({ imageId: '1234', imageData: new Blob() } as ImageDataResponse),
+      of({ imageId: '12345', imageData: new Blob() } as ImageDataResponse),
+      of({ imageId: '123456', imageData: new Blob() } as ImageDataResponse)
+    )
     component.imageInfos = []
 
     component.ngOnInit()
@@ -88,8 +104,6 @@ describe('WelcomeDetailComponent', () => {
 
   it('should log error if getAllImageInfos fails', () => {
     apiServiceSpy.getAllImageInfos.and.returnValue(throwError(() => new Error()))
-    spyOn(console, 'error')
-
     component.ngOnInit()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
@@ -97,17 +111,31 @@ describe('WelcomeDetailComponent', () => {
     })
   })
 
-  it('should display image in carousel', () => {
-    const imageInfos = [{ id: '123', url: 'http://onecx.de', visible: true, position: '1' } as ImageInfo]
-    apiServiceSpy.getAllImageInfos.and.returnValue(of(imageInfos))
-    component.imageInfos = []
+  it('should handle error when fetching imageData', () => {
+    apiServiceSpy.getImageById.and.returnValue(throwError(() => new Error()))
+    component.imageInfos = [{ id: '123', imageId: '123', visible: true, position: '1' }]
+    component.fetchImageData()
 
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
+  })
+
+  it('should display image in carousel', () => {
+    const imageInfos = [
+      { id: '123', url: 'http://onecx.de', visible: true, position: '1' } as ImageInfo,
+      { id: '1234', imageId: '1234', visible: true, position: '1' } as ImageInfo
+    ]
+    apiServiceSpy.getAllImageInfos.and.returnValue(of(imageInfos))
+    apiServiceSpy.getImageById.and.returnValues(of({ imageId: '1234', imageData: new Blob() } as ImageDataResponse))
+    component.imageInfos = []
+    component.currentSlide = 0
     component.ngOnInit()
     fixture.detectChanges()
     const dElement = fixture.debugElement
-    const nElement = dElement.nativeElement
-    const slide = nElement.querySelector('.slide')
-
-    expect(slide).toBeDefined()
+    let slide = dElement.query(By.css('.slide'))
+    expect(slide).toBeTruthy()
+    component.currentSlide = 1
+    fixture.detectChanges()
+    slide = dElement.query(By.css('.slide'))
+    expect(slide).toBeTruthy()
   })
 })

@@ -3,11 +3,7 @@
     <div class="card-wrapper grid pb-4">
       <p-card class="col-3 p-overlay-badge" *ngFor="let info of imageInfos; let i = index">
         <ng-template pTemplate="header">
-          <img
-            alt="{{ 'image ' + info.position }}"
-            src="{{ this.buildImageSrc(info) }}"
-            style="height: 13rem; object-fit: cover"
-          />
+          <img alt="{{ 'slide-' + i }}" src="{{ this.buildImageSrc(info) }}" style="height: 13rem; object-fit: cover" />
         </ng-template>
         <ng-template pTemplate="footer">
           <div class="flex">
@@ -28,6 +24,7 @@
             </div>
             <div class="arrow-buttons" style="margin-left: auto">
               <p-button
+                class="arrow-left"
                 [disabled]="!(i > 0)"
                 icon="pi pi-arrow-left"
                 [style]="{ 'margin-left': '.5em' }"
@@ -35,6 +32,7 @@
               >
               </p-button>
               <p-button
+                class="arrow-right"
                 [disabled]="!(i !== imageInfos.length - 1)"
                 icon="pi pi-arrow-right"
                 [style]="{ 'margin-left': '.5em' }"
@@ -48,9 +46,9 @@
         <span class="pi pi-plus plus"></span>
       </div>
     </div>
-    <p-button [disabled]="!this.isReordered" (onClick)="this.onSaveOrder()"
-      >{{ 'GENERAL.SAVE_ORDER' | translate }}</p-button
-    >
+    <p-button class="saveOrder" [disabled]="!this.isReordered" (onClick)="this.onSaveOrder()">{{
+      'GENERAL.SAVE_ORDER' | translate
+    }}</p-button>
   </div>
 </ocx-portal-page>
 <app-image-dialog

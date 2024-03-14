@@ -47,7 +47,6 @@ export class WelcomeDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchImageInfos()
-    this.updatePageWithPortalInfo(this.portal)
   }
 
   public fetchImageInfos() {
@@ -64,14 +63,16 @@ export class WelcomeDetailComponent implements OnInit {
 
   public fetchImageData() {
     this.imageInfos.forEach((info) => {
-      this.imageService.getImageById({ id: info.imageId || '' }).subscribe({
-        next: (imageData) => {
-          this.images.push(imageData)
-        },
-        error: () => {
-          this.msgService.error({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
-        }
-      })
+      if (info.imageId) {
+        this.imageService.getImageById({ id: info.imageId }).subscribe({
+          next: (imageData) => {
+            this.images.push(imageData)
+          },
+          error: () => {
+            this.msgService.error({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
+          }
+        })
+      }
     })
     this.initGallery()
   }
@@ -82,14 +83,10 @@ export class WelcomeDetailComponent implements OnInit {
     })
     if (currentImage) {
       return 'data:' + currentImage.mimeType + ';base64,' + currentImage.imageData
-    } else if (imageInfo.url !== null && imageInfo.url !== '') {
-      return imageInfo.url
     } else {
-      return ''
+      return imageInfo.url
     }
   }
-
-  public updatePageWithPortalInfo(portal: Portal | undefined): void {}
 
   private initGallery(): void {
     this.subscription = timer(0, this.CAROUSEL_SPEED).subscribe(() => {
