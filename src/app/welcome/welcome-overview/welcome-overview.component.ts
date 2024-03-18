@@ -11,9 +11,9 @@ import { Observable, Subscription, timer } from 'rxjs'
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
-  selector: 'app-welcome-detail',
-  templateUrl: './welcome-detail.component.html',
-  styleUrls: ['./welcome-detail.component.scss'],
+  selector: 'app-welcome-overview',
+  templateUrl: './welcome-overview.component.html',
+  styleUrls: ['./welcome-overview.component.scss'],
   animations: [
     trigger('carouselAnimation', [
       transition('void => *', [style({ opacity: 0 }), animate('300ms', style({ opacity: 1 }))]),
@@ -21,7 +21,7 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
     ])
   ]
 })
-export class WelcomeDetailComponent implements OnInit {
+export class WelcomeOverviewComponent implements OnInit {
   readonly CAROUSEL_SPEED: number = 5000
   readonly permission: string = 'BASE_PORTAL#SHOW'
   portal: Portal | undefined
@@ -52,7 +52,9 @@ export class WelcomeDetailComponent implements OnInit {
   public fetchImageInfos() {
     this.imageService.getAllImageInfos().subscribe({
       next: (data) => {
-        this.imageInfos = data.sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+        this.imageInfos = data
+          .filter((img) => img.visible === true)
+          .sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
         this.fetchImageData()
       }
     })

@@ -133,6 +133,14 @@ describe('ImageDialogComponent', () => {
     expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
   })
 
+  it('should handle file removal', () => {
+    component.ngOnInit()
+    component.handleFileSelected(new Blob())
+    expect(component.selectedFile).toBeDefined()
+    component.handleFileRemoval()
+    expect(component.selectedFile).toBeUndefined()
+  })
+
   it('should handle error when creating imageinfo', () => {
     apiServiceSpy.createImageInfo.and.returnValue(throwError(() => new Error()))
     component.formGroup.controls['url'].setValue('someUrl')

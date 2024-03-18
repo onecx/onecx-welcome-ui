@@ -112,6 +112,11 @@ export class ImageDialogComponent implements OnInit {
     this.formGroup.controls['url'].disable()
   }
 
+  public handleFileRemoval() {
+    this.formGroup.controls['url'].enable()
+    this.selectedFile = undefined
+  }
+
   private submitFormValues(): any {
     const imageInfo: ImageInfo = { ...this.formGroup.value }
     return imageInfo

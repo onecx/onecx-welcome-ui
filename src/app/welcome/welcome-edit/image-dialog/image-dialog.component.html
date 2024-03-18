@@ -23,7 +23,7 @@
           <span class="p-float-label">
             <p-fileUpload
               #fileUpload
-              (onRemove)="this.formGroup.controls['url'].enable()"
+              (onRemove)="this.handleFileRemoval()"
               (onSelect)="this.handleFileSelected($event.files[0])"
               [maxFileSize]="1000000"
               [showUploadButton]="false"

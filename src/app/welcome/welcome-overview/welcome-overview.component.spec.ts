@@ -13,10 +13,10 @@ import {
 } from '@onecx/portal-integration-angular'
 import { of, throwError } from 'rxjs'
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
-import { WelcomeDetailComponent } from '../welcome-detail/welcome-detail.component'
-describe('WelcomeDetailComponent', () => {
-  let component: WelcomeDetailComponent
-  let fixture: ComponentFixture<WelcomeDetailComponent>
+import { WelcomeOverviewComponent } from './welcome-overview.component'
+describe('WelcomeOverviewComponent', () => {
+  let component: WelcomeOverviewComponent
+  let fixture: ComponentFixture<WelcomeOverviewComponent>
 
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', [
     'success',
@@ -42,7 +42,7 @@ describe('WelcomeDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [WelcomeDetailComponent],
+      declarations: [WelcomeOverviewComponent],
       imports: [
         HttpClientTestingModule,
         TranslateModule.forRoot({
@@ -71,7 +71,7 @@ describe('WelcomeDetailComponent', () => {
   }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(WelcomeDetailComponent)
+    fixture = TestBed.createComponent(WelcomeOverviewComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   })

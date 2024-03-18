@@ -6,7 +6,7 @@ import { RouterModule, Routes } from '@angular/router'
 import { addInitializeModuleGuard, InitializeModuleGuard, PortalCoreModule } from '@onecx/portal-integration-angular'
 import { SharedModule } from '../shared/shared.module'
 
-import { WelcomeDetailComponent } from './welcome-detail/welcome-detail.component'
+import { WelcomeOverviewComponent } from './welcome-detail/welcome-overview.component'
 import { WelcomeEditComponent } from './welcome-edit/welcome-edit.component'
 import { CardModule } from 'primeng/card'
 import { ImageDialogComponent } from './welcome-edit/image-dialog/image-dialog.component'
@@ -15,7 +15,7 @@ import { FileUploadModule } from 'primeng/fileupload'
 const routes: Routes = [
   {
     path: '',
-    component: WelcomeDetailComponent,
+    component: WelcomeOverviewComponent,
     pathMatch: 'full'
   },
   {
@@ -25,7 +25,7 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  declarations: [WelcomeDetailComponent, WelcomeEditComponent, ImageDialogComponent],
+  declarations: [WelcomeOverviewComponent, WelcomeEditComponent, ImageDialogComponent],
   imports: [
     CommonModule,
     FormsModule,
