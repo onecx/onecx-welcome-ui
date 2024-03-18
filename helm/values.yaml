@@ -19,12 +19,10 @@ app:
       enabled: true
       spec:
         permissions:
-          WELCOME:
-            CREATE: Create welcome images
-            DELETE: Delete welcome images
-            EDIT: Edit welcome
-            SAVE: Update and save welcome images
-            VIEW: View mode for welcome
+          IMAGE:
+            DELETE: Delete image
+            EDIT: Edit image
+            VIEW: View image
     # Keycloak
     keycloak:
       client:

@@ -1,4 +1,4 @@
-<ocx-portal-page helpArticleId="PAGE_WELCOME_EDIT">
+<ocx-portal-page helpArticleId="PAGE_WELCOME_EDIT" permission="IMAGE#EDIT">
   <div>
     <div class="card-wrapper grid pb-4">
       <p-card class="col-3 p-overlay-badge" *ngFor="let info of imageInfos; let i = index">
@@ -15,6 +15,7 @@
                 icon="{{ info.visible ? 'pi pi-eye' : 'pi pi-eye-slash' }}"
               ></p-button>
               <p-button
+                ocxIfPermission="'IMAGE#DELETE'"
                 pTooltip="{{ 'ACTIONS.DELETE.TOOLTIP' | translate }}"
                 icon="pi pi-trash"
                 styleClass="p-button-secondary"

@@ -1,4 +1,4 @@
-<ocx-portal-page helpArticleId="PAGE_WELCOME_VIEW">
+<ocx-portal-page helpArticleId="PAGE_WELCOME_VIEW" permission="IMAGE#VIEW">
   <div class="page">
     <div class="layer">
       <div class="carousel">
@@ -16,16 +16,24 @@
       </div>
     </div>
     <div class="relative flex flex-wrap">
-      <div class="flex carouselAnimation md:col-4 xl:col-6 gap-2 px-6 text-white">
+      <div class="flex carouselAnimation md:col-12 xl:col-12 gap-2 px-6 text-white">
         <div>
           <h1 class="text-6xl font-light">
             {{ 'LANDING.TITLE' | translate }}, {{ (user$ | async)?.person?.firstName }}
           </h1>
           <h3 class="text-md font-normal my-1">{{ currentDate | date }}</h3>
           <h4 class="text-sm font-normal my-1">Workspace: {{ portal?.portalName }}</h4>
-          <div class="flex relative">
-            <p-button [routerLink]="['/edit']" icon="pi pi-pencil"></p-button>
-          </div>
+        </div>
+        <div class="ml-auto pt-2">
+          <button
+            ocxIfPermission="'IMAGE#EDIT'"
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            label="{{ 'GENERAL.EDIT' | translate }}"
+            [routerLink]="['/edit']"
+            class="p-button-text text-white"
+          ></button>
         </div>
       </div>
     </div>

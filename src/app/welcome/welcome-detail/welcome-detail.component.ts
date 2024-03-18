@@ -54,9 +54,6 @@ export class WelcomeDetailComponent implements OnInit {
       next: (data) => {
         this.imageInfos = data.sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
         this.fetchImageData()
-      },
-      error: () => {
-        this.msgService.error({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
       }
     })
   }

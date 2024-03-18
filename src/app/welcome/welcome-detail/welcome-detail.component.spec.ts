@@ -102,15 +102,6 @@ describe('WelcomeDetailComponent', () => {
     expect(component.imageInfos).toContain({ id: '123', url: 'http://onecx.de', visible: true, position: '1' })
   })
 
-  it('should log error if getAllImageInfos fails', () => {
-    apiServiceSpy.getAllImageInfos.and.returnValue(throwError(() => new Error()))
-    component.ngOnInit()
-
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.IMAGES.NOT_FOUND'
-    })
-  })
-
   it('should handle error when fetching imageData', () => {
     apiServiceSpy.getImageById.and.returnValue(throwError(() => new Error()))
     component.imageInfos = [{ id: '123', imageId: '123', visible: true, position: '1' }]
