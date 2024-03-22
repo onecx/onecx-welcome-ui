@@ -1,12 +1,22 @@
 <ocx-portal-page helpArticleId="PAGE_WELCOME_EDIT" permission="IMAGE#EDIT">
   <div>
+    <div class="flex w-full pb-4">
+      <p-button
+        icon="pi pi-arrow-left"
+        label="{{ 'GENERAL.BACK' | translate }}"
+        pTooltip="{{ 'GENERAL.TOOLTIPS.BACK' | translate }}"
+        tooltipPosition="left"
+        class="ml-auto"
+        [routerLink]="['../']"
+      ></p-button>
+    </div>
     <div class="card-wrapper grid pb-4">
       <p-card class="col-3 p-overlay-badge" *ngFor="let info of imageInfos; let i = index">
         <ng-template pTemplate="header">
           <img alt="{{ 'slide-' + i }}" src="{{ this.buildImageSrc(info) }}" style="height: 13rem; object-fit: cover" />
         </ng-template>
         <ng-template pTemplate="footer">
-          <div class="flex">
+          <div class="flex h-full">
             <div class="action-buttons" style="margin-right: auto">
               <p-button
                 class="visibilityChange"
@@ -26,6 +36,7 @@
             <div class="arrow-buttons" style="margin-left: auto">
               <p-button
                 class="arrow-left"
+                pTooltip="{{ 'ACTIONS.REORDER.MOVE_LEFT_TOOLTIP' | translate }}"
                 [disabled]="!(i > 0)"
                 icon="pi pi-arrow-left"
                 [style]="{ 'margin-left': '.5em' }"
@@ -34,6 +45,7 @@
               </p-button>
               <p-button
                 class="arrow-right"
+                pTooltip="{{ 'ACTIONS.REORDER.MOVE_RIGHT_TOOLTIP' | translate }}"
                 [disabled]="!(i !== imageInfos.length - 1)"
                 icon="pi pi-arrow-right"
                 [style]="{ 'margin-left': '.5em' }"
@@ -43,7 +55,13 @@
           </div>
         </ng-template>
       </p-card>
-      <div *ngIf="this.imageInfos.length <= 8" (click)="this.displayImageDialog = true" class="col-3 addImageCard">
+      <div
+        *ngIf="this.imageInfos.length < 8"
+        (click)="this.displayImageDialog = true"
+        class="col-3 addImageCard"
+        pTooltip="{{ 'ACTIONS.ADD.TOOLTIP' | translate }}"
+        tooltipPosition="bottom"
+      >
         <span class="pi pi-plus plus"></span>
       </div>
     </div>

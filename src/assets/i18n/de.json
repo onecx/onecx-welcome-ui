@@ -19,7 +19,12 @@
     "REORDER": {
       "SAVE": "Anordnung speichern",
       "SUCCESS": "Anordnung erfolgreich geändert",
-      "ERROR": "Anordnung konnte nicht geändert werden"
+      "ERROR": "Anordnung konnte nicht geändert werden",
+      "MOVE_LEFT_TOOLTIP": "Nach links verschieben",
+      "MOVE_RIGHT_TOOLTIP": "Nach rechts verschieben"
+    },
+    "ADD": {
+      "TOOLTIP": "Neues Bild hinzufügen"
     },
     "CREATE": {
       "TITLE": "Bild erstellen",
@@ -51,9 +56,11 @@
       "CANCEL_EDIT": "Den Änderungsmodus verlassen",
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
       "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
-      "EDIT": "Daten bearbeiten",
-      "SAVE": "Die Änderungen speichern"
-    }
+      "EDIT": "Bilder bearbeiten",
+      "SAVE": "Die Änderungen speichern",
+      "BACK": "Back to welcome page"
+    },
+    "BACK": "Zurück"
   },
   "BREADCRUMBS": {
     "CREATE": "Neu",

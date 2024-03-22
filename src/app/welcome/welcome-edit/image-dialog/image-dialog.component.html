@@ -29,6 +29,7 @@
               [showUploadButton]="false"
               [showCancelButton]="false"
               [disabled]="this.uploadDisabled"
+              accept=".jpg, .jpeg, .png"
               id="image_form_upload"
               class="w-full"
               rows="3"
@@ -64,22 +65,6 @@
         >
           {{ 'VALIDATION.ERRORS.MISSING_IMG_SRC' | translate }}
         </label>
-      </div>
-
-      <div class="grid col-12 row-gap-3 sm:row-gap-1 sm:mt-2">
-        <div class="w-1 flex flex-column row-gap-2 mr-2">
-          <p-inputSwitch
-            id="image_detail_form_visible"
-            class="input-switch-xl"
-            formControlName="visible"
-            trueValue="TRUE"
-            falseValue="FALSE"
-            [title]="'ACTIONS.VISIBILITY.TOOLTIP' | translate"
-          ></p-inputSwitch>
-          <label class="text-xs text-center float-label mr-2" for="image_detail_form_visible">
-            {{ 'ACTIONS.CREATE.VISIBILITY.' + formGroup.controls['visible'].value | uppercase | translate }}
-          </label>
-        </div>
       </div>
     </div>
   </form>

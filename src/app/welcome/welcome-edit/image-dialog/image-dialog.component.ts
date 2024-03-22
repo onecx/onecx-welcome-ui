@@ -28,12 +28,8 @@ export class ImageDialogComponent implements OnInit {
     private msgService: PortalMessageService
   ) {
     this.formGroup = fb.nonNullable.group({
-      id: new FormControl(null),
-      imageId: new FormControl(null),
-      modificationCount: new FormControl(null),
       url: new FormControl(null, this.imageSrcValidator()),
-      image: new FormControl(null),
-      visible: new FormControl(false)
+      image: new FormControl(null)
     })
     this.autoResize = true
   }
@@ -54,8 +50,8 @@ export class ImageDialogComponent implements OnInit {
 
   public onSave(): void {
     if (this.formGroup.valid) {
-      this.formGroup.get('modificationCount')?.setValue(0)
       let imageInfo = this.submitFormValues() as ImageInfo
+      imageInfo.modificationCount = 0
       imageInfo.position = (this.imageInfoCount + 1).toString()
       this.imageApiService
         .createImageInfo({
@@ -71,10 +67,11 @@ export class ImageDialogComponent implements OnInit {
                 })
                 .subscribe({
                   next: (createdImage) => {
-                    this.formGroup.get('imageId')?.setValue(createdImage.imageId)
-                    this.formGroup.get('modificationCount')?.setValue(data.modificationCount)
                     let imageInfo = this.submitFormValues() as ImageInfo
+                    imageInfo.modificationCount = data.modificationCount
+                    imageInfo.imageId = createdImage.imageId
                     imageInfo.position = (this.imageInfoCount + 1).toString()
+                    imageInfo.visible = true
                     this.imageApiService
                       .updateImageInfo({
                         id: data.id!,
@@ -84,7 +81,7 @@ export class ImageDialogComponent implements OnInit {
                         next: () => {
                           this.msgService.success({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
                           this.hideDialogAndChanged.emit(true)
-                          this.selectedFile = undefined
+                          this.handleFileRemoval()
                           this.fileUpload.clear()
                         },
                         error: () => {
@@ -107,9 +104,11 @@ export class ImageDialogComponent implements OnInit {
     }
   }
 
-  public handleFileSelected(selectedFile: any) {
-    this.selectedFile = selectedFile
-    this.formGroup.controls['url'].disable()
+  public handleFileSelected(selectedFile: Blob) {
+    if (selectedFile.size < 1000000) {
+      this.selectedFile = selectedFile
+      this.formGroup.controls['url'].disable()
+    }
   }
 
   public handleFileRemoval() {

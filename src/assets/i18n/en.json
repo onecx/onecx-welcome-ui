@@ -19,7 +19,12 @@
     "REORDER": {
       "SAVE": "Save arrangement",
       "SUCCESS": "Arrangement successfully changed",
-      "ERROR": "Arrangement could not be changed"
+      "ERROR": "Arrangement could not be changed",
+      "MOVE_LEFT_TOOLTIP": "Move to left",
+      "MOVE_RIGHT_TOOLTIP": "Move to right"
+    },
+    "ADD": {
+      "TOOLTIP": "Add new image"
     },
     "CREATE": {
       "TITLE": "Create image",
@@ -51,9 +56,11 @@
       "CANCEL_EDIT": "Cancel edit mode",
       "CANCEL_AND_CLOSE": "Cancel and close dialog",
       "CANCEL_WITHOUT_SAVE": "Cancel action without saving",
-      "EDIT": "Edit data",
-      "SAVE": "Save changes"
-    }
+      "EDIT": "Edit images",
+      "SAVE": "Save changes",
+      "BACK": "Back to welcome page"
+    },
+    "BACK": "Zurück"
   },
   "BREADCRUMBS": {
     "CREATE": "New",
