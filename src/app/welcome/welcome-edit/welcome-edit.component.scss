@@ -1,0 +1,27 @@
+.addImageCard {
+  outline: dashed;
+  outline-offset: -10px;
+  outline-color: lightgray;
+  display: table;
+  height: 20.2rem;
+  background-color: transparent;
+}
+
+.plus {
+  color: lightgray;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+  font-size: xx-large;
+}
+::ng-deep .p-card-content {
+  display: none !important;
+}
+
+.addImageCard:hover {
+  outline-color: var(--primary-color);
+  cursor: pointer;
+}
+.addImageCard:hover .plus {
+  color: var(--primary-color);
+}

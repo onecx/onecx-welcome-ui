@@ -1,0 +1,95 @@
+<p-dialog
+  header="{{ 'ACTIONS.CREATE.TITLE' | translate }}"
+  [(visible)]="displayDetailDialog"
+  (onHide)="onDialogHide()"
+  [baseZIndex]="10000"
+  [draggable]="true"
+  [resizable]="true"
+  [closable]="true"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [showHeader]="true"
+  [breakpoints]="{
+    '992px': '65vw',
+    '700px': '80vw',
+    '600px': '90vw',
+    '500px': '100vw',
+      }"
+>
+  <form [formGroup]="formGroup" errorTailor>
+    <div class="flex flex-wrap flex-column justify-content-between gap-2">
+      <div class="flex flex-wrap align-items-center justify-content-between mt-2">
+        <div class="w-full mb-2">
+          <span class="p-float-label">
+            <p-fileUpload
+              #fileUpload
+              (onRemove)="this.handleFileRemoval()"
+              (onSelect)="this.handleFileSelected($event.files[0])"
+              [maxFileSize]="1000000"
+              [showUploadButton]="false"
+              [showCancelButton]="false"
+              [disabled]="this.uploadDisabled"
+              [invalidFileSizeMessageDetail]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_SIZE_DETAIL' | translate"
+              [invalidFileSizeMessageSummary]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_SIZE_SUMMARY' | translate"
+              [invalidFileTypeMessageDetail]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_TYPE_DETAIL' | translate"
+              [invalidFileTypeMessageSummary]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_TYPE_SUMMARY' | translate"
+              accept=".jpg, .jpeg, .png"
+              id="image_form_upload"
+              class="w-full"
+              rows="3"
+              [multiple]="false"
+              [autoResize]="true"
+              [chooseLabel]="'ACTIONS.CREATE.SELECT' | translate"
+              appendTo="body"
+              [title]="'ACTIONS.CREATE.SELECT' | translate"
+            ></p-fileUpload>
+          </span>
+        </div>
+        <div class="w-12 mt-1 sm:mt-2">
+          <span class="p-float-label" controlErrorAnchor>
+            <input
+              pInputText
+              id="image_form_url"
+              style="min-height: 2.5rem"
+              class="w-full textarea-sm"
+              formControlName="url"
+              rows="1"
+              [autoResize]="true"
+              appendTo="body"
+              [title]="'ACTIONS.CREATE.URL' | translate"
+            />
+            <label for="image_form_url"> {{ 'ACTIONS.CREATE.URL' | translate }} </label>
+          </span>
+        </div>
+        <label
+          *ngIf="
+            formGroup.controls['url'].errors?.hasOwnProperty('srcMissing') && formGroup.controls['url'].value === ''
+          "
+          class="col-12 control-error pl-0"
+        >
+          {{ 'VALIDATION.ERRORS.MISSING_IMG_SRC' | translate }}
+        </label>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex flex-wrap justify-content-end gap-2 mb-1">
+      <p-button
+        id="image_button_cancel"
+        [label]="'GENERAL.CANCEL' | translate"
+        [title]="'GENERAL.TOOLTIPS.CANCEL' | translate"
+        (onClick)="onDialogHide()"
+        icon="pi pi-times"
+      ></p-button>
+      <p-button
+        id="image_button_save"
+        [label]="'GENERAL.SAVE' | translate"
+        [title]="'GENERAL.TOOLTIPS.SAVE' | translate"
+        (onClick)="this.onSave()"
+        icon="pi pi-save"
+        [disabled]="!formGroup.valid"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

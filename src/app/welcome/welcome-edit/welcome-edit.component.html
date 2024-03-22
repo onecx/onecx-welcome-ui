@@ -1,0 +1,83 @@
+<ocx-portal-page helpArticleId="PAGE_WELCOME_EDIT" permission="IMAGE#EDIT">
+  <div>
+    <div class="inline-flex w-full pb-4">
+      <div class="ml-auto inline-block">
+        <p-button
+          icon="pi pi-arrow-left"
+          label="{{ 'GENERAL.BACK' | translate }}"
+          pTooltip="{{ 'GENERAL.TOOLTIPS.BACK' | translate }}"
+          tooltipPosition="bottom"
+          [routerLink]="['../']"
+        ></p-button>
+        <p-button
+          class="saveOrder pl-2"
+          [disabled]="!this.isReordered"
+          label="{{ 'ACTIONS.REORDER.SAVE' | translate }}"
+          pTooltip="{{ 'ACTIONS.REORDER.SAVE_TOOLTIP' | translate }}"
+          tooltipPosition="bottom"
+          (onClick)="this.onSaveOrder()"
+        ></p-button>
+      </div>
+    </div>
+    <div class="card-wrapper grid pb-4">
+      <p-card class="col-3 p-overlay-badge" *ngFor="let info of imageInfos; let i = index">
+        <ng-template pTemplate="header">
+          <img alt="{{ 'slide-' + i }}" src="{{ this.buildImageSrc(info) }}" style="height: 13rem; object-fit: cover" />
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <div class="flex h-full">
+            <div class="action-buttons" style="margin-right: auto">
+              <p-button
+                class="visibilityChange"
+                pTooltip="{{ 'ACTIONS.VISIBILITY.TOOLTIP' | translate }}"
+                (onClick)="this.updateVisibility(info)"
+                icon="{{ info.visible ? 'pi pi-eye' : 'pi pi-eye-slash' }}"
+              ></p-button>
+              <p-button
+                ocxIfPermission="'IMAGE#DELETE'"
+                pTooltip="{{ 'ACTIONS.DELETE.TOOLTIP' | translate }}"
+                icon="pi pi-trash"
+                styleClass="p-button-secondary"
+                [style]="{ 'margin-left': '.5em' }"
+                (onClick)="this.handleDelete(info.id)"
+              ></p-button>
+            </div>
+            <div class="arrow-buttons" style="margin-left: auto">
+              <p-button
+                class="arrow-left"
+                pTooltip="{{ 'ACTIONS.REORDER.MOVE_LEFT_TOOLTIP' | translate }}"
+                [disabled]="!(i > 0)"
+                icon="pi pi-arrow-left"
+                [style]="{ 'margin-left': '.5em' }"
+                (onClick)="this.swapElement(this.imageInfos, i, i - 1)"
+              >
+              </p-button>
+              <p-button
+                class="arrow-right"
+                pTooltip="{{ 'ACTIONS.REORDER.MOVE_RIGHT_TOOLTIP' | translate }}"
+                [disabled]="!(i !== imageInfos.length - 1)"
+                icon="pi pi-arrow-right"
+                [style]="{ 'margin-left': '.5em' }"
+                (onClick)="this.swapElement(this.imageInfos, i, i + 1)"
+              ></p-button>
+            </div>
+          </div>
+        </ng-template>
+      </p-card>
+      <div
+        *ngIf="this.imageInfos.length < 8"
+        (click)="this.displayImageDialog = true"
+        class="col-3 addImageCard"
+        pTooltip="{{ 'ACTIONS.ADD.TOOLTIP' | translate }}"
+        tooltipPosition="bottom"
+      >
+        <span class="pi pi-plus plus"></span>
+      </div>
+    </div>
+  </div>
+</ocx-portal-page>
+<app-image-dialog
+  [displayDetailDialog]="displayImageDialog"
+  (hideDialogAndChanged)="onCloseDialog($event)"
+  [imageInfoCount]="this.imageInfos.length"
+></app-image-dialog>

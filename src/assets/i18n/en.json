@@ -1,0 +1,84 @@
+{
+  "ACTIONS": {
+    "CONFIRMATION": {
+      "NO": "No",
+      "YES": "Yes",
+      "NO.TOOLTIP": "Cancel the action",
+      "YES.TOOLTIP": "Proceed with the action"
+    },
+    "VISIBILITY": {
+      "TOOLTIP": "Change visiblity",
+      "SUCCESS": "Visibility successfully changed",
+      "ERROR": "Visibility could not be updated"
+    },
+    "DELETE": {
+      "TOOLTIP": "Delete Image",
+      "SUCCESS": "Image deleted successfully",
+      "ERROR": "Image could not be deleted"
+    },
+    "REORDER": {
+      "SAVE": "Save",
+      "SAVE_TOOLTIP": "Save arrangement",
+      "SUCCESS": "Arrangement successfully changed",
+      "ERROR": "Arrangement could not be changed",
+      "MOVE_LEFT_TOOLTIP": "Move to left",
+      "MOVE_RIGHT_TOOLTIP": "Move to right"
+    },
+    "ADD": {
+      "TOOLTIP": "Add new image"
+    },
+    "CREATE": {
+      "TITLE": "Create image",
+      "UPLOAD": "Upload image",
+      "VISIBILITY": {
+        "TRUE": "Visible",
+        "FALSE": "Hidden"
+      },
+      "FILE_ERRORS": {
+        "INVALID_SIZE_DETAIL": "Maximum upload size is 1MB.",
+        "INVALID_SIZE_SUMMARY": "Invalid file size.",
+        "INVALID_TYPE_DETAIL": "Allowed file types: .jpg, .jpeg, .png",
+        "INVALID_TYPE_SUMMARY": "Invalid file type."
+      },
+      "URL": "External URL",
+      "SELECT": "Select Image",
+      "SUCCESS": "Image successfully created",
+      "ERROR": "Image could not be created"
+    }
+  },
+  "LANDING": {
+    "TITLE": "Welcome"
+  },
+  "GENERAL": {
+    "CLOSE": "Close",
+    "CANCEL": "Cancel",
+    "SAVE": "Save",
+    "SAVE_ORDER": "Save order",
+    "VIEW": "View",
+    "EDIT": "Edit",
+    "IMAGES.NOT_FOUND": "Images could not be loaded",
+    "TOOLTIPS": {
+      "CLOSE": "Leave dialog",
+      "CANCEL": "Cancel action",
+      "CANCEL_EDIT": "Cancel edit mode",
+      "CANCEL_AND_CLOSE": "Cancel and close dialog",
+      "CANCEL_WITHOUT_SAVE": "Cancel action without saving",
+      "EDIT": "Edit images",
+      "SAVE": "Save changes",
+      "BACK": "Back to welcome page"
+    },
+    "BACK": "Zurück"
+  },
+  "BREADCRUMBS": {
+    "CREATE": "New",
+    "DETAILS": "Details",
+    "RELOAD": "Reload",
+    "SWITCH_TO_EDIT_MODE": "Edit"
+  },
+  "VALIDATION": {
+    "ERRORS": {
+      "INTERNAL_ERROR": "Internal error",
+      "MISSING_IMG_SRC": "Upload an image or add an external url"
+    }
+  }
+}

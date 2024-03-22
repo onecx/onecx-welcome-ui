@@ -1,0 +1,84 @@
+{
+  "ACTIONS": {
+    "CONFIRMATION": {
+      "NO": "Nein",
+      "YES": "Ja",
+      "NO.TOOLTIP": "Abbruch der Aktion",
+      "YES.TOOLTIP": "Fortfahren mit der Aktion"
+    },
+    "VISIBILITY": {
+      "TOOLTIP": "Sichtbarkeit ändern",
+      "SUCCESS": "Sichtbarkeit erfolgreich geändert",
+      "ERROR": "Sichtbarkeit konnte nicht geändert werden"
+    },
+    "DELETE": {
+      "TOOLTIP": "Bild löschen",
+      "SUCCESS": "Bild erfolgreich gelöscht",
+      "ERROR": "Bild konnte nicht gelöscht werden"
+    },
+    "REORDER": {
+      "SAVE": "Speichern",
+      "SAVE_TOOLTIP": "Anordnung speichern",
+      "SUCCESS": "Anordnung erfolgreich geändert",
+      "ERROR": "Anordnung konnte nicht geändert werden",
+      "MOVE_LEFT_TOOLTIP": "Nach links verschieben",
+      "MOVE_RIGHT_TOOLTIP": "Nach rechts verschieben"
+    },
+    "ADD": {
+      "TOOLTIP": "Neues Bild hinzufügen"
+    },
+    "CREATE": {
+      "TITLE": "Bild erstellen",
+      "UPLOAD": "Bild hochladen",
+      "VISIBILITY": {
+        "TRUE": "Sichtbar",
+        "FALSE": "Unsichtbar"
+      },
+      "FILE_ERRORS": {
+        "INVALID_SIZE_DETAIL": "Die maximale Größe beträgt 1MB.",
+        "INVALID_SIZE_SUMMARY": "Maximale Dateigröße überschritten.",
+        "INVALID_TYPE_DETAIL": "Erlaubte Formate: .jpg, .jpeg, .png.",
+        "INVALID_TYPE_SUMMARY": "Unzulässiges Dateiformat."
+      },
+      "URL": "Externe URL",
+      "SELECT": "Bild auswählen",
+      "SUCCESS": "Bild erfolgreich erstellt",
+      "ERROR": "Bild konnte nicht erstellt werden"
+    }
+  },
+  "LANDING": {
+    "TITLE": "Willkommen"
+  },
+  "GENERAL": {
+    "CLOSE": "Schließen",
+    "CANCEL": "Abbrechen",
+    "SAVE": "Speichern",
+    "SAVE_ORDER": "Anordnung speichern",
+    "VIEW": "Ansehen",
+    "EDIT": "Bearbeiten",
+    "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
+    "TOOLTIPS": {
+      "CLOSE": "Dialog verlassen",
+      "CANCEL": "Die Aktion abbrechen",
+      "CANCEL_EDIT": "Den Änderungsmodus verlassen",
+      "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
+      "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
+      "EDIT": "Bilder bearbeiten",
+      "SAVE": "Die Änderungen speichern",
+      "BACK": "Back to welcome page"
+    },
+    "BACK": "Zurück"
+  },
+  "BREADCRUMBS": {
+    "CREATE": "Neu",
+    "DETAILS": "Details",
+    "RELOAD": "Neu Laden",
+    "SWITCH_TO_EDIT_MODE": "Bearbeiten"
+  },
+  "VALIDATION": {
+    "ERRORS": {
+      "INTERNAL_ERROR": "Interner Fehler",
+      "MISSING_IMG_SRC": "Laden Sie ein Bild hoch oder geben sie eine externe Bild-URL an"
+    }
+  }
+}
