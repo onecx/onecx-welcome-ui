@@ -1,14 +1,23 @@
 <ocx-portal-page helpArticleId="PAGE_WELCOME_EDIT" permission="IMAGE#EDIT">
   <div>
-    <div class="flex w-full pb-4">
-      <p-button
-        icon="pi pi-arrow-left"
-        label="{{ 'GENERAL.BACK' | translate }}"
-        pTooltip="{{ 'GENERAL.TOOLTIPS.BACK' | translate }}"
-        tooltipPosition="left"
-        class="ml-auto"
-        [routerLink]="['../']"
-      ></p-button>
+    <div class="inline-flex w-full pb-4">
+      <div class="ml-auto inline-block">
+        <p-button
+          icon="pi pi-arrow-left"
+          label="{{ 'GENERAL.BACK' | translate }}"
+          pTooltip="{{ 'GENERAL.TOOLTIPS.BACK' | translate }}"
+          tooltipPosition="bottom"
+          [routerLink]="['../']"
+        ></p-button>
+        <p-button
+          class="saveOrder pl-2"
+          [disabled]="!this.isReordered"
+          label="{{ 'ACTIONS.REORDER.SAVE' | translate }}"
+          pTooltip="{{ 'ACTIONS.REORDER.SAVE_TOOLTIP' | translate }}"
+          tooltipPosition="bottom"
+          (onClick)="this.onSaveOrder()"
+        ></p-button>
+      </div>
     </div>
     <div class="card-wrapper grid pb-4">
       <p-card class="col-3 p-overlay-badge" *ngFor="let info of imageInfos; let i = index">
@@ -65,9 +74,6 @@
         <span class="pi pi-plus plus"></span>
       </div>
     </div>
-    <p-button class="saveOrder" [disabled]="!this.isReordered" (onClick)="this.onSaveOrder()"
-      >{{ 'GENERAL.SAVE_ORDER' | translate }}</p-button
-    >
   </div>
 </ocx-portal-page>
 <app-image-dialog

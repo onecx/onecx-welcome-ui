@@ -17,7 +17,8 @@
       "ERROR": "Bild konnte nicht gelöscht werden"
     },
     "REORDER": {
-      "SAVE": "Anordnung speichern",
+      "SAVE": "Speichern",
+      "SAVE_TOOLTIP": "Anordnung speichern",
       "SUCCESS": "Anordnung erfolgreich geändert",
       "ERROR": "Anordnung konnte nicht geändert werden",
       "MOVE_LEFT_TOOLTIP": "Nach links verschieben",
@@ -32,6 +33,12 @@
       "VISIBILITY": {
         "TRUE": "Sichtbar",
         "FALSE": "Unsichtbar"
+      },
+      "FILE_ERRORS": {
+        "INVALID_SIZE_DETAIL": "Die maximale Größe beträgt 1MB.",
+        "INVALID_SIZE_SUMMARY": "Maximale Dateigröße überschritten.",
+        "INVALID_TYPE_DETAIL": "Erlaubte Formate: .jpg, .jpeg, .png.",
+        "INVALID_TYPE_SUMMARY": "Unzulässiges Dateiformat."
       },
       "URL": "Externe URL",
       "SELECT": "Bild auswählen",

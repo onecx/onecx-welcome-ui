@@ -110,7 +110,7 @@ describe('WelcomeEditComponent', () => {
     fixture.detectChanges()
 
     const dElement = fixture.debugElement
-    const button = dElement.queryAll(By.css('button'))[0]
+    const button = dElement.queryAll(By.css('button'))[2]
     const icon = dElement.queryAll(By.css('.pi-eye'))[0]
     const iconSlash = dElement.queryAll(By.css('.pi-eye-slash'))[0]
 
@@ -148,7 +148,7 @@ describe('WelcomeEditComponent', () => {
     fixture.detectChanges()
 
     const dElement = fixture.debugElement
-    const deleteButton = dElement.queryAll(By.css('button'))[1]
+    const deleteButton = dElement.queryAll(By.css('button'))[3]
     expect(deleteButton).toBeTruthy()
     const cardAmount = dElement.queryAll(By.css('.p-card')).length
     expect(cardAmount).toBe(2)

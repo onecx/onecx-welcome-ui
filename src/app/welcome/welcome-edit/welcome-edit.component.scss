@@ -14,6 +14,9 @@
   vertical-align: middle;
   font-size: xx-large;
 }
+::ng-deep .p-card-content {
+  display: none !important;
+}
 
 .addImageCard:hover {
   outline-color: var(--primary-color);

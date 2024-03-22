@@ -17,7 +17,8 @@
       "ERROR": "Image could not be deleted"
     },
     "REORDER": {
-      "SAVE": "Save arrangement",
+      "SAVE": "Save",
+      "SAVE_TOOLTIP": "Save arrangement",
       "SUCCESS": "Arrangement successfully changed",
       "ERROR": "Arrangement could not be changed",
       "MOVE_LEFT_TOOLTIP": "Move to left",
@@ -32,6 +33,12 @@
       "VISIBILITY": {
         "TRUE": "Visible",
         "FALSE": "Hidden"
+      },
+      "FILE_ERRORS": {
+        "INVALID_SIZE_DETAIL": "Maximum upload size is 1MB.",
+        "INVALID_SIZE_SUMMARY": "Invalid file size.",
+        "INVALID_TYPE_DETAIL": "Allowed file types: .jpg, .jpeg, .png",
+        "INVALID_TYPE_SUMMARY": "Invalid file type."
       },
       "URL": "External URL",
       "SELECT": "Select Image",
