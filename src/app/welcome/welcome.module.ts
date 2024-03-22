@@ -6,7 +6,7 @@ import { RouterModule, Routes } from '@angular/router'
 import { addInitializeModuleGuard, InitializeModuleGuard, PortalCoreModule } from '@onecx/portal-integration-angular'
 import { SharedModule } from '../shared/shared.module'
 
-import { WelcomeOverviewComponent } from './welcome-detail/welcome-overview.component'
+import { WelcomeOverviewComponent } from './welcome-overview/welcome-overview.component'
 import { WelcomeEditComponent } from './welcome-edit/welcome-edit.component'
 import { CardModule } from 'primeng/card'
 import { ImageDialogComponent } from './welcome-edit/image-dialog/image-dialog.component'
