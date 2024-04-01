@@ -49,7 +49,7 @@
     "@ngneat/falso": "^6.4.0",
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
-    "@onecx/accelerator": "^4.5.1",
+    "@onecx/accelerator": "^4.13.1",
     "@onecx/integration-interface": "^4.5.1",
     "@onecx/keycloak-auth": "^4.5.1",
     "@onecx/portal-integration-angular": "^4.5.1",
