@@ -26,16 +26,6 @@ const PROXY_CONFIG = {
     changeOrigin: true,
     logLevel: 'debug',
     bypass: bypassFn
-  },
-  '/portal-api': {
-    target: 'http://tkit-portal-server/',
-    secure: false,
-    pathRewrite: {
-      '^/portal-api': ''
-    },
-    changeOrigin: true,
-    logLevel: 'debug',
-    bypass: bypassFn
   }
 }
 
