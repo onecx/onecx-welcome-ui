@@ -39,9 +39,7 @@ export class WelcomeOverviewComponent implements OnInit {
     private imageService: ImagesInternalAPIService,
     private msgService: PortalMessageService
   ) {
-    this.portal = this.appStateService.currentPortal$.getValue()
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    // this.user = this.auth.getCurrentUser()!
+    this.portal = this.appStateService.currentWorkspace$.getValue()
     this.user$ = this.userService.profile$.asObservable()
   }
 
