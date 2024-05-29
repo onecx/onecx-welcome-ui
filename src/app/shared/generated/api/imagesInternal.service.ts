@@ -1,6 +1,6 @@
 /**
  * onecx-welcome-bff
- * welcome bff
+ * OneCX Welcome BFF
  *
  * The version of the OpenAPI document: 1.0.0
  * Contact: tkit_dev@1000kit.org
@@ -33,7 +33,6 @@ import { Configuration }                                     from '../configurat
 
 
 export interface CreateImageRequestParams {
-    contentLength: number;
     body?: Blob;
 }
 
@@ -43,6 +42,10 @@ export interface CreateImageInfoRequestParams {
 
 export interface DeleteImageInfoByIdRequestParams {
     id: string;
+}
+
+export interface GetAllImageInfosByWorkspaceNameRequestParams {
+    workspaceName: string;
 }
 
 export interface GetImageByIdRequestParams {
@@ -55,7 +58,6 @@ export interface GetImageInfoByIdRequestParams {
 
 export interface UpdateImageByIdRequestParams {
     id: string;
-    contentLength: number;
     body?: Blob;
 }
 
@@ -134,7 +136,7 @@ export class ImagesInternalAPIService {
     }
 
     /**
-     * create image
+     * create Image
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -143,16 +145,9 @@ export class ImagesInternalAPIService {
     public createImage(requestParameters: CreateImageRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ImageDataResponse>>;
     public createImage(requestParameters: CreateImageRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ImageDataResponse>>;
     public createImage(requestParameters: CreateImageRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
-        const contentLength = requestParameters.contentLength;
-        if (contentLength === null || contentLength === undefined) {
-            throw new Error('Required parameter contentLength was null or undefined when calling createImage.');
-        }
         const body = requestParameters.body;
 
         let localVarHeaders = this.defaultHeaders;
-        if (contentLength !== undefined && contentLength !== null) {
-            localVarHeaders = localVarHeaders.set('Content-Length', String(contentLength));
-        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
@@ -207,7 +202,7 @@ export class ImagesInternalAPIService {
     }
 
     /**
-     * create image info
+     * create image information
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -276,7 +271,7 @@ export class ImagesInternalAPIService {
     }
 
     /**
-     * delete image information
+     * delete Image information
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -334,14 +329,19 @@ export class ImagesInternalAPIService {
     }
 
     /**
-     * get all existing image-infos
+     * get all existing Image informations by workspace name
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAllImageInfos(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<ImageInfo>>;
-    public getAllImageInfos(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<ImageInfo>>>;
-    public getAllImageInfos(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<ImageInfo>>>;
-    public getAllImageInfos(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public getAllImageInfosByWorkspaceName(requestParameters: GetAllImageInfosByWorkspaceNameRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<ImageInfo>>;
+    public getAllImageInfosByWorkspaceName(requestParameters: GetAllImageInfosByWorkspaceNameRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<ImageInfo>>>;
+    public getAllImageInfosByWorkspaceName(requestParameters: GetAllImageInfosByWorkspaceNameRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<ImageInfo>>>;
+    public getAllImageInfosByWorkspaceName(requestParameters: GetAllImageInfosByWorkspaceNameRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        const workspaceName = requestParameters.workspaceName;
+        if (workspaceName === null || workspaceName === undefined) {
+            throw new Error('Required parameter workspaceName was null or undefined when calling getAllImageInfosByWorkspaceName.');
+        }
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -374,7 +374,7 @@ export class ImagesInternalAPIService {
             }
         }
 
-        let localVarPath = `/images/info`;
+        let localVarPath = `/images/${this.configuration.encodeParam({name: "workspaceName", value: workspaceName, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/info`;
         return this.httpClient.request<Array<ImageInfo>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -519,16 +519,9 @@ export class ImagesInternalAPIService {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateImageById.');
         }
-        const contentLength = requestParameters.contentLength;
-        if (contentLength === null || contentLength === undefined) {
-            throw new Error('Required parameter contentLength was null or undefined when calling updateImageById.');
-        }
         const body = requestParameters.body;
 
         let localVarHeaders = this.defaultHeaders;
-        if (contentLength !== undefined && contentLength !== null) {
-            localVarHeaders = localVarHeaders.set('Content-Length', String(contentLength));
-        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {

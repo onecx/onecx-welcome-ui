@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn } from '@angular/forms'
 
-import { Action, PortalMessageService } from '@onecx/portal-integration-angular'
+import { Action, AppStateService, PortalMessageService } from '@onecx/portal-integration-angular'
 import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
@@ -21,17 +21,20 @@ export class ImageDialogComponent implements OnInit {
   autoResize!: boolean
   selectedFile: any
   uploadDisabled: boolean = false
+  currentWorkspaceName: string = ''
 
   constructor(
     private imageApiService: ImagesInternalAPIService,
     private fb: FormBuilder,
-    private msgService: PortalMessageService
+    private msgService: PortalMessageService,
+    private appstateService: AppStateService
   ) {
     this.formGroup = fb.nonNullable.group({
       url: new FormControl(null, this.imageSrcValidator()),
       image: new FormControl(null)
     })
     this.autoResize = true
+    this.currentWorkspaceName = this.appstateService.currentWorkspace$.getValue()?.portalName!
   }
 
   ngOnInit() {
@@ -53,6 +56,7 @@ export class ImageDialogComponent implements OnInit {
       let imageInfo = this.submitFormValues() as ImageInfo
       imageInfo.modificationCount = 0
       imageInfo.position = (this.imageInfoCount + 1).toString()
+      imageInfo.workspaceName = this.currentWorkspaceName
       this.imageApiService
         .createImageInfo({
           imageInfo: imageInfo
@@ -62,7 +66,6 @@ export class ImageDialogComponent implements OnInit {
             if (this.selectedFile !== undefined) {
               this.imageApiService
                 .createImage({
-                  contentLength: 0,
                   body: this.selectedFile
                 })
                 .subscribe({
@@ -72,6 +75,7 @@ export class ImageDialogComponent implements OnInit {
                     imageInfo.imageId = createdImage.imageId
                     imageInfo.position = (this.imageInfoCount + 1).toString()
                     imageInfo.visible = true
+                    imageInfo.workspaceName = this.currentWorkspaceName
                     this.imageApiService
                       .updateImageInfo({
                         id: data.id!,

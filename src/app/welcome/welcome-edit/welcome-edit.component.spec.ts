@@ -26,7 +26,7 @@ describe('WelcomeEditComponent', () => {
   ])
 
   const apiServiceSpy = {
-    getAllImageInfos: jasmine.createSpy('getAllImageInfos').and.returnValue(of([])),
+    getAllImageInfosByWorkspaceName: jasmine.createSpy('getAllImageInfosByWorkspaceName').and.returnValue(of([])),
     getImageById: jasmine.createSpy('getImageById').and.returnValue(of({})),
     deleteImageInfoById: jasmine.createSpy('deleteImageInfoById').and.returnValue(of({})),
     updateImageInfo: jasmine.createSpy('updateImageInfo').and.returnValue(of({})),
@@ -60,7 +60,7 @@ describe('WelcomeEditComponent', () => {
     msgServiceSpy.error.calls.reset()
     msgServiceSpy.info.calls.reset()
     msgServiceSpy.warning.calls.reset()
-    apiServiceSpy.getAllImageInfos.calls.reset()
+    apiServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
     apiServiceSpy.getImageById.calls.reset()
     apiServiceSpy.deleteImageInfoById.calls.reset()
     apiServiceSpy.updateImageInfo.calls.reset()
@@ -77,7 +77,7 @@ describe('WelcomeEditComponent', () => {
   })
 
   it('should display image', () => {
-    apiServiceSpy.getAllImageInfos.and.returnValue(
+    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
       of([
         { id: '123', imageId: '123', visible: true, position: '1' },
         { id: '1234', imageId: '1234', visible: true, position: '2' },
@@ -103,7 +103,9 @@ describe('WelcomeEditComponent', () => {
   })
 
   it('should change visiblity on click', () => {
-    apiServiceSpy.getAllImageInfos.and.returnValue(of([{ id: '123', imageId: '123', visible: true, position: '1' }]))
+    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
+      of([{ id: '123', imageId: '123', visible: true, position: '1' }])
+    )
     apiServiceSpy.getImageById.and.returnValue(of({ imageId: '123', imageData: new Blob() } as ImageDataResponse))
 
     component.ngOnInit()
@@ -117,10 +119,12 @@ describe('WelcomeEditComponent', () => {
     expect(icon).toBeTruthy()
     expect(iconSlash).toBeFalsy()
 
-    apiServiceSpy.getAllImageInfos.calls.reset()
+    apiServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
     apiServiceSpy.getImageById.calls.reset()
     apiServiceSpy.updateImageInfo.and.returnValue(of({}))
-    apiServiceSpy.getAllImageInfos.and.returnValue(of([{ id: '123', imageId: '123', visible: false, position: '1' }]))
+    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
+      of([{ id: '123', imageId: '123', visible: false, position: '1' }])
+    )
     apiServiceSpy.getImageById.and.returnValue(of({ imageId: '123', imageData: new Blob() } as ImageDataResponse))
     button.nativeElement.click({ id: '123', imageId: '123', visible: false, position: '1' })
     fixture.detectChanges()
@@ -133,7 +137,7 @@ describe('WelcomeEditComponent', () => {
   })
 
   it('should get deleted on click', () => {
-    apiServiceSpy.getAllImageInfos.and.returnValue(
+    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
       of([
         { id: '123', imageId: '123', visible: true, position: '1' },
         { id: '124', imageId: '1234', visible: true, position: '2' }
@@ -152,9 +156,11 @@ describe('WelcomeEditComponent', () => {
     expect(deleteButton).toBeTruthy()
     const cardAmount = dElement.queryAll(By.css('.p-card')).length
     expect(cardAmount).toBe(2)
-    apiServiceSpy.getAllImageInfos.calls.reset()
+    apiServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
     apiServiceSpy.getImageById.calls.reset()
-    apiServiceSpy.getAllImageInfos.and.returnValue(of([{ id: '124', imageId: '1234', visible: true, position: '2' }]))
+    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
+      of([{ id: '124', imageId: '1234', visible: true, position: '2' }])
+    )
     apiServiceSpy.getImageById.and.returnValue(of({ imageId: '1234', imageData: new Blob() } as ImageDataResponse))
     apiServiceSpy.deleteImageInfoById.and.returnValue(of({}))
     deleteButton.nativeElement.click('123')
@@ -187,7 +193,7 @@ describe('WelcomeEditComponent', () => {
   it('should swap image positions', () => {
     const dElement = fixture.debugElement
 
-    apiServiceSpy.getAllImageInfos.and.returnValue(
+    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
       of([
         { id: '123', imageId: '123', visible: true, position: '1' },
         { id: '1234', imageId: '1234', visible: true, position: '2' }
@@ -212,7 +218,7 @@ describe('WelcomeEditComponent', () => {
   })
 
   it('should handle error when fetching imageinfos', () => {
-    apiServiceSpy.getAllImageInfos.and.returnValue(throwError(() => new Error()))
+    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => new Error()))
 
     component.fetchImageInfos()
 
@@ -221,7 +227,7 @@ describe('WelcomeEditComponent', () => {
 
   it('should handle error when fetching imageData', () => {
     apiServiceSpy.getImageById.and.returnValue(throwError(() => new Error()))
-    component.imageInfos = [{ id: '123', imageId: '123', visible: true, position: '1' }]
+    component.imageInfos = [{ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' }]
     component.fetchImageData()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
@@ -236,7 +242,7 @@ describe('WelcomeEditComponent', () => {
 
   it('should handle error when updating visiblity', () => {
     apiServiceSpy.updateImageInfo.and.returnValue(throwError(() => new Error()))
-    component.updateVisibility({ id: '123', imageId: '123', visible: true, position: '1' })
+    component.updateVisibility({ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' })
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.VISIBILITY.ERROR' })
   })

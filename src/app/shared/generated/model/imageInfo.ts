@@ -1,6 +1,6 @@
 /**
  * onecx-welcome-bff
- * welcome bff
+ * OneCX Welcome BFF
  *
  * The version of the OpenAPI document: 1.0.0
  * Contact: tkit_dev@1000kit.org
@@ -22,5 +22,6 @@ export interface ImageInfo {
     creationUser?: string;
     modificationDate?: string;
     modificationUser?: string;
+    workspaceName: string;
 }
 
