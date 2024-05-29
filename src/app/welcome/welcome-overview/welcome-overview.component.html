@@ -22,7 +22,7 @@
             {{ 'LANDING.TITLE' | translate }}, {{ (user$ | async)?.person?.firstName }}
           </h1>
           <h3 class="text-md font-normal my-1">{{ currentDate | date }}</h3>
-          <h4 class="text-sm font-normal my-1">Workspace: {{ portal?.portalName }}</h4>
+          <h4 class="text-sm font-normal my-1">Workspace: {{ workspace?.portalName }}</h4>
         </div>
         <div class="ml-auto pt-2">
           <button

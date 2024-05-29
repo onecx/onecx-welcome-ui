@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { Portal, PortalMessageService } from '@onecx/portal-integration-angular'
+import { AppStateService, Portal, PortalMessageService } from '@onecx/portal-integration-angular'
 import { Subscription } from 'rxjs'
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
@@ -9,7 +9,7 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
   styleUrls: ['./welcome-edit.component.scss']
 })
 export class WelcomeEditComponent implements OnInit {
-  portal: Portal | undefined
+  workspace: Portal | undefined
   currentSlide = 0
   public helpArticleId = 'PAGE_WELCOME_EDIT'
   subscription: Subscription | undefined
@@ -20,13 +20,19 @@ export class WelcomeEditComponent implements OnInit {
   selectedImageData: ImageDataResponse | undefined
   isReordered: boolean = false
 
-  constructor(private imageService: ImagesInternalAPIService, private msgService: PortalMessageService) {}
+  constructor(
+    private imageService: ImagesInternalAPIService,
+    private msgService: PortalMessageService,
+    private appStateService: AppStateService
+  ) {
+    this.workspace = this.appStateService.currentWorkspace$.getValue()
+  }
   ngOnInit(): void {
     this.fetchImageInfos()
   }
 
   public fetchImageInfos() {
-    this.imageService.getAllImageInfos().subscribe({
+    this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
       next: (data: ImageInfo[]) => {
         this.imageInfos = data.sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
         this.fetchImageData()
@@ -103,7 +109,8 @@ export class WelcomeEditComponent implements OnInit {
             id: info.id,
             creationUser: info.creationUser,
             modificationDate: info.modificationDate,
-            modificationUser: info.modificationUser
+            modificationUser: info.modificationUser,
+            workspaceName: info.workspaceName
           }
         })
         .subscribe({

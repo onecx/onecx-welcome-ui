@@ -24,7 +24,7 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 export class WelcomeOverviewComponent implements OnInit {
   readonly CAROUSEL_SPEED: number = 5000
   readonly permission: string = 'BASE_PORTAL#SHOW'
-  portal: Portal | undefined
+  workspace: Portal | undefined
   currentSlide = -1
   public helpArticleId = 'PAGE_WELCOME'
   user$: Observable<UserProfile>
@@ -39,7 +39,7 @@ export class WelcomeOverviewComponent implements OnInit {
     private imageService: ImagesInternalAPIService,
     private msgService: PortalMessageService
   ) {
-    this.portal = this.appStateService.currentWorkspace$.getValue()
+    this.workspace = this.appStateService.currentWorkspace$.getValue()
     this.user$ = this.userService.profile$.asObservable()
   }
 
@@ -48,7 +48,7 @@ export class WelcomeOverviewComponent implements OnInit {
   }
 
   public fetchImageInfos() {
-    this.imageService.getAllImageInfos().subscribe({
+    this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
       next: (data) => {
         this.imageInfos = data
           .filter((img) => img.visible === true)

@@ -2,7 +2,7 @@
 openapi: 3.0.3
 info:
   title: onecx-welcome-bff
-  description: welcome bff
+  description: OneCX Welcome BFF
   version: 1.0.0
   contact:
     email: 'tkit_dev@1000kit.org'
@@ -12,13 +12,13 @@ info:
 servers:
   - url: 'http://onecx-welcome-bff:8080'
 tags:
-  - name: OneCX Welcome Bff
+  - name: OneCX Welcome BFF
 paths:
   /images/info/{id}:
     get:
       x-onecx:
         permissions:
-          welcome:
+          image:
             - read
       tags:
         - imagesInternal
@@ -38,7 +38,7 @@ paths:
     put:
       x-onecx:
         permissions:
-          welcome:
+          image:
             - write
       tags:
         - imagesInternal
@@ -68,11 +68,11 @@ paths:
     delete:
       x-onecx:
         permissions:
-          welcome:
+          image:
             - delete
       tags:
         - imagesInternal
-      description: delete image information
+      description: delete Image information
       operationId: deleteImageInfoById
       parameters:
         - $ref: '#/components/parameters/id'
@@ -85,11 +85,11 @@ paths:
     post:
       x-onecx:
         permissions:
-          welcome:
+          image:
             - write
       tags:
         - imagesInternal
-      description: create image info
+      description: create image information
       operationId: createImageInfo
       requestBody:
         required: true
@@ -110,15 +110,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /images/{workspaceName}/info:
     get:
       x-onecx:
         permissions:
-          welcome:
+          image:
             - read
       tags:
         - imagesInternal
-      description: get all existing image-infos
-      operationId: getAllImageInfos
+      description: get all existing Image informations by workspace name
+      operationId: getAllImageInfosByWorkspaceName
+      parameters:
+        - in: path
+          name: workspaceName
+          schema:
+            type: string
+          required: true
       responses:
         '200':
           description: OK
@@ -132,7 +139,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          welcome:
+          image:
             - write
       tags:
         - imagesInternal
@@ -157,20 +164,12 @@ paths:
     post:
       x-onecx:
         permissions:
-          welcome:
+          image:
             - write
       tags:
         - imagesInternal
-      description: create image
+      description: create Image
       operationId: createImage
-      parameters:
-        - in: header
-          name: Content-Length
-          required: true
-          schema:
-            minimum: 1
-            maximum: 1100000
-            type: integer
       requestBody:
         content:
           image/*:
@@ -194,7 +193,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          welcome:
+          image:
             - read
       tags:
         - imagesInternal
@@ -214,7 +213,7 @@ paths:
     put:
       x-onecx:
         permissions:
-          welcome:
+          image:
             - write
       tags:
         - imagesInternal
@@ -222,13 +221,6 @@ paths:
       operationId: updateImageById
       parameters:
         - $ref: '#/components/parameters/id'
-        - in: header
-          name: Content-Length
-          required: true
-          schema:
-            minimum: 1
-            maximum: 1100000
-            type: integer
       requestBody:
         content:
           image/*:
@@ -274,6 +266,8 @@ components:
         modificationUser:
           type: string
     ImageInfo:
+      required:
+        - workspaceName
       type: object
       properties:
         position:
@@ -296,6 +290,8 @@ components:
         modificationDate:
           $ref: '#/components/schemas/OffsetDateTime'
         modificationUser:
+          type: string
+        workspaceName:
           type: string
     ImageInfoReorderRequest:
       type: object
