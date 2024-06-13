@@ -34,13 +34,17 @@ export class WelcomeEditComponent implements OnInit {
   public fetchImageInfos() {
     this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
       next: (data: ImageInfo[]) => {
-        this.imageInfos = data.sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+        this.imageInfos = this.sortImageInfos(data)
         this.fetchImageData()
       },
       error: () => {
         this.msgService.error({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
       }
     })
+  }
+
+  sortImageInfos(data: ImageInfo[]) {
+    return data.sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
   }
 
   public fetchImageData() {
@@ -126,7 +130,7 @@ export class WelcomeEditComponent implements OnInit {
   }
 
   public swapElement(array: any, indexA: number, indexB: number) {
-    var tmp = array[indexA]
+    let tmp = array[indexA]
     array[indexA].position = indexB + 1
     array[indexB].position = indexA + 1
     array[indexA] = array[indexB]

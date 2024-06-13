@@ -39,7 +39,7 @@ export class ImageDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup.get('url')?.valueChanges.subscribe((v) => {
-      v !== null && v !== '' ? (this.uploadDisabled = true) : (this.uploadDisabled = false)
+      v !== null && v !== '' ? () => (this.uploadDisabled = true) : () => (this.uploadDisabled = false)
     })
   }
   public onDialogHide() {
