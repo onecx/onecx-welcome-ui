@@ -34,7 +34,7 @@ export class WelcomeEditComponent implements OnInit {
   public fetchImageInfos() {
     this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
       next: (data: ImageInfo[]) => {
-        this.imageInfos = this.sortImageInfos(data)
+        this.imageInfos = data.sort((a, b) => this.compareImagePosition(a.position!, b.position!))
         this.fetchImageData()
       },
       error: () => {
@@ -43,8 +43,12 @@ export class WelcomeEditComponent implements OnInit {
     })
   }
 
-  sortImageInfos(data: ImageInfo[]) {
-    return data.sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+  compareImagePosition(infoOne: string, infoTwo: string): number {
+    if (infoOne < infoTwo) {
+      return -1
+    } else if (infoOne > infoTwo) {
+      return 1
+    } else return 0
   }
 
   public fetchImageData() {
