@@ -50,14 +50,17 @@ export class WelcomeOverviewComponent implements OnInit {
   public fetchImageInfos() {
     this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
       next: (data) => {
-        this.imageInfos = data
-          .filter((img) => img.visible === true)
-          .sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+        this.imageInfos = this.sortAndFilterData(data)
         this.fetchImageData()
       }
     })
   }
 
+  sortAndFilterData(data: ImageInfo[]) {
+    return data
+      .filter((img) => img.visible === true)
+      .sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+  }
   public fetchImageData() {
     this.imageInfos.forEach((info) => {
       if (info.imageId) {

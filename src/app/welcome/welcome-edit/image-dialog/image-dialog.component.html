@@ -62,6 +62,7 @@
           </span>
         </div>
         <label
+          for="image_form_url"
           *ngIf="
             formGroup.controls['url'].errors?.hasOwnProperty('srcMissing') && formGroup.controls['url'].value === ''
           "
