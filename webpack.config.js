@@ -5,7 +5,7 @@ const config = withModuleFederationPlugin({
   name: 'onecx-welcome-ui',
   filename: 'remoteEntry.js',
   exposes: {
-    './OneCXWelcomeModule': 'src/app/onecx-welcome-remote.module.ts'
+    './OneCXWelcomeModule': 'src/bootstrap.ts'
   },
   shared: share({
     '@angular/core': { singleton: true, requiredVersion: 'auto' },
@@ -33,9 +33,11 @@ const config = withModuleFederationPlugin({
     '@onecx/accelerator': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/angular-accelerator': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/angular-integration-interface': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/angular-webcomponents': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/integration-interface': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/keycloak-auth': { requiredVersion: 'auto', includeSecondaries: true },
-    '@onecx/portal-integration-angular': { requiredVersion: 'auto', includeSecondaries: true }
+    '@onecx/portal-integration-angular': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/portal-layout-styles': { requiredVersion: 'auto', includeSecondaries: true }
   }),
   sharedMappings: ['@onecx/portal-integration-angular']
 })
@@ -47,5 +49,17 @@ const plugins = config.plugins.filter((plugin) => !(plugin instanceof ModifyEntr
 
 module.exports = {
   ...config,
-  plugins
+  plugins,
+  output: {
+    uniqueName: 'my-ui',
+    publicPath: 'auto'
+  },
+  experiments: {
+    ...config.experiments,
+    topLevelAwait: true
+  },
+  optimization: {
+    runtimeChunk: false,
+    splitChunks: false
+  }
 }

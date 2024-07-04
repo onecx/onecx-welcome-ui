@@ -16,6 +16,9 @@ app:
           description: "OneCX Welcome UI"
           note: "OneCX Welcome UI auto import via MF operator"
           type: MODULE
+          technology: WEBCOMPONENTMODULE
+          remoteName: onecx-welcome
+          tagName: ocx-welcome-component
     # Permission
     permission:
       enabled: true
