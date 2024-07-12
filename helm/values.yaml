@@ -28,12 +28,5 @@ app:
             DELETE: Delete image
             EDIT: Edit image
             VIEW: View image
-    # Keycloak
-    keycloak:
-      client:
-        enabled: true
-        spec:
-          kcConfig:
-            clientId: "onecx-welcome-ui"
             
 # PIPE Config
