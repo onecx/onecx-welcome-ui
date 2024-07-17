@@ -1,9 +1,8 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http'
 import { APP_INITIALIZER, DoBootstrap, Injector, NgModule } from '@angular/core'
-import { createCustomElement } from '@angular/elements'
 import { Router, RouterModule, Routes } from '@angular/router'
 import { MissingTranslationHandler, TranslateLoader, TranslateModule } from '@ngx-translate/core'
-import { initializeRouter, startsWith } from '@onecx/angular-webcomponents'
+import { createAppEntrypoint, initializeRouter, startsWith } from '@onecx/angular-webcomponents'
 
 import {
   addInitializeModuleGuard,
@@ -69,9 +68,6 @@ export class OneCXWelcomeModule implements DoBootstrap {
   }
 
   ngDoBootstrap(): void {
-    const appEntrypoint = createCustomElement(AppEntrypointComponent, {
-      injector: this.injector
-    })
-    customElements.define('ocx-welcome-component', appEntrypoint)
+    createAppEntrypoint(AppEntrypointComponent, 'ocx-welcome-component', this.injector)
   }
 }
