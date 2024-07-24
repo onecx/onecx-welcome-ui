@@ -32,6 +32,7 @@ export class WelcomeEditComponent implements OnInit {
   }
 
   public fetchImageInfos() {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
       next: (data: ImageInfo[]) => {
         this.imageInfos = data.sort((a, b) => this.compareImagePosition(a.position!, b.position!))
@@ -65,7 +66,7 @@ export class WelcomeEditComponent implements OnInit {
   }
 
   public buildImageSrc(imageInfo: ImageInfo) {
-    let currentImage = this.images.find((image) => {
+    const currentImage = this.images.find((image) => {
       return image.imageId === imageInfo.imageId
     })
     if (currentImage) {
@@ -134,7 +135,7 @@ export class WelcomeEditComponent implements OnInit {
   }
 
   public swapElement(array: any, indexA: number, indexB: number) {
-    let tmp = array[indexA]
+    const tmp = array[indexA]
     array[indexA].position = indexB + 1
     array[indexB].position = indexA + 1
     array[indexA] = array[indexB]

@@ -48,6 +48,7 @@ export class WelcomeOverviewComponent implements OnInit {
   }
 
   public fetchImageInfos() {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
       next: (data) => {
         this.imageInfos = this.sortAndFilterData(data)
@@ -78,7 +79,7 @@ export class WelcomeOverviewComponent implements OnInit {
   }
 
   public buildImageSrc(imageInfo: ImageInfo) {
-    let currentImage = this.images.find((image) => {
+    const currentImage = this.images.find((image) => {
       return image.imageId === imageInfo.imageId
     })
     if (currentImage) {
