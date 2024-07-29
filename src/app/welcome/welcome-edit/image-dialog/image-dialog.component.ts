@@ -56,7 +56,7 @@ export class ImageDialogComponent implements OnInit {
 
   public onSave(): void {
     if (this.formGroup.valid) {
-      let imageInfo = this.submitFormValues() as ImageInfo
+      const imageInfo = this.submitFormValues() as ImageInfo
       imageInfo.modificationCount = 0
       imageInfo.position = (this.imageInfoCount + 1).toString()
       imageInfo.workspaceName = this.currentWorkspaceName
@@ -73,7 +73,7 @@ export class ImageDialogComponent implements OnInit {
                 })
                 .subscribe({
                   next: (createdImage) => {
-                    let imageInfo = this.submitFormValues() as ImageInfo
+                    const imageInfo = this.submitFormValues() as ImageInfo
                     imageInfo.modificationCount = data.modificationCount
                     imageInfo.imageId = createdImage.imageId
                     imageInfo.position = (this.imageInfoCount + 1).toString()
