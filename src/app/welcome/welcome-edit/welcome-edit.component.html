@@ -71,7 +71,14 @@
         pTooltip="{{ 'ACTIONS.ADD.TOOLTIP' | translate }}"
         tooltipPosition="bottom"
       >
-        <span class="pi pi-plus plus"></span>
+        <a
+          class="pi pi-plus plus"
+          (keydown.enter)="this.displayImageDialog = true"
+          (keydown.space)="this.displayImageDialog = true"
+          tabindex="0"
+          aria-label="'ACTIONS.ADD.LABEL' | translate"
+        >
+        </a>
       </div>
     </div>
   </div>
