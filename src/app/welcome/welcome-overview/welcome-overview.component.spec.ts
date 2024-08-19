@@ -26,7 +26,7 @@ describe('WelcomeOverviewComponent', () => {
   ])
 
   const apiServiceSpy = {
-    getAllImageInfos: jasmine.createSpy('getAllImageInfos').and.returnValue(of({})),
+    getAllImageInfosByWorkspaceName: jasmine.createSpy('getAllImageInfosByWorkspaceName').and.returnValue(of({})),
     getImageById: jasmine.createSpy('getImageById').and.returnValue(of({}))
   }
 
@@ -65,7 +65,7 @@ describe('WelcomeOverviewComponent', () => {
     msgServiceSpy.error.calls.reset()
     msgServiceSpy.info.calls.reset()
     msgServiceSpy.warning.calls.reset()
-    apiServiceSpy.getAllImageInfos.calls.reset()
+    apiServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
     apiServiceSpy.getImageById.calls.reset()
     mockUserService.lang$.getValue.and.returnValue('de')
   }))
@@ -80,13 +80,13 @@ describe('WelcomeOverviewComponent', () => {
   })
 
   it('should get all imageinfos onInit', () => {
-    apiServiceSpy.getAllImageInfos.and.returnValue(
+    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
       of([
-        { id: '123', imageId: '123', visible: true, position: '1' },
-        { id: '1234', imageId: '1234', visible: true, position: '2' },
-        { id: '12345', imageId: '12345', visible: true, position: '4' },
-        { id: '123456', imageId: '123456', visible: true, position: '3' },
-        { id: '123', url: 'http://onecx.de', visible: true, position: '1' }
+        { id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' },
+        { id: '1234', imageId: '1234', visible: true, position: '2', workspaceName: 'w1' },
+        { id: '12345', imageId: '12345', visible: true, position: '4', workspaceName: 'w1' },
+        { id: '123456', imageId: '123456', visible: true, position: '3', workspaceName: 'w1' },
+        { id: '123', url: 'http://onecx.de', visible: true, position: '1', workspaceName: 'w1' }
       ])
     )
     apiServiceSpy.getImageById.and.returnValues(
@@ -99,12 +99,18 @@ describe('WelcomeOverviewComponent', () => {
 
     component.ngOnInit()
 
-    expect(component.imageInfos).toContain({ id: '123', url: 'http://onecx.de', visible: true, position: '1' })
+    expect(component.imageInfos).toContain({
+      id: '123',
+      url: 'http://onecx.de',
+      visible: true,
+      position: '1',
+      workspaceName: 'w1'
+    })
   })
 
   it('should handle error when fetching imageData', () => {
     apiServiceSpy.getImageById.and.returnValue(throwError(() => new Error()))
-    component.imageInfos = [{ id: '123', imageId: '123', visible: true, position: '1' }]
+    component.imageInfos = [{ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' }]
     component.fetchImageData()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
@@ -115,7 +121,7 @@ describe('WelcomeOverviewComponent', () => {
       { id: '123', url: 'http://onecx.de', visible: true, position: '1' } as ImageInfo,
       { id: '1234', imageId: '1234', visible: true, position: '1' } as ImageInfo
     ]
-    apiServiceSpy.getAllImageInfos.and.returnValue(of(imageInfos))
+    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
     apiServiceSpy.getImageById.and.returnValues(of({ imageId: '1234', imageData: new Blob() } as ImageDataResponse))
     component.imageInfos = []
     component.currentSlide = 0

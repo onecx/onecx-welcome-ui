@@ -25,6 +25,7 @@
       "MOVE_RIGHT_TOOLTIP": "Nach rechts verschieben"
     },
     "ADD": {
+      "LABEL": "Dialog öffnen und neues Bild hinzufügen",
       "TOOLTIP": "Neues Bild hinzufügen"
     },
     "CREATE": {

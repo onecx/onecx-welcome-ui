@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { Portal, PortalMessageService } from '@onecx/portal-integration-angular'
+import { AppStateService, Portal, PortalMessageService } from '@onecx/portal-integration-angular'
 import { Subscription } from 'rxjs'
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
@@ -9,7 +9,7 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
   styleUrls: ['./welcome-edit.component.scss']
 })
 export class WelcomeEditComponent implements OnInit {
-  portal: Portal | undefined
+  workspace: Portal | undefined
   currentSlide = 0
   public helpArticleId = 'PAGE_WELCOME_EDIT'
   subscription: Subscription | undefined
@@ -20,21 +20,36 @@ export class WelcomeEditComponent implements OnInit {
   selectedImageData: ImageDataResponse | undefined
   isReordered: boolean = false
 
-  constructor(private imageService: ImagesInternalAPIService, private msgService: PortalMessageService) {}
+  constructor(
+    private imageService: ImagesInternalAPIService,
+    private msgService: PortalMessageService,
+    private appStateService: AppStateService
+  ) {
+    this.workspace = this.appStateService.currentWorkspace$.getValue()
+  }
   ngOnInit(): void {
     this.fetchImageInfos()
   }
 
   public fetchImageInfos() {
-    this.imageService.getAllImageInfos().subscribe({
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+    this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
       next: (data: ImageInfo[]) => {
-        this.imageInfos = data.sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+        this.imageInfos = data.sort((a, b) => this.compareImagePosition(a.position!, b.position!))
         this.fetchImageData()
       },
       error: () => {
         this.msgService.error({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
       }
     })
+  }
+
+  compareImagePosition(infoOne: string, infoTwo: string): number {
+    if (infoOne < infoTwo) {
+      return -1
+    } else if (infoOne > infoTwo) {
+      return 1
+    } else return 0
   }
 
   public fetchImageData() {
@@ -51,7 +66,7 @@ export class WelcomeEditComponent implements OnInit {
   }
 
   public buildImageSrc(imageInfo: ImageInfo) {
-    let currentImage = this.images.find((image) => {
+    const currentImage = this.images.find((image) => {
       return image.imageId === imageInfo.imageId
     })
     if (currentImage) {
@@ -103,7 +118,8 @@ export class WelcomeEditComponent implements OnInit {
             id: info.id,
             creationUser: info.creationUser,
             modificationDate: info.modificationDate,
-            modificationUser: info.modificationUser
+            modificationUser: info.modificationUser,
+            workspaceName: info.workspaceName
           }
         })
         .subscribe({
@@ -119,7 +135,7 @@ export class WelcomeEditComponent implements OnInit {
   }
 
   public swapElement(array: any, indexA: number, indexB: number) {
-    var tmp = array[indexA]
+    const tmp = array[indexA]
     array[indexA].position = indexB + 1
     array[indexB].position = indexA + 1
     array[indexA] = array[indexB]

@@ -25,6 +25,7 @@
       "MOVE_RIGHT_TOOLTIP": "Move to right"
     },
     "ADD": {
+      "LABEL": "Open Dialog to add a new image",
       "TOOLTIP": "Add new image"
     },
     "CREATE": {

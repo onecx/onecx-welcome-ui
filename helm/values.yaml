@@ -16,6 +16,9 @@ app:
           description: "OneCX Welcome UI"
           note: "OneCX Welcome UI auto import via MF operator"
           type: MODULE
+          technology: WEBCOMPONENTMODULE
+          remoteName: onecx-welcome
+          tagName: ocx-welcome-component
     # Permission
     permission:
       enabled: true
@@ -25,12 +28,5 @@ app:
             DELETE: Delete image
             EDIT: Edit image
             VIEW: View image
-    # Keycloak
-    keycloak:
-      client:
-        enabled: true
-        spec:
-          kcConfig:
-            clientId: "onecx-welcome-ui"
             
 # PIPE Config

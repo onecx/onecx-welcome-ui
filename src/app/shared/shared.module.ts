@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { ColorSketchModule } from 'ngx-color/sketch'
-import { ErrorTailorModule } from '@ngneat/error-tailor'
+import { provideErrorTailorConfig } from '@ngneat/error-tailor'
 
 import { AutoCompleteModule } from 'primeng/autocomplete'
 import { CalendarModule } from 'primeng/calendar'
@@ -12,7 +12,6 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup'
 import { ConfirmationService } from 'primeng/api'
 import { DataViewModule } from 'primeng/dataview'
 import { DialogModule } from 'primeng/dialog'
-import { DialogService } from 'primeng/dynamicdialog'
 import { DropdownModule } from 'primeng/dropdown'
 import { InputTextModule } from 'primeng/inputtext'
 import { InputTextareaModule } from 'primeng/inputtextarea'
@@ -23,20 +22,7 @@ import { SelectButtonModule } from 'primeng/selectbutton'
 import { TableModule } from 'primeng/table'
 import { ToastModule } from 'primeng/toast'
 
-import {
-  AppStateService,
-  ConfigurationService,
-  PortalDialogService,
-  PortalApiConfiguration
-} from '@onecx/portal-integration-angular'
-
-import { Configuration } from 'src/app/shared/generated'
-import { environment } from 'src/environments/environment'
 import { LabelResolver } from './label.resolver'
-
-export function apiConfigProvider(configService: ConfigurationService, appStateService: AppStateService) {
-  return new PortalApiConfiguration(Configuration, environment.apiPrefix, configService, appStateService)
-}
 
 @NgModule({
   declarations: [],
@@ -60,8 +46,34 @@ export function apiConfigProvider(configService: ConfigurationService, appStateS
     SelectButtonModule,
     TableModule,
     ToastModule,
-    TranslateModule,
-    ErrorTailorModule.forRoot({
+    TranslateModule
+  ],
+  exports: [
+    AutoCompleteModule,
+    CalendarModule,
+    CommonModule,
+    ConfirmDialogModule,
+    ConfirmPopupModule,
+    DataViewModule,
+    DialogModule,
+    DropdownModule,
+    FormsModule,
+    InputTextModule,
+    InputTextareaModule,
+    KeyFilterModule,
+    ListboxModule,
+    MultiSelectModule,
+    ReactiveFormsModule,
+    SelectButtonModule,
+    TableModule,
+    ToastModule,
+    TranslateModule
+  ],
+  //this is not elegant, for some reason the injection token from primeng does not work across federated module
+  providers: [
+    ConfirmationService,
+    LabelResolver,
+    provideErrorTailorConfig({
       controlErrorsOn: { async: true, blur: true, change: true },
       errors: {
         useFactory: (i18n: TranslateService) => {
@@ -83,35 +95,6 @@ export function apiConfigProvider(configService: ConfigurationService, appStateS
         )
       }
     })
-  ],
-  exports: [
-    AutoCompleteModule,
-    CalendarModule,
-    CommonModule,
-    ConfirmDialogModule,
-    ConfirmPopupModule,
-    DataViewModule,
-    DialogModule,
-    DropdownModule,
-    ErrorTailorModule,
-    FormsModule,
-    InputTextModule,
-    InputTextareaModule,
-    KeyFilterModule,
-    ListboxModule,
-    MultiSelectModule,
-    ReactiveFormsModule,
-    SelectButtonModule,
-    TableModule,
-    ToastModule,
-    TranslateModule
-  ],
-  //this is not elegant, for some reason the injection token from primeng does not work across federated module
-  providers: [
-    ConfirmationService,
-    LabelResolver,
-    { provide: DialogService, useClass: PortalDialogService },
-    { provide: Configuration, useFactory: apiConfigProvider, deps: [ConfigurationService, AppStateService] }
   ],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })

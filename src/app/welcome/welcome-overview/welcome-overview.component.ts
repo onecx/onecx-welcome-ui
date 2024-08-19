@@ -24,7 +24,7 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 export class WelcomeOverviewComponent implements OnInit {
   readonly CAROUSEL_SPEED: number = 5000
   readonly permission: string = 'BASE_PORTAL#SHOW'
-  portal: Portal | undefined
+  workspace: Portal | undefined
   currentSlide = -1
   public helpArticleId = 'PAGE_WELCOME'
   user$: Observable<UserProfile>
@@ -39,9 +39,7 @@ export class WelcomeOverviewComponent implements OnInit {
     private imageService: ImagesInternalAPIService,
     private msgService: PortalMessageService
   ) {
-    this.portal = this.appStateService.currentPortal$.getValue()
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    // this.user = this.auth.getCurrentUser()!
+    this.workspace = this.appStateService.currentWorkspace$.getValue()
     this.user$ = this.userService.profile$.asObservable()
   }
 
@@ -50,16 +48,20 @@ export class WelcomeOverviewComponent implements OnInit {
   }
 
   public fetchImageInfos() {
-    this.imageService.getAllImageInfos().subscribe({
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+    this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
       next: (data) => {
-        this.imageInfos = data
-          .filter((img) => img.visible === true)
-          .sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+        this.imageInfos = this.sortAndFilterData(data)
         this.fetchImageData()
       }
     })
   }
 
+  sortAndFilterData(data: ImageInfo[]) {
+    return data
+      .filter((img) => img.visible === true)
+      .sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+  }
   public fetchImageData() {
     this.imageInfos.forEach((info) => {
       if (info.imageId) {
@@ -77,7 +79,7 @@ export class WelcomeOverviewComponent implements OnInit {
   }
 
   public buildImageSrc(imageInfo: ImageInfo) {
-    let currentImage = this.images.find((image) => {
+    const currentImage = this.images.find((image) => {
       return image.imageId === imageInfo.imageId
     })
     if (currentImage) {

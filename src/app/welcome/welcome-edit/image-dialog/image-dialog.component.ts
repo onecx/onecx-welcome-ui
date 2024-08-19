@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn } from '@angular/forms'
 
-import { Action, PortalMessageService } from '@onecx/portal-integration-angular'
+import { Action, AppStateService, PortalMessageService } from '@onecx/portal-integration-angular'
 import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
@@ -21,23 +21,29 @@ export class ImageDialogComponent implements OnInit {
   autoResize!: boolean
   selectedFile: any
   uploadDisabled: boolean = false
+  currentWorkspaceName: string = ''
 
   constructor(
     private imageApiService: ImagesInternalAPIService,
     private fb: FormBuilder,
-    private msgService: PortalMessageService
+    private msgService: PortalMessageService,
+    private appstateService: AppStateService
   ) {
     this.formGroup = fb.nonNullable.group({
       url: new FormControl(null, this.imageSrcValidator()),
       image: new FormControl(null)
     })
     this.autoResize = true
+    this.currentWorkspaceName = this.appstateService.currentWorkspace$.getValue()?.portalName || ''
   }
 
   ngOnInit() {
     this.formGroup.get('url')?.valueChanges.subscribe((v) => {
-      v !== null && v !== '' ? (this.uploadDisabled = true) : (this.uploadDisabled = false)
+      v !== null && v !== '' ? this.disableUpload(true) : this.disableUpload(false)
     })
+  }
+  disableUpload(disable: boolean) {
+    this.uploadDisabled = disable
   }
   public onDialogHide() {
     this.displayDetailDialog = false
@@ -50,9 +56,10 @@ export class ImageDialogComponent implements OnInit {
 
   public onSave(): void {
     if (this.formGroup.valid) {
-      let imageInfo = this.submitFormValues() as ImageInfo
+      const imageInfo = this.submitFormValues() as ImageInfo
       imageInfo.modificationCount = 0
       imageInfo.position = (this.imageInfoCount + 1).toString()
+      imageInfo.workspaceName = this.currentWorkspaceName
       this.imageApiService
         .createImageInfo({
           imageInfo: imageInfo
@@ -62,16 +69,16 @@ export class ImageDialogComponent implements OnInit {
             if (this.selectedFile !== undefined) {
               this.imageApiService
                 .createImage({
-                  contentLength: 0,
                   body: this.selectedFile
                 })
                 .subscribe({
                   next: (createdImage) => {
-                    let imageInfo = this.submitFormValues() as ImageInfo
+                    const imageInfo = this.submitFormValues() as ImageInfo
                     imageInfo.modificationCount = data.modificationCount
                     imageInfo.imageId = createdImage.imageId
                     imageInfo.position = (this.imageInfoCount + 1).toString()
                     imageInfo.visible = true
+                    imageInfo.workspaceName = this.currentWorkspaceName
                     this.imageApiService
                       .updateImageInfo({
                         id: data.id!,
