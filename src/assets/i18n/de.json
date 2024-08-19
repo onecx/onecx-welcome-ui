@@ -48,7 +48,7 @@
     }
   },
   "LANDING": {
-    "TITLE": "Willkommen"
+    "TITLE": "Hallo"
   },
   "GENERAL": {
     "CLOSE": "Schließen",
@@ -66,7 +66,7 @@
       "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
       "EDIT": "Bilder bearbeiten",
       "SAVE": "Die Änderungen speichern",
-      "BACK": "Back to welcome page"
+      "BACK": "Zurück zur Startseite"
     },
     "BACK": "Zurück"
   },

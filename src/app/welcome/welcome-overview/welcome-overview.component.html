@@ -19,7 +19,7 @@
       <div class="flex carouselAnimation md:col-12 xl:col-12 gap-2 px-6 text-white">
         <div>
           <h1 class="text-6xl font-light">
-            {{ 'LANDING.TITLE' | translate }}, {{ (user$ | async)?.person?.firstName }}
+            {{ 'LANDING.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
           </h1>
           <h3 class="text-md font-normal my-1">{{ currentDate | date }}</h3>
           <h4 class="text-sm font-normal my-1">Workspace: {{ workspace?.portalName }}</h4>

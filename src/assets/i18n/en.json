@@ -25,12 +25,12 @@
       "MOVE_RIGHT_TOOLTIP": "Move to right"
     },
     "ADD": {
-      "LABEL": "Open Dialog to add a new image",
-      "TOOLTIP": "Add new image"
+      "LABEL": "Open Dialog to add a new Image",
+      "TOOLTIP": "Add new Image"
     },
     "CREATE": {
-      "TITLE": "Create image",
-      "UPLOAD": "Upload image",
+      "TITLE": "Create Image",
+      "UPLOAD": "Upload Image",
       "VISIBILITY": {
         "TRUE": "Visible",
         "FALSE": "Hidden"
@@ -48,7 +48,7 @@
     }
   },
   "LANDING": {
-    "TITLE": "Welcome"
+    "TITLE": "Hello"
   },
   "GENERAL": {
     "CLOSE": "Close",
@@ -64,9 +64,9 @@
       "CANCEL_EDIT": "Cancel edit mode",
       "CANCEL_AND_CLOSE": "Cancel and close dialog",
       "CANCEL_WITHOUT_SAVE": "Cancel action without saving",
-      "EDIT": "Edit images",
+      "EDIT": "Edit Images",
       "SAVE": "Save changes",
-      "BACK": "Back to welcome page"
+      "BACK": "Back to Start page"
     },
     "BACK": "Zurück"
   },
@@ -79,7 +79,7 @@
   "VALIDATION": {
     "ERRORS": {
       "INTERNAL_ERROR": "Internal error",
-      "MISSING_IMG_SRC": "Upload an image or add an external url"
+      "MISSING_IMG_SRC": "Upload an Image or add an external URL."
     }
   }
 }
