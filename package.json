@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "license": "Apache-2.0",
   "contributors": [
-    "OneCX Development Team <onecx-development-team@onecx.org>"
+    "OneCX Development Team <onecx_dev@1000kit.org>"
   ],
   "config": {
     "openapiYaml": "src/assets/api/openapi-bff.yaml",
@@ -12,14 +12,14 @@
   },
   "scripts": {
     "build": "ng build",
-    "clean": "npm cache clean --force && npm run clean-angular",
-    "clean-angular": "ng cache clean",
-    "start": "ng serve --configuration=development --proxy-config=proxy.conf.js",
-    "prepare": "husky install",
-    "lint": "ng lint",
-    "eslint": "eslint --quiet --ext .js,.ts src",
+    "check": "ng lint --cache=true && npx prettier -c --cache .",
+    "clean": "npm cache clean --force && ng cache clean && rm -f .eslintcache && rm -f ./node_modules/.cache/prettier/.prettier-cache",
+    "lint": "ng lint --cache=true",
     "format": "ng lint --fix",
-    "browsers": "npx browserslist",
+    "eslint": "eslint --quiet --ext .js,.ts src",
+    "browser": "npx browserslist",
+    "prepare": "husky || true",
+    "start": "ng serve --configuration=development --proxy-config=proxy.conf.js",
     "test": "ng test",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
     "karma": "rm -rf reports && npm run test:ci",
