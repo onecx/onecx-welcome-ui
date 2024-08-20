@@ -1,64 +1,79 @@
 <ocx-portal-page helpArticleId="PAGE_WELCOME_EDIT" permission="IMAGE#EDIT">
-  <div>
-    <div class="inline-flex w-full pb-4">
-      <div class="ml-auto inline-block">
-        <p-button
-          icon="pi pi-arrow-left"
-          label="{{ 'GENERAL.BACK' | translate }}"
-          pTooltip="{{ 'GENERAL.TOOLTIPS.BACK' | translate }}"
-          tooltipPosition="bottom"
-          [routerLink]="['../']"
-        ></p-button>
-        <p-button
-          class="saveOrder pl-2"
-          [disabled]="!this.isReordered"
-          label="{{ 'ACTIONS.REORDER.SAVE' | translate }}"
-          pTooltip="{{ 'ACTIONS.REORDER.SAVE_TOOLTIP' | translate }}"
-          tooltipPosition="bottom"
-          (onClick)="this.onSaveOrder()"
-        ></p-button>
-      </div>
+  <div class="flex flex-column row-gap-3">
+    <div class="flex flex-row justify-content-end column-gap-2">
+      <p-button
+        id="wc_card_list_action_back"
+        icon="pi pi-arrow-left"
+        [routerLink]="['../']"
+        [label]="'GENERAL.BACK' | translate"
+        [pTooltip]="'GENERAL.TOOLTIPS.BACK' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></p-button>
+      <p-button
+        id="wc_card_list_action_save"
+        icon="pi pi-save"
+        (onClick)="this.onSaveOrder()"
+        [disabled]="!this.isReordered"
+        [label]="'ACTIONS.REORDER.SAVE' | translate"
+        [pTooltip]="'ACTIONS.REORDER.SAVE_TOOLTIP' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></p-button>
     </div>
-    <div class="card-wrapper grid pb-4">
-      <p-card class="col-3 p-overlay-badge" *ngFor="let info of imageInfos; let i = index">
-        <ng-template pTemplate="header">
-          <img alt="{{ 'slide-' + i }}" src="{{ this.buildImageSrc(info) }}" style="height: 13rem; object-fit: cover" />
+    <div class="flex flex-row flex-wrap gap-4">
+      <p-card class="w-20rem h-20rem p-overlay-badge" styleClass="" *ngFor="let info of imageInfos; let i = index">
+        <ng-template pTemplate="content">
+          <img
+            [id]="'wc_card_list_' + i + '_image'"
+            [alt]="'image-' + i"
+            [src]="this.buildImageSrc(info)"
+            class="w-full h-13rem"
+            style="_object-fit: cover"
+          />
         </ng-template>
         <ng-template pTemplate="footer">
-          <div class="flex h-full">
-            <div class="action-buttons" style="margin-right: auto">
+          <div class="flex flex-row flex-nowrap justify-content-between">
+            <div class="flex flex-row flex-nowrap column-gap-2">
               <p-button
+                [id]="'wc_card_list_' + i + '_action_visibility'"
+                [icon]="info.visible ? 'pi pi-eye' : 'pi pi-eye-slash'"
                 class="visibilityChange"
-                pTooltip="{{ 'ACTIONS.VISIBILITY.TOOLTIP' | translate }}"
                 (onClick)="this.updateVisibility(info)"
-                icon="{{ info.visible ? 'pi pi-eye' : 'pi pi-eye-slash' }}"
+                [pTooltip]="'ACTIONS.VISIBILITY.TOOLTIP' | translate"
+                tooltipPosition="bottom"
+                tooltipEvent="hover"
               ></p-button>
               <p-button
                 ocxIfPermission="'IMAGE#DELETE'"
-                pTooltip="{{ 'ACTIONS.DELETE.TOOLTIP' | translate }}"
+                [id]="'wc_card_list_' + i + '_action_delete'"
                 icon="pi pi-trash"
-                styleClass="p-button-secondary"
-                [style]="{ 'margin-left': '.5em' }"
+                id=""
                 (onClick)="this.handleDelete(info.id)"
+                [pTooltip]="'ACTIONS.DELETE.TOOLTIP' | translate"
+                tooltipPosition="bottom"
+                tooltipEvent="hover"
               ></p-button>
             </div>
-            <div class="arrow-buttons" style="margin-left: auto">
+            <div class="flex flex-row flex-nowrap column-gap-2">
               <p-button
-                class="arrow-left"
-                pTooltip="{{ 'ACTIONS.REORDER.MOVE_LEFT_TOOLTIP' | translate }}"
-                [disabled]="!(i > 0)"
+                [id]="'wc_card_list_' + i + '_action_left'"
                 icon="pi pi-arrow-left"
-                [style]="{ 'margin-left': '.5em' }"
+                [disabled]="!(i > 0)"
                 (onClick)="this.swapElement(this.imageInfos, i, i - 1)"
+                [pTooltip]="'ACTIONS.REORDER.MOVE_LEFT_TOOLTIP' | translate"
+                tooltipPosition="bottom"
+                tooltipEvent="hover"
               >
               </p-button>
               <p-button
-                class="arrow-right"
-                pTooltip="{{ 'ACTIONS.REORDER.MOVE_RIGHT_TOOLTIP' | translate }}"
-                [disabled]="!(i !== imageInfos.length - 1)"
+                [id]="'wc_card_list_' + i + '_action_right'"
                 icon="pi pi-arrow-right"
-                [style]="{ 'margin-left': '.5em' }"
+                [disabled]="!(i !== imageInfos.length - 1)"
                 (onClick)="this.swapElement(this.imageInfos, i, i + 1)"
+                [pTooltip]="'ACTIONS.REORDER.MOVE_RIGHT_TOOLTIP' | translate"
+                tooltipPosition="bottom"
+                tooltipEvent="hover"
               ></p-button>
             </div>
           </div>
@@ -66,16 +81,18 @@
       </p-card>
       <div
         *ngIf="this.imageInfos.length < 20"
+        [id]="'wc_card_list_action_add'"
         (click)="this.displayImageDialog = true"
-        class="col-3 addImageCard"
-        pTooltip="{{ 'ACTIONS.ADD.TOOLTIP' | translate }}"
+        class="w-20rem h-20rem new-image-card flex justify-content-center align-items-center border-primary border-round-xl cursor-pointer"
+        [pTooltip]="'ACTIONS.ADD.TOOLTIP' | translate"
         tooltipPosition="bottom"
+        tooltipEvent="hover"
       >
         <a
-          class="pi pi-plus plus"
+          tabindex="0"
+          class="pi pi-plus font-bold text-3xl"
           (keydown.enter)="this.displayImageDialog = true"
           (keydown.space)="this.displayImageDialog = true"
-          tabindex="0"
           aria-label="'ACTIONS.ADD.LABEL' | translate"
         >
         </a>
@@ -83,6 +100,7 @@
     </div>
   </div>
 </ocx-portal-page>
+
 <app-image-dialog
   [displayDetailDialog]="displayImageDialog"
   (hideDialogAndChanged)="onCloseDialog($event)"

@@ -5,38 +5,40 @@
         <ng-container *ngFor="let slide of imageInfos; let i = index">
           <img
             *ngIf="i === currentSlide"
+            class="slide"
+            @carouselAnimation
             [src]="this.buildImageSrc(slide)"
             [alt]="slide.imageId"
             [title]="slide.imageId"
-            class="slide"
-            @carouselAnimation
+            [pTooltip]="'GENERAL.TOOLTIPS.EDIT' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
           />
         </ng-container>
         <div class="overlay"></div>
       </div>
     </div>
-    <div class="relative flex flex-wrap">
-      <div class="flex carouselAnimation md:col-12 xl:col-12 gap-2 px-6 text-white">
-        <div>
-          <h1 class="text-6xl font-light">
-            {{ 'LANDING.TITLE' | translate }}, {{ (user$ | async)?.person?.firstName }}
-          </h1>
-          <h3 class="text-md font-normal my-1">{{ currentDate | date }}</h3>
-          <h4 class="text-sm font-normal my-1">Workspace: {{ workspace?.portalName }}</h4>
+    <div class="relative mt-3 px-4 flex flex-row flex-wrap justify-content-between text-white">
+      <div>
+        <div class="mb-4 text-6xl font-light">
+          {{ 'LANDING.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
         </div>
-        <div class="ml-auto pt-2">
-          <button
-            ocxIfPermission="'IMAGE#EDIT'"
-            pButton
-            type="button"
-            icon="pi pi-pencil"
-            label="{{ 'GENERAL.EDIT' | translate }}"
-            pTooltip="{{ 'GENERAL.TOOLTIPS.EDIT' | translate }}"
-            tooltipPosition="left"
-            [routerLink]="['./edit']"
-            class="p-button-text text-white"
-          ></button>
-        </div>
+        <div class="text-3xl font-light">{{ currentDate | date }}</div>
+        <div class="text-sm mt-1">Workspace: {{ workspace?.portalName }}</div>
+      </div>
+      <div>
+        <p-button
+          ocxIfPermission="'IMAGE#EDIT'"
+          id="wc_overview_button_edit"
+          styleClass="p-button-text text-white"
+          icon="pi pi-pencil"
+          [text]="true"
+          [routerLink]="['./edit']"
+          [label]="'GENERAL.EDIT' | translate"
+          [pTooltip]="'GENERAL.TOOLTIPS.EDIT' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        ></p-button>
       </div>
     </div>
   </div>

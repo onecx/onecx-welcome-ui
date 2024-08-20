@@ -29,8 +29,8 @@
       "TOOLTIP": "Neues Bild hinzufügen"
     },
     "CREATE": {
-      "TITLE": "Bild erstellen",
-      "UPLOAD": "Bild hochladen",
+      "TITLE": "Bild hochladen",
+      "UPLOAD": "Hochladen",
       "VISIBILITY": {
         "TRUE": "Sichtbar",
         "FALSE": "Unsichtbar"
@@ -48,7 +48,7 @@
     }
   },
   "LANDING": {
-    "TITLE": "Willkommen"
+    "TITLE": "Hallo"
   },
   "GENERAL": {
     "CLOSE": "Schließen",
@@ -56,7 +56,7 @@
     "SAVE": "Speichern",
     "SAVE_ORDER": "Anordnung speichern",
     "VIEW": "Ansehen",
-    "EDIT": "Bearbeiten",
+    "EDIT": "Konfigurieren",
     "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
     "TOOLTIPS": {
       "CLOSE": "Dialog verlassen",
@@ -64,9 +64,9 @@
       "CANCEL_EDIT": "Den Änderungsmodus verlassen",
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
       "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
-      "EDIT": "Bilder bearbeiten",
+      "EDIT": "Hintergrundbilder hochladen und bearbeiten",
       "SAVE": "Die Änderungen speichern",
-      "BACK": "Back to welcome page"
+      "BACK": "Zurück zur Startseite"
     },
     "BACK": "Zurück"
   },

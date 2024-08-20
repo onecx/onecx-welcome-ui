@@ -172,7 +172,7 @@ describe('WelcomeEditComponent', () => {
 
   it('should open create dialog', fakeAsync(() => {
     const dElement = fixture.debugElement
-    const openDialogButton = dElement.query(By.css('.addImageCard'))
+    const openDialogButton = dElement.query(By.css('.new-image-card'))
     expect(openDialogButton).toBeTruthy()
     expect(component.displayImageDialog).toBeFalsy()
     openDialogButton.nativeElement.click()
@@ -205,13 +205,13 @@ describe('WelcomeEditComponent', () => {
     )
     component.ngOnInit()
     fixture.detectChanges()
-    let saveOrderButton = dElement.nativeElement.querySelector('.saveOrder')
+    let saveOrderButton = dElement.nativeElement.querySelector('#wc_card_list_action_save')
     expect(saveOrderButton.attributes.getNamedItem('ng-reflect-disabled').value).toBeTruthy()
     component.swapElement(component.imageInfos, 0, 1)
     apiServiceSpy.updateImageOrder.and.returnValue(of({}))
     component.onSaveOrder()
     fixture.detectChanges()
-    saveOrderButton = dElement.nativeElement.querySelector('.saveOrder')
+    saveOrderButton = dElement.nativeElement.querySelector('#wc_card_list_action_save')
     expect(saveOrderButton.attributes.getNamedItem('ng-reflect-disabled').value).toBe('false')
     expect(component.imageInfos[0].id).toEqual('1234')
     expect(component.imageInfos[0].position?.toString()).toBe('1')

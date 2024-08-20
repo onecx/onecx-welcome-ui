@@ -77,19 +77,23 @@
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end gap-2 mb-1">
       <p-button
-        id="image_button_cancel"
-        [label]="'GENERAL.CANCEL' | translate"
-        [title]="'GENERAL.TOOLTIPS.CANCEL' | translate"
+        id="wc_add_image_action_cancel"
         (onClick)="onDialogHide()"
         icon="pi pi-times"
+        [label]="'GENERAL.CANCEL' | translate"
+        [pTooltip]="'GENERAL.TOOLTIPS.CANCEL' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
       ></p-button>
       <p-button
-        id="image_button_save"
-        [label]="'GENERAL.SAVE' | translate"
-        [title]="'GENERAL.TOOLTIPS.SAVE' | translate"
+        id="wc_add_image_action_save"
         (onClick)="this.onSave()"
         icon="pi pi-save"
         [disabled]="!formGroup.valid"
+        [label]="'GENERAL.SAVE' | translate"
+        [pTooltip]="'GENERAL.TOOLTIPS.SAVE' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
       ></p-button>
     </div>
   </ng-template>
