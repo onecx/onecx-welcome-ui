@@ -80,7 +80,7 @@
     "@angular-eslint/schematics": "^18.3.0",
     "@angular-eslint/template-parser": "^18.3.0",
     "@angular/cli": "~18.1.2",
-    "@angular/compiler-cli": "^18.1.1",
+    "@angular/compiler-cli": "^18.2.0",
     "@angular/language-service": "^18.1.1",
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
