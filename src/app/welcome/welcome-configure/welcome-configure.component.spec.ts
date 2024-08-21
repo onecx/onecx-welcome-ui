@@ -7,16 +7,16 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
 import { AppStateService, createTranslateLoader, PortalMessageService } from '@onecx/portal-integration-angular'
 import { of, throwError } from 'rxjs'
 import { ImageDataResponse, ImagesInternalAPIService } from 'src/app/shared/generated'
-import { WelcomeEditComponent } from '../welcome-edit/welcome-edit.component'
+import { WelcomeConfigureComponent } from './welcome-configure.component'
 import { CardModule } from 'primeng/card'
 import { ButtonModule } from 'primeng/button'
 import { ImageDialogComponent } from './image-dialog/image-dialog.component'
 import { DialogModule } from 'primeng/dialog'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
-describe('WelcomeEditComponent', () => {
-  let component: WelcomeEditComponent
-  let fixture: ComponentFixture<WelcomeEditComponent>
+describe('WelcomeConfigureComponent', () => {
+  let component: WelcomeConfigureComponent
+  let fixture: ComponentFixture<WelcomeConfigureComponent>
 
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', [
     'success',
@@ -35,7 +35,7 @@ describe('WelcomeEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [WelcomeEditComponent, ImageDialogComponent],
+      declarations: [WelcomeConfigureComponent, ImageDialogComponent],
       imports: [
         HttpClientTestingModule,
         TranslateModule.forRoot({
@@ -68,7 +68,7 @@ describe('WelcomeEditComponent', () => {
   }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(WelcomeEditComponent)
+    fixture = TestBed.createComponent(WelcomeConfigureComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   })

@@ -4,11 +4,11 @@ import { Subscription } from 'rxjs'
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
-  selector: 'app-welcome-edit',
-  templateUrl: './welcome-edit.component.html',
-  styleUrls: ['./welcome-edit.component.scss']
+  selector: 'app-welcome-configure',
+  templateUrl: './welcome-configure.component.html',
+  styleUrls: ['./welcome-configure.component.scss']
 })
-export class WelcomeEditComponent implements OnInit {
+export class WelcomeConfigureComponent implements OnInit {
   workspace: Portal | undefined
   currentSlide = 0
   public helpArticleId = 'PAGE_WELCOME_EDIT'

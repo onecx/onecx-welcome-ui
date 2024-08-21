@@ -7,9 +7,9 @@ import { addInitializeModuleGuard, InitializeModuleGuard, PortalCoreModule } fro
 import { SharedModule } from '../shared/shared.module'
 
 import { WelcomeOverviewComponent } from './welcome-overview/welcome-overview.component'
-import { WelcomeEditComponent } from './welcome-edit/welcome-edit.component'
+import { WelcomeConfigureComponent } from './welcome-configure/welcome-configure.component'
 import { CardModule } from 'primeng/card'
-import { ImageDialogComponent } from './welcome-edit/image-dialog/image-dialog.component'
+import { ImageDialogComponent } from './welcome-configure/image-dialog/image-dialog.component'
 import { FileUploadModule } from 'primeng/fileupload'
 
 const routes: Routes = [
@@ -19,13 +19,13 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'edit',
-    component: WelcomeEditComponent,
+    path: 'configure',
+    component: WelcomeConfigureComponent,
     pathMatch: 'full'
   }
 ]
 @NgModule({
-  declarations: [WelcomeOverviewComponent, WelcomeEditComponent, ImageDialogComponent],
+  declarations: [WelcomeOverviewComponent, WelcomeConfigureComponent, ImageDialogComponent],
   imports: [
     CommonModule,
     FormsModule,
