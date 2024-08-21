@@ -13,7 +13,7 @@ import {
 } from '@onecx/portal-integration-angular'
 import { DialogModule } from 'primeng/dialog'
 import { InputSwitchModule } from 'primeng/inputswitch'
-import { of, throwError } from 'rxjs'
+import { of } from 'rxjs'
 import { ImagesInternalAPIService } from 'src/app/shared/generated'
 import { ImageDetailComponent } from './image-detail.component'
 import { OverlayPanelModule } from 'primeng/overlaypanel'

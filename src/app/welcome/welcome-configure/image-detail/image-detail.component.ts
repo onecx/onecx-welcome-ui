@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
 
-import { Action } from '@onecx/portal-integration-angular'
-import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
+import { ImageDataResponse, ImageInfo } from 'src/app/shared/generated'
 
 @Component({
   selector: 'app-image-detail',
