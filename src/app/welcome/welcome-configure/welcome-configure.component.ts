@@ -16,6 +16,7 @@ export class WelcomeConfigureComponent implements OnInit {
   images: ImageDataResponse[] = []
   imageInfos: ImageInfo[] = []
   public displayImageDialog = false
+  public displayDetailDialog = false
   selectedImageInfo: ImageInfo | undefined
   selectedImageData: ImageDataResponse | undefined
   isReordered: boolean = false
@@ -155,10 +156,14 @@ export class WelcomeConfigureComponent implements OnInit {
     })
   }
 
-  public onCloseDialog(refresh: boolean): void {
+  public onCloseImageDialog(refresh: boolean): void {
     this.displayImageDialog = false
     if (refresh) {
       this.fetchImageInfos()
     }
+  }
+
+  public onCloseDetailDialog(): void {
+    this.displayDetailDialog = false
   }
 }

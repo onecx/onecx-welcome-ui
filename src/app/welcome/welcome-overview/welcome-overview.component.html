@@ -10,7 +10,8 @@
             [src]="this.buildImageSrc(slide)"
             [alt]="slide.imageId"
             [title]="slide.imageId"
-            [pTooltip]="'GENERAL.TOOLTIPS.EDIT' | translate"
+            [aria-label]="'GENERAL.TOOLTIPS .EDIT' | translate"
+            [pTooltip]="'GENERAL.TOOLTIPS .EDIT' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
           />
@@ -35,6 +36,7 @@
           [text]="true"
           [routerLink]="['./edit']"
           [label]="'GENERAL.EDIT' | translate"
+          [aria-label]="'GENERAL.TOOLTIPS.EDIT' | translate"
           [pTooltip]="'GENERAL.TOOLTIPS.EDIT' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"

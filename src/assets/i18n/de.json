@@ -50,6 +50,10 @@
   "LANDING": {
     "TITLE": "Hallo"
   },
+  "DETAIL": {
+    "TITLE": "Detaillierte Ansicht",
+    "TOOLTIP": "Klicken, um detaillierte Ansicht des Bilds zu sehen"
+  },
   "GENERAL": {
     "CLOSE": "Schließen",
     "CANCEL": "Abbrechen",

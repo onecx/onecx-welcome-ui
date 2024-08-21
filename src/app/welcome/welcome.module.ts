@@ -8,6 +8,7 @@ import { SharedModule } from '../shared/shared.module'
 
 import { WelcomeOverviewComponent } from './welcome-overview/welcome-overview.component'
 import { WelcomeConfigureComponent } from './welcome-configure/welcome-configure.component'
+import { ImageDetailComponent } from './welcome-configure/image-detail/image-detail.component'
 import { CardModule } from 'primeng/card'
 import { ImageDialogComponent } from './welcome-configure/image-dialog/image-dialog.component'
 import { FileUploadModule } from 'primeng/fileupload'
@@ -25,7 +26,7 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  declarations: [WelcomeOverviewComponent, WelcomeConfigureComponent, ImageDialogComponent],
+  declarations: [WelcomeOverviewComponent, WelcomeConfigureComponent, ImageDialogComponent, ImageDetailComponent],
   imports: [
     CommonModule,
     FormsModule,
