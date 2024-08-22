@@ -7,7 +7,12 @@
     "inlineSources": true,
     "target": "ES2022"
   },
-  "files": ["src/main.ts", "src/polyfills.ts", "src/app/onecx-welcome-remote.module.ts"],
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts",
+    "src/app/onecx-welcome-remote.module.ts",
+    "src/app/remotes/announcement-list-active/announcement-list-active.component.bootstrap.ts"
+  ],
   "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["src/test.ts", "src/**/*.spec.ts"]
 }

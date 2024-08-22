@@ -5,7 +5,9 @@ const config = withModuleFederationPlugin({
   name: 'onecx-welcome-ui',
   filename: 'remoteEntry.js',
   exposes: {
-    './OneCXWelcomeModule': 'src/bootstrap.ts'
+    './OneCXWelcomeModule': 'src/bootstrap.ts',
+    './OneCXAnnouncementListActiveComponent':
+      'src/app/remotes/announcement-list-active/announcement-list-active.component.bootstrap.ts'
   },
   shared: share({
     '@angular/core': { requiredVersion: 'auto' },
@@ -25,6 +27,10 @@ const config = withModuleFederationPlugin({
       includeSecondaries: true
     },
     '@angular/router': { requiredVersion: 'auto', includeSecondaries: true },
+    '@angular/elements': {
+      requiredVersion: 'auto',
+      includeSecondaries: true
+    },
     rxjs: { requiredVersion: 'auto', includeSecondaries: true },
     '@ngx-translate/core': { requiredVersion: 'auto' },
     '@onecx/accelerator': { requiredVersion: 'auto', includeSecondaries: true },
@@ -32,6 +38,7 @@ const config = withModuleFederationPlugin({
     '@onecx/angular-auth': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/angular-integration-interface': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/angular-webcomponents': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/angular-remote-components': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/integration-interface': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/keycloak-auth': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/portal-integration-angular': { requiredVersion: 'auto', includeSecondaries: true },

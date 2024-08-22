@@ -19,6 +19,13 @@ app:
           technology: WEBCOMPONENTMODULE
           remoteName: onecx-welcome
           tagName: ocx-welcome-component
+        announcement-list-active:
+          exposedModule: "./OneCXAnnouncementListActiveComponent"
+          description: "Announcement list active component"
+          type: COMPONENT
+          technology: WEBCOMPONENTMODULE
+          remoteName: onecx-announcement
+          tagName: ocx-announcement-list-active-component
     # Permission
     permission:
       enabled: true
