@@ -15,7 +15,7 @@ export class WelcomeConfigureComponent implements OnInit {
   subscription: Subscription | undefined
   images: ImageDataResponse[] = []
   imageInfos: ImageInfo[] = []
-  public displayImageDialog = false
+  public displayCreateDialog = false
   public displayDetailDialog = false
   selectedImageInfo: ImageInfo | undefined
   selectedImageData: ImageDataResponse | undefined
@@ -156,8 +156,8 @@ export class WelcomeConfigureComponent implements OnInit {
     })
   }
 
-  public onCloseImageDialog(refresh: boolean): void {
-    this.displayImageDialog = false
+  public onCloseCreateDialog(refresh: boolean): void {
+    this.displayCreateDialog = false
     if (refresh) {
       this.fetchImageInfos()
     }

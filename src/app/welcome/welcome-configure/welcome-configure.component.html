@@ -93,7 +93,7 @@
       <div
         *ngIf="this.imageInfos.length < 20"
         [id]="'wc_card_list_action_add'"
-        (click)="this.displayImageDialog = true"
+        (click)="this.displayCreateDialog = true"
         class="w-20rem h-20rem new-image-card flex justify-content-center align-items-center border-primary border-round-xl cursor-pointer"
         [aria-label]="'ACTIONS.ADD.TOOLTIP' | translate"
         [pTooltip]="'ACTIONS.ADD.TOOLTIP' | translate"
@@ -103,8 +103,8 @@
         <a
           tabindex="0"
           class="pi pi-plus font-bold text-3xl"
-          (keydown.enter)="this.displayImageDialog = true"
-          (keydown.space)="this.displayImageDialog = true"
+          (keydown.enter)="this.displayCreateDialog = true"
+          (keydown.space)="this.displayCreateDialog = true"
           aria-label="'ACTIONS.ADD.LABEL' | translate"
         >
         </a>
@@ -113,11 +113,11 @@
   </div>
 </ocx-portal-page>
 
-<app-image-dialog
-  [displayDetailDialog]="displayImageDialog"
-  (hideDialogAndChanged)="onCloseImageDialog($event)"
+<app-image-create
+  [displayCreateDialog]="displayCreateDialog"
+  (hideDialogAndChanged)="onCloseCreateDialog($event)"
   [imageInfoCount]="this.imageInfos.length"
-></app-image-dialog>
+></app-image-create>
 
 <app-image-detail
   [displayDetailDialog]="displayDetailDialog"

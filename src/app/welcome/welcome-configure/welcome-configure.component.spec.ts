@@ -10,7 +10,7 @@ import { ImageDataResponse, ImagesInternalAPIService } from 'src/app/shared/gene
 import { WelcomeConfigureComponent } from './welcome-configure.component'
 import { CardModule } from 'primeng/card'
 import { ButtonModule } from 'primeng/button'
-import { ImageDialogComponent } from './image-dialog/image-dialog.component'
+import { ImageCreateComponent } from './image-create/image-create.component'
 import { DialogModule } from 'primeng/dialog'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
@@ -35,7 +35,7 @@ describe('WelcomeConfigureComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [WelcomeConfigureComponent, ImageDialogComponent],
+      declarations: [WelcomeConfigureComponent, ImageCreateComponent],
       imports: [
         HttpClientTestingModule,
         TranslateModule.forRoot({
@@ -174,16 +174,16 @@ describe('WelcomeConfigureComponent', () => {
     const dElement = fixture.debugElement
     const openDialogButton = dElement.query(By.css('.new-image-card'))
     expect(openDialogButton).toBeTruthy()
-    expect(component.displayImageDialog).toBeFalsy()
+    expect(component.displayCreateDialog).toBeFalsy()
     openDialogButton.nativeElement.click()
     fixture.detectChanges()
-    expect(component.displayImageDialog).toBeTruthy()
+    expect(component.displayCreateDialog).toBeTruthy()
 
     const dialog = dElement.nativeElement.querySelector('p-dialog')
     expect(dialog.attributes.getNamedItem('ng-reflect-visible').value).toBeTruthy()
     const closeButton = dElement.query(By.css('.p-dialog-header-close'))
     closeButton.nativeElement.click()
-    component.onCloseDialog(true)
+    component.onCloseCreateDialog(true)
     fixture.detectChanges()
 
     const dialogAfterChange = dElement.nativeElement.querySelector('p-dialog')

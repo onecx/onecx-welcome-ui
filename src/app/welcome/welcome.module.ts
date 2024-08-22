@@ -2,6 +2,8 @@ import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } from '@angular/cor
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { RouterModule, Routes } from '@angular/router'
+import { CardModule } from 'primeng/card'
+import { FileUploadModule } from 'primeng/fileupload'
 
 import { addInitializeModuleGuard, InitializeModuleGuard, PortalCoreModule } from '@onecx/portal-integration-angular'
 import { SharedModule } from '../shared/shared.module'
@@ -9,9 +11,7 @@ import { SharedModule } from '../shared/shared.module'
 import { WelcomeOverviewComponent } from './welcome-overview/welcome-overview.component'
 import { WelcomeConfigureComponent } from './welcome-configure/welcome-configure.component'
 import { ImageDetailComponent } from './welcome-configure/image-detail/image-detail.component'
-import { CardModule } from 'primeng/card'
-import { ImageDialogComponent } from './welcome-configure/image-dialog/image-dialog.component'
-import { FileUploadModule } from 'primeng/fileupload'
+import { ImageCreateComponent } from './welcome-configure/image-create/image-create.component'
 
 const routes: Routes = [
   {
@@ -26,7 +26,7 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  declarations: [WelcomeOverviewComponent, WelcomeConfigureComponent, ImageDialogComponent, ImageDetailComponent],
+  declarations: [WelcomeOverviewComponent, WelcomeConfigureComponent, ImageCreateComponent, ImageDetailComponent],
   imports: [
     CommonModule,
     FormsModule,
