@@ -1,4 +1,3 @@
----
 openapi: 3.0.3
 info:
   title: onecx-welcome-bff
@@ -12,7 +11,8 @@ info:
 servers:
   - url: 'http://onecx-welcome-bff:8080'
 tags:
-  - name: OneCX Welcome BFF
+  - name: imagesInternal
+  - name: announcements
 paths:
   /images/info/{id}:
     get:
@@ -240,6 +240,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /announcements/search:
+    post:
+      x-onecx:
+        permissions:
+          announcement:
+            - read
+      tags:
+        - announcements
+      description: search announcements by criteria
+      operationId: searchAnnouncementsByCriteria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementSearchCriteria'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnouncementPageResult'
+        '400':
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
 components:
   schemas:
     ImageDataResponse:
@@ -300,6 +329,95 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ImageInfo'
+    Announcement:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        type:
+          $ref: '#/components/schemas/Type'
+        priority:
+          $ref: '#/components/schemas/Priority'
+        status:
+          $ref: '#/components/schemas/Status'
+        startDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        endDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        productName:
+          type: string
+    AnnouncementPageResult:
+      description: PageResult  for Announcements
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/Announcement'
+    AnnouncementSearchCriteria:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/Type'
+        priority:
+          $ref: '#/components/schemas/Priority'
+        status:
+          $ref: '#/components/schemas/Status'
+        startDateFrom:
+          $ref: '#/components/schemas/OffsetDateTime'
+        startDateTo:
+          $ref: '#/components/schemas/OffsetDateTime'
+        endDateFrom:
+          $ref: '#/components/schemas/OffsetDateTime'
+        endDateTo:
+          $ref: '#/components/schemas/OffsetDateTime'
+        productName:
+          type: string
+        title:
+          type: string
+        workspaceName:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    Priority:
+      enum:
+        - IMPORTANT
+        - NORMAL
+        - LOW
+      type: string
+    Status:
+      enum:
+        - ACTIVE
+        - INACTIVE
+      type: string
+    Type:
+      enum:
+        - EVENT
+        - INFO
+        - SYSTEM_MAINTENANCE
+      type: string
     OffsetDateTime:
       format: date-time
       type: string

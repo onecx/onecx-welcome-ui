@@ -11,5 +11,5 @@
   },
   "files": ["src/test.ts", "src/polyfills.ts"],
   "exclude": ["src/app/shared/generated/**/*", "node_modules"],
-  "include": ["**/*.spec.ts", "**/*.d.ts", "src/app/remotes/announcement-list-active/announcement-list-active.component.spec.ts"]
+  "include": ["**/*.spec.ts", "**/*.d.ts"]
 }
