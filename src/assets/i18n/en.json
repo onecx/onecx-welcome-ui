@@ -7,7 +7,8 @@
       "YES.TOOLTIP": "Proceed with the action"
     },
     "VISIBILITY": {
-      "TOOLTIP": "Change visiblity",
+      "TOOLTIP_MAKE_VISIBLE": "Make picture visible on the welcome screen",
+      "TOOLTIP_MAKE_INVISIBLE": "Make picture invisible on the welcome screen",
       "SUCCESS": "Visibility successfully changed",
       "ERROR": "Visibility could not be updated"
     },

@@ -1,12 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, OnInit } from '@angular/core'
-import {
-  AppStateService,
-  Portal,
-  PortalMessageService,
-  UserProfile,
-  UserService
-} from '@onecx/portal-integration-angular'
+import { Workspace } from '@onecx/integration-interface'
+import { AppStateService, PortalMessageService, UserProfile, UserService } from '@onecx/portal-integration-angular'
 import { Observable, Subscription, timer } from 'rxjs'
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
@@ -24,7 +19,7 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 export class WelcomeOverviewComponent implements OnInit {
   readonly CAROUSEL_SPEED: number = 5000
   readonly permission: string = 'BASE_PORTAL#SHOW'
-  workspace: Portal | undefined
+  workspace: Workspace | undefined
   currentSlide = -1
   public helpArticleId = 'PAGE_WELCOME'
   user$: Observable<UserProfile>
@@ -39,17 +34,17 @@ export class WelcomeOverviewComponent implements OnInit {
     private imageService: ImagesInternalAPIService,
     private msgService: PortalMessageService
   ) {
-    this.workspace = this.appStateService.currentWorkspace$.getValue()
     this.user$ = this.userService.profile$.asObservable()
   }
 
   ngOnInit(): void {
+    this.workspace = this.appStateService.currentWorkspace$.getValue()
     this.fetchImageInfos()
   }
 
   public fetchImageInfos() {
     // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
+    this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.workspaceName! }).subscribe({
       next: (data) => {
         this.imageInfos = this.sortAndFilterData(data)
         this.fetchImageData()
