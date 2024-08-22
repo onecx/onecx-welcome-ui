@@ -51,8 +51,8 @@
     "TITLE": "Hallo"
   },
   "DETAIL": {
-    "TITLE": "Detaillierte Ansicht",
-    "TOOLTIP": "Klicken, um detaillierte Ansicht des Bilds zu sehen"
+    "TITLE": "Vergrößerte Ansicht",
+    "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bilds zu sehen"
   },
   "GENERAL": {
     "CLOSE": "Schließen",
