@@ -30,7 +30,7 @@
             [id]="'wc_card_list_' + i + '_image'"
             [alt]="'image-' + i"
             [src]="this.buildImageSrc(info)"
-            (click)="this.displayDetailDialog = true"
+            (click)="this.displayDetailDialog = true; currentImage = i"
             class="w-full h-13rem"
             style="_object-fit: cover; cursor: pointer"
             [aria-label]="'DETAIL.TOOLTIP' | translate"
@@ -124,4 +124,5 @@
   (hideDialogAndChanged)="onCloseDetailDialog()"
   [images]="images"
   [imageInfos]="imageInfos"
+  [imageIndex]="currentImage"
 ></app-image-detail>

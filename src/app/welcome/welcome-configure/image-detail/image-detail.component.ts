@@ -12,17 +12,13 @@ export class ImageDetailComponent {
   @Input() public imageInfoCount: number = 0
   @Input() public images: ImageDataResponse[] = []
   @Input() public imageInfos: ImageInfo[] = []
+  @Input() public imageIndex = 0
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
 
   public isLoading = false
-  autoResize!: boolean
   selectedFile: any
   uploadDisabled: boolean = false
   currentWorkspaceName: string = ''
-
-  constructor() {
-    this.autoResize = true
-  }
 
   public buildImageSrc(imageInfo: ImageInfo) {
     const currentImage = this.images.find((image) => {

@@ -10,14 +10,14 @@
   [style]="{ width: '70vw' }"
   [showHeader]="true"
 >
-  <p-carousel [value]="imageInfos" [numVisible]="1" [numScroll]="1">
-    <ng-template let-info pTemplate="item">
+  <p-carousel [value]="imageInfos" [numVisible]="1" [numScroll]="1" [page]="imageIndex">
+    <ng-template let-info let-i="index" pTemplate="item">
       <div class="border-1 surface-border border-round m-2 p-3">
         <div class="mb-3">
           <div class="relative mx-auto">
             <img
               [src]="this.buildImageSrc(info)"
-              [alt]="'image'"
+              [alt]="'image' + i"
               class="w-full border-round"
               [aria-label]="'DETAIL.TOOLTIP' | translate"
               [pTooltip]="'DETAIL.TOOLTIP' | translate"

@@ -41,7 +41,10 @@
               [autoResize]="true"
               [chooseLabel]="'ACTIONS.CREATE.SELECT' | translate"
               appendTo="body"
-              [title]="'ACTIONS.CREATE.SELECT' | translate"
+              [aria-label]="'ACTIONS.CREATE.SELECT' | translate"
+              [pTooltip]="'ACTIONS.CREATE.SELECT' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
             ></p-fileUpload>
           </span>
         </div>
@@ -56,7 +59,10 @@
               rows="1"
               [autoResize]="true"
               appendTo="body"
-              [title]="'ACTIONS.CREATE.URL' | translate"
+              [aria-label]="'ACTIONS.CREATE.URL' | translate"
+              [pTooltip]="'ACTIONS.CREATE.URL' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
             />
             <label for="image_form_url"> {{ 'ACTIONS.CREATE.URL' | translate }} </label>
           </span>
@@ -81,6 +87,7 @@
         (onClick)="onDialogHide()"
         icon="pi pi-times"
         [label]="'GENERAL.CANCEL' | translate"
+        [aria-label]="'GENERAL.TOOLTIPS.CANCEL' | translate"
         [pTooltip]="'GENERAL.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
@@ -91,6 +98,7 @@
         icon="pi pi-save"
         [disabled]="!formGroup.valid"
         [label]="'GENERAL.SAVE' | translate"
+        [aria-label]="'GENERAL.TOOLTIPS.SAVE' | translate"
         [pTooltip]="'GENERAL.TOOLTIPS.SAVE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
