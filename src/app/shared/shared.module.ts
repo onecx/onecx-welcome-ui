@@ -7,6 +7,7 @@ import { provideErrorTailorConfig } from '@ngneat/error-tailor'
 
 import { AutoCompleteModule } from 'primeng/autocomplete'
 import { CalendarModule } from 'primeng/calendar'
+import { CarouselModule } from 'primeng/carousel'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { ConfirmPopupModule } from 'primeng/confirmpopup'
 import { ConfirmationService } from 'primeng/api'
@@ -29,6 +30,7 @@ import { LabelResolver } from './label.resolver'
   imports: [
     AutoCompleteModule,
     CalendarModule,
+    CarouselModule,
     ColorSketchModule,
     CommonModule,
     ConfirmDialogModule,
@@ -51,6 +53,7 @@ import { LabelResolver } from './label.resolver'
   exports: [
     AutoCompleteModule,
     CalendarModule,
+    CarouselModule,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,

@@ -4,18 +4,19 @@ import { Subscription } from 'rxjs'
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
-  selector: 'app-welcome-edit',
-  templateUrl: './welcome-edit.component.html',
-  styleUrls: ['./welcome-edit.component.scss']
+  selector: 'app-welcome-configure',
+  templateUrl: './welcome-configure.component.html',
+  styleUrls: ['./welcome-configure.component.scss']
 })
-export class WelcomeEditComponent implements OnInit {
+export class WelcomeConfigureComponent implements OnInit {
   workspace: Portal | undefined
-  currentSlide = 0
+  public currentImage = 0
   public helpArticleId = 'PAGE_WELCOME_EDIT'
   subscription: Subscription | undefined
   images: ImageDataResponse[] = []
   imageInfos: ImageInfo[] = []
-  public displayImageDialog = false
+  public displayCreateDialog = false
+  public displayDetailDialog = false
   selectedImageInfo: ImageInfo | undefined
   selectedImageData: ImageDataResponse | undefined
   isReordered: boolean = false
@@ -155,10 +156,14 @@ export class WelcomeEditComponent implements OnInit {
     })
   }
 
-  public onCloseDialog(refresh: boolean): void {
-    this.displayImageDialog = false
+  public onCloseCreateDialog(refresh: boolean): void {
+    this.displayCreateDialog = false
     if (refresh) {
       this.fetchImageInfos()
     }
+  }
+
+  public onCloseDetailDialog(): void {
+    this.displayDetailDialog = false
   }
 }

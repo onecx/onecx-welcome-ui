@@ -15,14 +15,14 @@ import { DialogModule } from 'primeng/dialog'
 import { InputSwitchModule } from 'primeng/inputswitch'
 import { of, throwError } from 'rxjs'
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
-import { ImageDialogComponent } from './image-dialog.component'
+import { ImageCreateComponent } from './image-create.component'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { By } from '@angular/platform-browser'
 import { ButtonModule } from 'primeng/button'
 
-describe('ImageDialogComponent', () => {
-  let component: ImageDialogComponent
-  let fixture: ComponentFixture<ImageDialogComponent>
+describe('ImageCreateComponent', () => {
+  let component: ImageCreateComponent
+  let fixture: ComponentFixture<ImageCreateComponent>
 
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', [
     'success',
@@ -49,7 +49,7 @@ describe('ImageDialogComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ImageDialogComponent],
+      declarations: [ImageCreateComponent],
       imports: [
         HttpClientTestingModule,
         TranslateModule.forRoot({
@@ -85,9 +85,9 @@ describe('ImageDialogComponent', () => {
   }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ImageDialogComponent)
+    fixture = TestBed.createComponent(ImageCreateComponent)
     component = fixture.componentInstance
-    component.displayDetailDialog = true
+    component.displayCreateDialog = true
     fixture.detectChanges()
   })
   it('should create', () => {
@@ -190,7 +190,7 @@ describe('ImageDialogComponent', () => {
     expect(closeButton).toBeTruthy()
     //spyOn(component, 'onDialogHide').and.callThrough()
     let dialogCloseEvent
-    component.hideDialogAndChanged.subscribe((event) => {
+    component.hideDialogAndChanged.subscribe((event: any) => {
       dialogCloseEvent = event
     })
     expect(dialogCloseEvent).toBeUndefined()

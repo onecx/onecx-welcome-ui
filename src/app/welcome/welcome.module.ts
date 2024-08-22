@@ -2,15 +2,16 @@ import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } from '@angular/cor
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { RouterModule, Routes } from '@angular/router'
+import { CardModule } from 'primeng/card'
+import { FileUploadModule } from 'primeng/fileupload'
 
 import { addInitializeModuleGuard, InitializeModuleGuard, PortalCoreModule } from '@onecx/portal-integration-angular'
 import { SharedModule } from '../shared/shared.module'
 
 import { WelcomeOverviewComponent } from './welcome-overview/welcome-overview.component'
-import { WelcomeEditComponent } from './welcome-edit/welcome-edit.component'
-import { CardModule } from 'primeng/card'
-import { ImageDialogComponent } from './welcome-edit/image-dialog/image-dialog.component'
-import { FileUploadModule } from 'primeng/fileupload'
+import { WelcomeConfigureComponent } from './welcome-configure/welcome-configure.component'
+import { ImageDetailComponent } from './welcome-configure/image-detail/image-detail.component'
+import { ImageCreateComponent } from './welcome-configure/image-create/image-create.component'
 
 const routes: Routes = [
   {
@@ -19,13 +20,13 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'edit',
-    component: WelcomeEditComponent,
+    path: 'configure',
+    component: WelcomeConfigureComponent,
     pathMatch: 'full'
   }
 ]
 @NgModule({
-  declarations: [WelcomeOverviewComponent, WelcomeEditComponent, ImageDialogComponent],
+  declarations: [WelcomeOverviewComponent, WelcomeConfigureComponent, ImageCreateComponent, ImageDetailComponent],
   imports: [
     CommonModule,
     FormsModule,

@@ -5,12 +5,12 @@ import { Action, AppStateService, PortalMessageService } from '@onecx/portal-int
 import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
-  selector: 'app-image-dialog',
-  templateUrl: './image-dialog.component.html',
-  styleUrls: ['./image-dialog.component.scss']
+  selector: 'app-image-create',
+  templateUrl: './image-create.component.html',
+  styleUrls: ['./image-create.component.scss']
 })
-export class ImageDialogComponent implements OnInit {
-  @Input() public displayDetailDialog = false
+export class ImageCreateComponent implements OnInit {
+  @Input() public displayCreateDialog = false
   @Input() public imageInfoCount: number = 0
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
   @ViewChild('fileUpload', { static: true }) fileUpload: any
@@ -46,7 +46,7 @@ export class ImageDialogComponent implements OnInit {
     this.uploadDisabled = disable
   }
   public onDialogHide() {
-    this.displayDetailDialog = false
+    this.displayCreateDialog = false
     this.hideDialogAndChanged.emit(false)
   }
   imageSrcValidator(): ValidatorFn {

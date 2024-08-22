@@ -50,6 +50,10 @@
   "LANDING": {
     "TITLE": "Hallo"
   },
+  "DETAIL": {
+    "TITLE": "Vergrößerte Ansicht",
+    "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bilds zu sehen"
+  },
   "GENERAL": {
     "CLOSE": "Schließen",
     "CANCEL": "Abbrechen",
@@ -60,12 +64,12 @@
     "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
     "TOOLTIPS": {
       "CLOSE": "Dialog verlassen",
-      "CANCEL": "Die Aktion abbrechen",
+      "CANCEL": "Aktion abbrechen",
       "CANCEL_EDIT": "Den Änderungsmodus verlassen",
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
       "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
       "EDIT": "Hintergrundbilder hochladen und bearbeiten",
-      "SAVE": "Die Änderungen speichern",
+      "SAVE": "Änderungen speichern",
       "BACK": "Zurück zur Startseite"
     },
     "BACK": "Zurück"
