@@ -5,9 +5,7 @@ const config = withModuleFederationPlugin({
   name: 'onecx-welcome-ui',
   filename: 'remoteEntry.js',
   exposes: {
-    './OneCXWelcomeModule': 'src/bootstrap.ts',
-    './OneCXAnnouncementListActiveComponent':
-      'src/app/remotes/announcement-list-active/announcement-list-active.component.bootstrap.ts'
+    './OneCXWelcomeModule': 'src/bootstrap.ts'
   },
   shared: share({
     '@angular/core': { requiredVersion: 'auto' },
@@ -38,7 +36,6 @@ const config = withModuleFederationPlugin({
     '@onecx/angular-auth': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/angular-integration-interface': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/angular-webcomponents': { requiredVersion: 'auto', includeSecondaries: true },
-    '@onecx/angular-remote-components': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/integration-interface': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/keycloak-auth': { requiredVersion: 'auto', includeSecondaries: true },
     '@onecx/portal-integration-angular': { requiredVersion: 'auto', includeSecondaries: true },
