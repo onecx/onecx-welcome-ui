@@ -48,7 +48,11 @@
                 class="visibilityChange"
                 (onClick)="this.updateVisibility(info)"
                 [aria-label]="'ACTIONS.VISIBILITY.TOOLTIP' | translate"
-                [pTooltip]="'ACTIONS.VISIBILITY.TOOLTIP' | translate"
+                [pTooltip]="
+                  info.visible
+                    ? ('ACTIONS.VISIBILITY.TOOLTIP_MAKE_INVISIBLE' | translate)
+                    : ('ACTIONS.VISIBILITY.TOOLTIP_MAKE_VISIBLE' | translate)
+                "
                 tooltipPosition="bottom"
                 tooltipEvent="hover"
               ></p-button>

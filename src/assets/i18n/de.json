@@ -7,7 +7,8 @@
       "YES.TOOLTIP": "Fortfahren mit der Aktion"
     },
     "VISIBILITY": {
-      "TOOLTIP": "Sichtbarkeit ändern",
+      "TOOLTIP_MAKE_VISIBLE": "Auf dem Startbildschirm sichtbar machen",
+      "TOOLTIP_MAKE_INVISIBLE": "Auf dem Startbildschirm unsichtbar machen",
       "SUCCESS": "Sichtbarkeit erfolgreich geändert",
       "ERROR": "Sichtbarkeit konnte nicht geändert werden"
     },

@@ -10,8 +10,8 @@
             [src]="this.buildImageSrc(slide)"
             [alt]="slide.imageId"
             [title]="slide.imageId"
-            [aria-label]="'GENERAL.TOOLTIPS .EDIT' | translate"
-            [pTooltip]="'GENERAL.TOOLTIPS .EDIT' | translate"
+            [aria-label]="'GENERAL.TOOLTIPS.EDIT' | translate"
+            [pTooltip]="'GENERAL.TOOLTIPS.EDIT' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
           />
@@ -25,7 +25,7 @@
           {{ 'LANDING.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
         </div>
         <div class="text-3xl font-light">{{ currentDate | date }}</div>
-        <div class="text-sm mt-1">Workspace: {{ workspace?.portalName }}</div>
+        <div class="text-sm mt-1">Workspace: {{ workspace?.displayName }}</div>
       </div>
       <div>
         <p-button

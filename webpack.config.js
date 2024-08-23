@@ -25,6 +25,10 @@ const config = withModuleFederationPlugin({
       includeSecondaries: true
     },
     '@angular/router': { requiredVersion: 'auto', includeSecondaries: true },
+    '@angular/elements': {
+      requiredVersion: 'auto',
+      includeSecondaries: true
+    },
     rxjs: { requiredVersion: 'auto', includeSecondaries: true },
     '@ngx-translate/core': { requiredVersion: 'auto' },
     '@onecx/accelerator': { requiredVersion: 'auto', includeSecondaries: true },
