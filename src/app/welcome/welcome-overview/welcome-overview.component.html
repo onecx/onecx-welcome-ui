@@ -1,6 +1,16 @@
 <ocx-portal-page helpArticleId="PAGE_WELCOME_VIEW" permission="IMAGE#VIEW">
   <div class="page">
     <div class="layer">
+      <div class="sm:pt-2 pb-2 sm:pb-3 px-3">
+        <ocx-slot
+          *ngIf="isListActiveAnnouncementsComponentDefined$ | async; else changePasswordPlaceholder"
+          name="{{ listActiveSlotName }}"
+        >
+        </ocx-slot>
+        <ng-template #changePasswordPlaceholder>
+          <div class="font-bold mt-2 mb-3">{{ 'PASSWORD.NOT_AVAILABLE' | translate }}</div>
+        </ng-template>
+      </div>
       <div class="carousel">
         <ng-container *ngFor="let slide of imageInfos; let i = index">
           <img
