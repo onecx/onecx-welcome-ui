@@ -24,10 +24,12 @@ import { TableModule } from 'primeng/table'
 import { ToastModule } from 'primeng/toast'
 
 import { LabelResolver } from './label.resolver'
+import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 
 @NgModule({
   declarations: [],
   imports: [
+    AngularRemoteComponentsModule,
     AutoCompleteModule,
     CalendarModule,
     CarouselModule,
@@ -51,6 +53,7 @@ import { LabelResolver } from './label.resolver'
     TranslateModule
   ],
   exports: [
+    AngularRemoteComponentsModule,
     AutoCompleteModule,
     CalendarModule,
     CarouselModule,

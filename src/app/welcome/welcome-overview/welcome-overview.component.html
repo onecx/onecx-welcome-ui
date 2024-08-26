@@ -3,12 +3,12 @@
     <div class="layer">
       <div class="sm:pt-2 pb-2 sm:pb-3 px-3">
         <ocx-slot
-          *ngIf="isListActiveAnnouncementsComponentDefined$ | async; else changePasswordPlaceholder"
+          *ngIf="isListActiveAnnouncementsComponentDefined$ | async; else listActivePlaceholder"
           name="{{ listActiveSlotName }}"
         >
         </ocx-slot>
-        <ng-template #changePasswordPlaceholder>
-          <div class="font-bold mt-2 mb-3">{{ 'PASSWORD.NOT_AVAILABLE' | translate }}</div>
+        <ng-template #listActivePlaceholder>
+          <div class="font-bold mt-2 mb-3">{{ 'LIST_ACTIVE.NOT_AVAILABLE' | translate }}</div>
         </ng-template>
       </div>
       <div class="carousel">
