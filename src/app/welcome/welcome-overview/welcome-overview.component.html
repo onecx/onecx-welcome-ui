@@ -1,57 +1,43 @@
 <ocx-portal-page helpArticleId="PAGE_WELCOME_VIEW" permission="IMAGE#VIEW">
-  <div class="page">
-    <div class="layer">
-      <div class="carousel">
-        <ng-container *ngFor="let slide of imageInfos; let i = index">
-          <img
-            *ngIf="i === currentSlide"
-            class="slide"
-            @carouselAnimation
-            [src]="this.buildImageSrc(slide)"
-            [alt]="slide.imageId"
-            [title]="slide.imageId"
-            [aria-label]="'GENERAL.TOOLTIPS.EDIT' | translate"
-            [pTooltip]="'GENERAL.TOOLTIPS.EDIT' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          />
-        </ng-container>
-        <div class="overlay"></div>
+  <ng-container *ngFor="let slide of imageInfos; let i = index">
+    <img
+      *ngIf="i === currentSlide"
+      class="slide absolute top-0 left-0 w-full h-full"
+      @carouselAnimation
+      [src]="this.buildImageSrc(slide)"
+      [alt]="slide.imageId"
+      [title]="slide.imageId"
+    />
+  </ng-container>
+
+  <!-- INFO -->
+  <div class="info absolute overflow-hidden w-11 flex flex-row flex-wrap justify-content-between text-white">
+    <div>
+      <div id="wc_overview_info_title" class="mb-4 text-6xl font-light">
+        {{ 'LANDING.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
       </div>
+      <div id="wc_overview_info_date" class="text-3xl font-light">{{ currentDate | date }}</div>
+      <div id="wc_overview_info_workspace" class="text-sm mt-1">Workspace: {{ workspace?.displayName }}</div>
     </div>
-    <div class="relative mt-3 px-4 flex flex-row flex-wrap justify-content-between text-white">
-      <div>
-        <div class="mb-4 text-6xl font-light">
-          {{ 'LANDING.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
-        </div>
-        <div class="text-3xl font-light">{{ currentDate | date }}</div>
-        <div class="text-sm mt-1">Workspace: {{ workspace?.displayName }}</div>
-      </div>
-      <div>
-        <p-button
-          ocxIfPermission="'IMAGE#EDIT'"
-          id="wc_overview_button_edit"
-          styleClass="p-button-text text-white"
-          icon="pi pi-pencil"
-          [text]="true"
-          [routerLink]="['./configure']"
-          [label]="'GENERAL.EDIT' | translate"
-          [aria-label]="'GENERAL.TOOLTIPS.EDIT' | translate"
-          [pTooltip]="'GENERAL.TOOLTIPS.EDIT' | translate"
-          tooltipPosition="top"
-          tooltipEvent="hover"
-        ></p-button>
-      </div>
+    <div>
+      <p-button
+        ocxIfPermission="'IMAGE#EDIT'"
+        id="wc_overview_info_configure"
+        styleClass="p-button-text text-white"
+        icon="pi pi-pencil"
+        [text]="true"
+        [routerLink]="['./configure']"
+        [label]="'GENERAL.CONFIGURE' | translate"
+        [aria-label]="'GENERAL.TOOLTIPS.CONFIGURE' | translate"
+        [pTooltip]="'GENERAL.TOOLTIPS.CONFIGURE' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></p-button>
     </div>
   </div>
-  <div class="sm:pt-2 pb-2 sm:pb-3 px-3">
-    <ocx-slot
-      *ngIf="isListActiveAnnouncementsComponentDefined$ | async; else listActivePlaceholder"
-      name="{{ listActiveSlotName }}"
-    >
-    </ocx-slot>
-    <ng-template #listActivePlaceholder>
-      <div class="font-bold mt-2 mb-3">{{ 'LIST_ACTIVE.NOT_AVAILABLE' | translate }}</div>
-    </ng-template>
+
+  <!-- SLOT: Announcements -->
+  <div class="announcements absolute w-5 border-round-lg border-solid border-white">
+    <ocx-slot *ngIf="isListActiveAnnouncementsComponentDefined$ | async" name="{{ listActiveSlotName }}"> </ocx-slot>
   </div>
 </ocx-portal-page>

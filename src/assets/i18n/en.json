@@ -61,7 +61,7 @@
     "SAVE": "Save",
     "SAVE_ORDER": "Save order",
     "VIEW": "View",
-    "EDIT": "Configure",
+    "CONFIGURE": "Configure",
     "IMAGES.NOT_FOUND": "Images could not be loaded",
     "TOOLTIPS": {
       "CLOSE": "Leave dialog",
@@ -69,7 +69,7 @@
       "CANCEL_EDIT": "Cancel edit mode",
       "CANCEL_AND_CLOSE": "Cancel and close dialog",
       "CANCEL_WITHOUT_SAVE": "Cancel action without saving",
-      "EDIT": "Upload and Editing of Background Images",
+      "CONFIGURE": "Upload and Editing of Background Images",
       "SAVE": "Save changes",
       "BACK": "Back to Start page"
     },

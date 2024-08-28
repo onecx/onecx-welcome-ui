@@ -61,7 +61,7 @@
     "SAVE": "Speichern",
     "SAVE_ORDER": "Anordnung speichern",
     "VIEW": "Ansehen",
-    "EDIT": "Konfigurieren",
+    "CONFIGURE": "Konfigurieren",
     "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
     "TOOLTIPS": {
       "CLOSE": "Dialog verlassen",
@@ -69,7 +69,7 @@
       "CANCEL_EDIT": "Den Änderungsmodus verlassen",
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
       "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
-      "EDIT": "Hintergrundbilder hochladen und bearbeiten",
+      "CONFIGURE": "Hintergrundbilder hochladen und bearbeiten",
       "SAVE": "Änderungen speichern",
       "BACK": "Zurück zur Startseite"
     },
