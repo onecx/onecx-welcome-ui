@@ -18,7 +18,9 @@ import { AppEntrypointComponent } from './app-entrypoint.component'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { Configuration } from './shared/generated'
+import { SharedModule } from 'primeng/api'
 import { environment } from 'src/environments/environment'
+import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 
 function apiConfigProvider(configService: ConfigurationService, appStateService: AppStateService) {
   return new PortalApiConfiguration(Configuration, environment.apiPrefix, configService, appStateService)
@@ -47,7 +49,8 @@ const routes: Routes = [
         deps: [HttpClient, AppStateService]
       },
       missingTranslationHandler: { provide: MissingTranslationHandler, useClass: PortalMissingTranslationHandler }
-    })
+    }),
+    SharedModule
   ],
   exports: [],
   providers: [
@@ -58,7 +61,11 @@ const routes: Routes = [
       multi: true,
       deps: [Router, AppStateService]
     },
-    { provide: Configuration, useFactory: apiConfigProvider, deps: [ConfigurationService, AppStateService] }
+    { provide: Configuration, useFactory: apiConfigProvider, deps: [ConfigurationService, AppStateService] },
+    {
+      provide: SLOT_SERVICE,
+      useExisting: SlotService
+    }
   ],
   schemas: []
 })

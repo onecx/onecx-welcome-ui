@@ -1,10 +1,12 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, OnInit } from '@angular/core'
+import { Observable, Subscription, timer } from 'rxjs'
+
 import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, PortalMessageService, UserProfile, UserService } from '@onecx/portal-integration-angular'
-import { Observable, Subscription, timer } from 'rxjs'
-import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
+import { SlotService } from '@onecx/angular-remote-components'
 
+import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 @Component({
   selector: 'app-welcome-overview',
   templateUrl: './welcome-overview.component.html',
@@ -27,14 +29,20 @@ export class WelcomeOverviewComponent implements OnInit {
   subscription: Subscription | undefined
   images: ImageDataResponse[] = []
   imageInfos: ImageInfo[] = []
+  public isListActiveAnnouncementsComponentDefined$: Observable<boolean>
+  public listActiveSlotName = 'onecx-welcome-list-active'
 
   constructor(
     private appStateService: AppStateService,
     private userService: UserService,
     private imageService: ImagesInternalAPIService,
-    private msgService: PortalMessageService
+    private msgService: PortalMessageService,
+    private readonly slotService: SlotService
   ) {
     this.user$ = this.userService.profile$.asObservable()
+    this.isListActiveAnnouncementsComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(
+      this.listActiveSlotName
+    )
   }
 
   ngOnInit(): void {

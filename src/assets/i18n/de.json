@@ -86,5 +86,8 @@
       "INTERNAL_ERROR": "Interner Fehler",
       "MISSING_IMG_SRC": "Laden Sie ein Bild hoch oder geben sie eine externe Bild-URL an"
     }
+  },
+  "LIST_ACTIVE": {
+    "NOT_AVAILABLE": "Remote-Komponente zum Auflisten aktiver Neuigkeiten nicht verfügbar"
   }
 }

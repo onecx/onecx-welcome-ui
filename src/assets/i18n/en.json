@@ -86,5 +86,8 @@
       "INTERNAL_ERROR": "Internal error",
       "MISSING_IMG_SRC": "Upload an Image or add an external URL."
     }
+  },
+  "LIST_ACTIVE": {
+    "NOT_AVAILABLE": "Remote component to list active Announcements not available"
   }
 }
