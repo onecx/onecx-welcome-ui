@@ -53,6 +53,7 @@
     "TITLE": "Hello"
   },
   "DETAIL": {
+    "IMAGE": "Picture",
     "TITLE": "Enlarged view",
     "TOOLTIP": "Click for an enlarged view of the image"
   },

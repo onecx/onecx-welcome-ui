@@ -48,13 +48,13 @@ export class WelcomeOverviewComponent implements OnInit {
     this.fetchImageData()
   }
 
-  public fetchImageData() {
+  private fetchImageData() {
     if (this.workspace)
       this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName }).subscribe({
         next: (data) => {
           this.imageData = data
-          //.filter((img) => img.visible === true)
-          //.sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+            .filter((img) => img.visible === true)
+            .sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
           this.fetchImages()
         }
       })
@@ -73,7 +73,6 @@ export class WelcomeOverviewComponent implements OnInit {
         })
       }
     })
-    this.initGallery()
   }
 
   public buildImageSrc(imageInfo: ImageInfo) {

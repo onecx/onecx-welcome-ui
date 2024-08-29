@@ -53,6 +53,7 @@
     "TITLE": "Hallo"
   },
   "DETAIL": {
+    "IMAGE": "Bild",
     "TITLE": "Vergrößerte Ansicht",
     "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bilds zu sehen"
   },

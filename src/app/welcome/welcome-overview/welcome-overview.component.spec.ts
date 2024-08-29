@@ -95,6 +95,7 @@ describe('WelcomeOverviewComponent', () => {
       of({ imageId: '12345', imageData: new Blob() } as ImageDataResponse),
       of({ imageId: '123456', imageData: new Blob() } as ImageDataResponse)
     )
+    // component.workspace = 'w1'
     component.imageData = []
 
     component.ngOnInit()
