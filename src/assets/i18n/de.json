@@ -49,7 +49,7 @@
     }
   },
   "LANDING": {
-    "SLIDE": "Hintergrundbild",
+    "IMAGE": "Hintergrundbild",
     "TITLE": "Hallo"
   },
   "DETAIL": {

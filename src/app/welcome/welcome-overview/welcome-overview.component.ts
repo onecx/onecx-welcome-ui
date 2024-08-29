@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, OnInit } from '@angular/core'
-import { Observable, Subscription, timer } from 'rxjs'
+import { catchError, map, Observable, of, Subject, Subscription, takeUntil, tap, timer } from 'rxjs'
 
 import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, PortalMessageService, UserProfile, UserService } from '@onecx/portal-integration-angular'
@@ -19,14 +19,16 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
   ]
 })
 export class WelcomeOverviewComponent implements OnInit {
+  private readonly destroy$ = new Subject()
+  public loading = true
   readonly CAROUSEL_SPEED: number = 15000
   workspace: Workspace | undefined
-  currentSlide = -1
+  currentSlide = 0
   user$: Observable<UserProfile>
   currentDate = new Date()
   subscription: Subscription | undefined
   images: ImageDataResponse[] = []
-  imageData: ImageInfo[] = []
+  public imageData$!: Observable<ImageInfo[]>
   public isAnnouncementListActiveComponentAvailable$: Observable<boolean>
   public listActiveSlotName = 'onecx-welcome-list-active'
 
@@ -45,50 +47,58 @@ export class WelcomeOverviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.workspace = this.appStateService.currentWorkspace$.getValue()
-    this.fetchImageData()
+    this.getImageData()
   }
 
-  private fetchImageData() {
+  private getImageData(): void {
+    this.loading = true
     if (this.workspace)
-      this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName }).subscribe({
-        next: (data) => {
-          this.imageData = data
-            .filter((img) => img.visible === true)
-            .sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
-          this.fetchImages()
-        }
-      })
+      this.imageData$ = this.imageService
+        .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
+        .pipe(
+          tap((x) => {
+            console.log(x)
+          }),
+          map((images) => {
+            this.fetchImages(images) // get images
+            return images
+              .filter((img) => img.visible === true)
+              .sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+          }),
+          catchError((err) => {
+            console.error('getAllImageInfosByWorkspaceName():', err)
+            return of([] as ImageInfo[])
+          })
+        )
+        .pipe(takeUntil(this.destroy$))
   }
 
-  public fetchImages() {
-    this.imageData.forEach((info) => {
+  public fetchImages(imageData: ImageInfo[]): void {
+    if (this.images.length > 0) return
+    imageData.forEach((info) => {
       if (info.imageId) {
         this.imageService.getImageById({ id: info.imageId }).subscribe({
-          next: (imageData) => {
-            this.images.push(imageData)
-          },
-          error: () => {
-            this.msgService.error({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
+          next: (img) => {
+            this.images.push(img)
+            if (this.images.length === imageData.length) {
+              this.subscription = timer(0, this.CAROUSEL_SPEED).subscribe(() => {
+                this.currentSlide = ++this.currentSlide % this.images.length
+              })
+              this.loading = false
+            }
           }
         })
       }
     })
   }
 
-  public buildImageSrc(imageInfo: ImageInfo) {
-    const currentImage = this.images.find((image) => {
+  public buildImageSrc(imageInfo: ImageInfo): string | undefined {
+    if (this.loading || this.images.length === 0) return undefined
+    let data: string | undefined = undefined
+    const existingImage = this.images.find((image) => {
       return image.imageId === imageInfo.imageId
     })
-    if (currentImage) {
-      return 'data:' + currentImage.mimeType + ';base64,' + currentImage.imageData
-    } else {
-      return imageInfo.url
-    }
-  }
-
-  private initGallery(): void {
-    this.subscription = timer(0, this.CAROUSEL_SPEED).subscribe(() => {
-      this.currentSlide = ++this.currentSlide % this.imageData.length
-    })
+    data = existingImage ? 'data:' + existingImage.mimeType + ';base64,' + existingImage.imageData : imageInfo.url
+    return data
   }
 }

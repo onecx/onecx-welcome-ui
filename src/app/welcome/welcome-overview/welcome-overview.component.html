@@ -2,14 +2,17 @@
   <!-- Default background if no image can be displayed -->
   <div class="background absolute surface-400 top-0 left-0 w-full h-full"></div>
 
-  <ng-container *ngFor="let slide of imageData; let i = index">
+  <!-- Bachground Image -->
+  <!-- 
+  -->
+  <ng-container *ngFor="let image of imageData$ | async; let i = index">
     <img
-      *ngIf="i === currentSlide"
+      *ngIf="!loading && i === currentSlide"
       class="slide absolute top-0 left-0 w-full h-full"
       @carouselAnimation
-      [src]="this.buildImageSrc(slide)"
-      [alt]="'LANDING.SLIDE' | translate"
-      [aria-label]="'LANDING.SLIDE' | translate"
+      [src]="this.buildImageSrc(image)"
+      [alt]="'LANDING.IMAGE' | translate"
+      [aria-label]="'LANDING.IMAGE' | translate"
     />
   </ng-container>
 
