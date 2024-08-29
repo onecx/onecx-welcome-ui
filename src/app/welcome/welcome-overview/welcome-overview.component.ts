@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, OnInit } from '@angular/core'
-import { catchError, map, Observable, of, Subject, Subscription, takeUntil, tap, timer } from 'rxjs'
+import { catchError, map, Observable, of, Subject, Subscription, takeUntil, timer } from 'rxjs'
 
 import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, PortalMessageService, UserProfile, UserService } from '@onecx/portal-integration-angular'
@@ -56,9 +56,6 @@ export class WelcomeOverviewComponent implements OnInit {
       this.imageData$ = this.imageService
         .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
         .pipe(
-          tap((x) => {
-            console.log(x)
-          }),
           map((images) => {
             this.fetchImages(images) // get images
             return images
