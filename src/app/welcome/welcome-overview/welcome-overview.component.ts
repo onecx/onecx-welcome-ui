@@ -45,22 +45,22 @@ export class WelcomeOverviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.workspace = this.appStateService.currentWorkspace$.getValue()
-    this.fetchImageInfos()
+    this.fetchImageData()
   }
 
-  public fetchImageInfos() {
+  public fetchImageData() {
     if (this.workspace)
       this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName }).subscribe({
         next: (data) => {
           this.imageData = data
-            .filter((img) => img.visible === true)
-            .sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
-          this.fetchImageData()
+          //.filter((img) => img.visible === true)
+          //.sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+          this.fetchImages()
         }
       })
   }
 
-  public fetchImageData() {
+  public fetchImages() {
     this.imageData.forEach((info) => {
       if (info.imageId) {
         this.imageService.getImageById({ id: info.imageId }).subscribe({
