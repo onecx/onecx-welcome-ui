@@ -3,8 +3,6 @@
   <div class="background absolute surface-400 top-0 left-0 w-full h-full"></div>
 
   <!-- Bachground Image -->
-  <!-- 
-  -->
   <ng-container *ngFor="let image of imageData$ | async; let i = index">
     <img
       *ngIf="!loading && i === currentSlide"
@@ -45,7 +43,7 @@
   <!-- SLOT: Announcements -->
   <div
     *ngIf="isAnnouncementListActiveComponentAvailable$ | async"
-    class="announcements absolute w-5 surface-200 border-round-lg border-solid border-transparent p-2"
+    class="announcements absolute w-5 max-h-25rem overflow-y-auto border-round-lg border-solid border-2 border-gray-600"
   >
     <ocx-slot [name]="listActiveSlotName"> </ocx-slot>
   </div>
