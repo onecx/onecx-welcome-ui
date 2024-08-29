@@ -49,6 +49,7 @@
     }
   },
   "LANDING": {
+    "SLIDE": "Background Image",
     "TITLE": "Hello"
   },
   "DETAIL": {
@@ -73,13 +74,7 @@
       "SAVE": "Save changes",
       "BACK": "Back to Start page"
     },
-    "BACK": "Zurück"
-  },
-  "BREADCRUMBS": {
-    "CREATE": "New",
-    "DETAILS": "Details",
-    "RELOAD": "Reload",
-    "SWITCH_TO_EDIT_MODE": "Edit"
+    "BACK": "Back"
   },
   "VALIDATION": {
     "ERRORS": {

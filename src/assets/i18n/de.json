@@ -49,6 +49,7 @@
     }
   },
   "LANDING": {
+    "SLIDE": "Hintergrundbild",
     "TITLE": "Hallo"
   },
   "DETAIL": {
@@ -74,12 +75,6 @@
       "BACK": "Zurück zur Startseite"
     },
     "BACK": "Zurück"
-  },
-  "BREADCRUMBS": {
-    "CREATE": "Neu",
-    "DETAILS": "Details",
-    "RELOAD": "Neu Laden",
-    "SWITCH_TO_EDIT_MODE": "Bearbeiten"
   },
   "VALIDATION": {
     "ERRORS": {

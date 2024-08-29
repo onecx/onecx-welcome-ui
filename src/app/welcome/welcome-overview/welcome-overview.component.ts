@@ -19,17 +19,15 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
   ]
 })
 export class WelcomeOverviewComponent implements OnInit {
-  readonly CAROUSEL_SPEED: number = 5000
-  readonly permission: string = 'BASE_PORTAL#SHOW'
+  readonly CAROUSEL_SPEED: number = 15000
   workspace: Workspace | undefined
   currentSlide = -1
-  public helpArticleId = 'PAGE_WELCOME'
   user$: Observable<UserProfile>
   currentDate = new Date()
   subscription: Subscription | undefined
   images: ImageDataResponse[] = []
-  imageInfos: ImageInfo[] = []
-  public isListActiveAnnouncementsComponentDefined$: Observable<boolean>
+  imageData: ImageInfo[] = []
+  public isAnnouncementListActiveComponentAvailable$: Observable<boolean>
   public listActiveSlotName = 'onecx-welcome-list-active'
 
   constructor(
@@ -40,7 +38,7 @@ export class WelcomeOverviewComponent implements OnInit {
     private readonly slotService: SlotService
   ) {
     this.user$ = this.userService.profile$.asObservable()
-    this.isListActiveAnnouncementsComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(
+    this.isAnnouncementListActiveComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(
       this.listActiveSlotName
     )
   }
@@ -51,22 +49,19 @@ export class WelcomeOverviewComponent implements OnInit {
   }
 
   public fetchImageInfos() {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.workspaceName! }).subscribe({
-      next: (data) => {
-        this.imageInfos = this.sortAndFilterData(data)
-        this.fetchImageData()
-      }
-    })
+    if (this.workspace)
+      this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName }).subscribe({
+        next: (data) => {
+          this.imageData = data
+            .filter((img) => img.visible === true)
+            .sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+          this.fetchImageData()
+        }
+      })
   }
 
-  sortAndFilterData(data: ImageInfo[]) {
-    return data
-      .filter((img) => img.visible === true)
-      .sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
-  }
   public fetchImageData() {
-    this.imageInfos.forEach((info) => {
+    this.imageData.forEach((info) => {
       if (info.imageId) {
         this.imageService.getImageById({ id: info.imageId }).subscribe({
           next: (imageData) => {
@@ -94,7 +89,7 @@ export class WelcomeOverviewComponent implements OnInit {
 
   private initGallery(): void {
     this.subscription = timer(0, this.CAROUSEL_SPEED).subscribe(() => {
-      this.currentSlide = ++this.currentSlide % this.imageInfos.length
+      this.currentSlide = ++this.currentSlide % this.imageData.length
     })
   }
 }

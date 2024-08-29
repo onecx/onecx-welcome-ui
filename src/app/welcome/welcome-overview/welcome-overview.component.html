@@ -1,12 +1,15 @@
 <ocx-portal-page helpArticleId="PAGE_WELCOME_VIEW" permission="IMAGE#VIEW">
-  <ng-container *ngFor="let slide of imageInfos; let i = index">
+  <!-- Default background if no image can be displayed -->
+  <div class="background absolute surface-400 top-0 left-0 w-full h-full"></div>
+
+  <ng-container *ngFor="let slide of imageData; let i = index">
     <img
       *ngIf="i === currentSlide"
       class="slide absolute top-0 left-0 w-full h-full"
       @carouselAnimation
       [src]="this.buildImageSrc(slide)"
-      [alt]="slide.imageId"
-      [title]="slide.imageId"
+      [alt]="'LANDING.SLIDE' | translate"
+      [aria-label]="'LANDING.SLIDE' | translate"
     />
   </ng-container>
 
@@ -37,7 +40,10 @@
   </div>
 
   <!-- SLOT: Announcements -->
-  <div class="announcements absolute w-5 border-round-lg border-solid border-white">
-    <ocx-slot *ngIf="isListActiveAnnouncementsComponentDefined$ | async" name="{{ listActiveSlotName }}"> </ocx-slot>
+  <div
+    *ngIf="isAnnouncementListActiveComponentAvailable$ | async"
+    class="announcements absolute w-5 surface-200 border-round-lg border-solid border-transparent p-2"
+  >
+    <ocx-slot [name]="listActiveSlotName"> </ocx-slot>
   </div>
 </ocx-portal-page>
