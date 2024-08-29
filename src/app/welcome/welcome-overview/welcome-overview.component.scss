@@ -1,40 +1,27 @@
-:host {
-  flex-grow: 1;
+.p-carousel.p-component.p-carousel-horizontal {
+  display: none;
 }
 
-.layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.slide {
+  object-fit: cover;
+  z-index: 10;
+}
+.background {
+  z-index: 5;
+}
+.info {
+  top: 3rem;
+  left: 4rem;
+  z-index: 15;
+}
+.announcements {
+  top: 7rem;
+  right: 4rem;
+  z-index: 20;
 }
 
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.carousel {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-
-  .slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
+/*
 .message-window {
   max-height: 400px;
 }
+*/
