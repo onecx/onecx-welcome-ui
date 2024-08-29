@@ -19,12 +19,12 @@ app:
           technology: WEBCOMPONENTMODULE
           remoteName: onecx-welcome
           tagName: ocx-welcome-component
-      slot:
-        enabled: true
-        specs:
-          onecx-welcome-list-active:
-            name: 'onecx-welcome-list-active'
-            description: 'List active announcements for workspace'
+    slot:
+      enabled: true
+      specs:
+        onecx-welcome-list-active:
+          name: 'onecx-welcome-list-active'
+          description: 'List active announcements for workspace'
     # Permission
     permission:
       enabled: true
