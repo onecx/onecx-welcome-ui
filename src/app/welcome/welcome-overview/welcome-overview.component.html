@@ -43,8 +43,16 @@
   <!-- SLOT: Announcements -->
   <div
     *ngIf="isAnnouncementListActiveComponentAvailable$ | async"
-    class="announcements absolute w-5 max-h-25rem overflow-y-auto border-round-lg border-solid border-2 border-gray-600"
+    class="announcements absolute w-5 max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent"
   >
     <ocx-slot [name]="listActiveSlotName"> </ocx-slot>
+    <div class="hidden bg-white white-space-nowrap text-overflow-hidden text-overflow-ellipsis">
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
+      dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita
+      kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
+      sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
+      voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+      sanctus est Lorem ipsum dolor sit amet.
+    </div>
   </div>
 </ocx-portal-page>
