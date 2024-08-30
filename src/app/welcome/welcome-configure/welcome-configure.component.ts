@@ -11,10 +11,9 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 export class WelcomeConfigureComponent implements OnInit {
   workspace: Portal | undefined
   public currentImage = 0
-  public helpArticleId = 'PAGE_WELCOME_EDIT'
   subscription: Subscription | undefined
   images: ImageDataResponse[] = []
-  imageInfos: ImageInfo[] = []
+  imageData: ImageInfo[] = []
   public displayCreateDialog = false
   public displayDetailDialog = false
   selectedImageInfo: ImageInfo | undefined
@@ -36,7 +35,8 @@ export class WelcomeConfigureComponent implements OnInit {
     // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
       next: (data: ImageInfo[]) => {
-        this.imageInfos = data.sort((a, b) => this.compareImagePosition(a.position!, b.position!))
+        this.imageData = data
+        this.imageData.sort(this.sortImagesByPosition)
         this.fetchImageData()
       },
       error: () => {
@@ -45,16 +45,12 @@ export class WelcomeConfigureComponent implements OnInit {
     })
   }
 
-  compareImagePosition(infoOne: string, infoTwo: string): number {
-    if (infoOne < infoTwo) {
-      return -1
-    } else if (infoOne > infoTwo) {
-      return 1
-    } else return 0
+  private sortImagesByPosition(a: ImageInfo, b: ImageInfo): number {
+    return (a.position ?? 0) < (b.position ?? 0) ? -1 : (a.position ?? 0) > (b.position ?? 0) ? 1 : 0
   }
 
   public fetchImageData() {
-    this.imageInfos.map((info) => {
+    this.imageData.map((info) => {
       if (info.imageId) {
         this.imageService.getImageById({ id: info.imageId }).subscribe({
           next: (imageData: ImageDataResponse) => {
@@ -77,10 +73,10 @@ export class WelcomeConfigureComponent implements OnInit {
     }
   }
 
-  public handleDelete(id: string | undefined) {
+  public onDeleteImage(id: string | undefined) {
     if (id) {
-      const indexOfItem = this.imageInfos.findIndex((i) => i.id === id)
-      this.imageInfos.splice(indexOfItem, 1)
+      const indexOfItem = this.imageData.findIndex((i) => i.id === id)
+      this.imageData.splice(indexOfItem, 1)
       this.imageService.deleteImageInfoById({ id: id }).subscribe({
         next: () => {
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.SUCCESS' })
@@ -94,17 +90,17 @@ export class WelcomeConfigureComponent implements OnInit {
   }
 
   updatePositions() {
-    this.imageInfos.map((info, index) => {
+    this.imageData.map((info, index) => {
       info.position = (index + 1).toString()
     })
-    this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: this.imageInfos } }).subscribe({
+    this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: this.imageData } }).subscribe({
       next: () => {
         this.fetchImageInfos()
       }
     })
   }
 
-  public updateVisibility(info: ImageInfo) {
+  public onChangeVisibility(info: ImageInfo) {
     if (info.id) {
       this.imageService
         .updateImageInfo({
@@ -145,7 +141,7 @@ export class WelcomeConfigureComponent implements OnInit {
   }
 
   public onSaveOrder() {
-    const imagesToReorder = this.imageInfos
+    const imagesToReorder = this.imageData
     this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: imagesToReorder } }).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'ACTIONS.REORDER.SUCCESS' })

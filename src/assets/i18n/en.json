@@ -7,8 +7,7 @@
       "YES.TOOLTIP": "Proceed with the action"
     },
     "VISIBILITY": {
-      "TOOLTIP_MAKE_VISIBLE": "Make picture visible on the welcome screen",
-      "TOOLTIP_MAKE_INVISIBLE": "Make picture invisible on the welcome screen",
+      "TOOLTIP": "Change visibility on the start screen",
       "SUCCESS": "Visibility successfully changed",
       "ERROR": "Visibility could not be updated"
     },
@@ -30,7 +29,7 @@
       "TOOLTIP": "Add new Image"
     },
     "CREATE": {
-      "TITLE": "Create Image",
+      "TITLE": "Add Image",
       "UPLOAD": "Upload Image",
       "VISIBILITY": {
         "TRUE": "Visible",
@@ -43,16 +42,19 @@
         "INVALID_TYPE_SUMMARY": "Invalid file type."
       },
       "URL": "External URL",
+      "URL.TOOLTIP": "An external URL as an alternative to upload",
       "SELECT": "Select Image",
-      "SUCCESS": "Image successfully created",
-      "ERROR": "Image could not be created"
+      "SELECT.TOOLTIP": "Select and Upload an Image",
+      "SUCCESS": "Image successfully added",
+      "ERROR": "Image could not be added"
     }
   },
   "LANDING": {
-    "SLIDE": "Background Image",
+    "IMAGE": "Background Image",
     "TITLE": "Hello"
   },
   "DETAIL": {
+    "IMAGE": "Picture",
     "TITLE": "Enlarged view",
     "TOOLTIP": "Click for an enlarged view of the image"
   },

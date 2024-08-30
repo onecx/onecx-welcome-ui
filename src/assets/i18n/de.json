@@ -7,8 +7,7 @@
       "YES.TOOLTIP": "Fortfahren mit der Aktion"
     },
     "VISIBILITY": {
-      "TOOLTIP_MAKE_VISIBLE": "Auf dem Startbildschirm sichtbar machen",
-      "TOOLTIP_MAKE_INVISIBLE": "Auf dem Startbildschirm unsichtbar machen",
+      "TOOLTIP": "Sichtbarkeit auf dem Startbildschirm ändern",
       "SUCCESS": "Sichtbarkeit erfolgreich geändert",
       "ERROR": "Sichtbarkeit konnte nicht geändert werden"
     },
@@ -30,7 +29,7 @@
       "TOOLTIP": "Neues Bild hinzufügen"
     },
     "CREATE": {
-      "TITLE": "Bild hochladen",
+      "TITLE": "Bild hinzufügen",
       "UPLOAD": "Hochladen",
       "VISIBILITY": {
         "TRUE": "Sichtbar",
@@ -43,18 +42,21 @@
         "INVALID_TYPE_SUMMARY": "Unzulässiges Dateiformat."
       },
       "URL": "Externe URL",
+      "URL.TOOLTIP": "Eine externe URL als Alternative zum Hochladen",
       "SELECT": "Bild auswählen",
-      "SUCCESS": "Bild erfolgreich erstellt",
-      "ERROR": "Bild konnte nicht erstellt werden"
+      "SELECT.TOOLTIP": "Ein Bild auswählen und hochladen",
+      "SUCCESS": "Bild erfolgreich hinzugefügt",
+      "ERROR": "Bild konnte nicht hinzugefügt werden"
     }
   },
   "LANDING": {
-    "SLIDE": "Hintergrundbild",
+    "IMAGE": "Hintergrundbild",
     "TITLE": "Hallo"
   },
   "DETAIL": {
+    "IMAGE": "Bild",
     "TITLE": "Vergrößerte Ansicht",
-    "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bilds zu sehen"
+    "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bildes zu sehen"
   },
   "GENERAL": {
     "CLOSE": "Schließen",

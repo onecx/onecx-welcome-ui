@@ -1,5 +1,5 @@
 <p-dialog
-  header="{{ 'DETAIL.TITLE' | translate }}"
+  [header]="'DETAIL.TITLE' | translate"
   [(visible)]="displayDetailDialog"
   (onHide)="onDialogHide()"
   [baseZIndex]="10000"
@@ -16,10 +16,10 @@
         <div class="mb-3">
           <div class="relative mx-auto">
             <img
-              [src]="this.buildImageSrc(info)"
-              [alt]="'image' + i"
               class="w-full border-round"
-              [aria-label]="'DETAIL.TOOLTIP' | translate"
+              [src]="this.buildImageSrc(info)"
+              [alt]="'DETAIL.IMAGE' | translate"
+              [aria-label]="'DETAIL.IMAGE' | translate"
               [pTooltip]="'DETAIL.TOOLTIP' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
@@ -33,11 +33,11 @@
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end gap-2 mb-1">
       <p-button
-        id="wc_add_image_action_cancel"
-        (onClick)="onDialogHide()"
+        id="wc_image_detail_action_cancel"
         icon="pi pi-times"
+        (onClick)="onDialogHide()"
         [label]="'GENERAL.CANCEL' | translate"
-        [aria-label]="'GENERAL.TOOLTIPS.CANCEL' | translate"
+        [aria-label]="'GENERAL.CANCEL' | translate"
         [pTooltip]="'GENERAL.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"

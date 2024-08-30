@@ -1,13 +1,9 @@
-.p-carousel.p-component.p-carousel-horizontal {
-  display: none;
+.background {
+  z-index: 5;
 }
-
 .slide {
   object-fit: cover;
   z-index: 10;
-}
-.background {
-  z-index: 5;
 }
 .info {
   top: 3rem;
@@ -18,10 +14,5 @@
   top: 7rem;
   right: 4rem;
   z-index: 20;
+  background-color: transparent;
 }
-
-/*
-.message-window {
-  max-height: 400px;
-}
-*/
