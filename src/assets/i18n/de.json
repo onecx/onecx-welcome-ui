@@ -7,8 +7,7 @@
       "YES.TOOLTIP": "Fortfahren mit der Aktion"
     },
     "VISIBILITY": {
-      "TOOLTIP_MAKE_VISIBLE": "Auf dem Startbildschirm sichtbar machen",
-      "TOOLTIP_MAKE_INVISIBLE": "Auf dem Startbildschirm unsichtbar machen",
+      "TOOLTIP": "Auf dem Startbildschirm sichtbar/unsichtbar machen",
       "SUCCESS": "Sichtbarkeit erfolgreich geändert",
       "ERROR": "Sichtbarkeit konnte nicht geändert werden"
     },
@@ -43,9 +42,11 @@
         "INVALID_TYPE_SUMMARY": "Unzulässiges Dateiformat."
       },
       "URL": "Externe URL",
+      "URL.TOOLTIP": "Eine externe URL als Alternative zum Hochladen",
       "SELECT": "Bild auswählen",
-      "SUCCESS": "Bild erfolgreich erstellt",
-      "ERROR": "Bild konnte nicht erstellt werden"
+      "SELECT.TOOLTIP": "Ein Bild auswählen",
+      "SUCCESS": "Bild erfolgreich hinzugefügt",
+      "ERROR": "Bild konnte nicht hinzugefügt werden"
     }
   },
   "LANDING": {
@@ -55,7 +56,7 @@
   "DETAIL": {
     "IMAGE": "Bild",
     "TITLE": "Vergrößerte Ansicht",
-    "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bilds zu sehen"
+    "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bildes zu sehen"
   },
   "GENERAL": {
     "CLOSE": "Schließen",

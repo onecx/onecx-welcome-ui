@@ -14,8 +14,8 @@
       <p-button
         id="wc_configure_card_list_action_save"
         icon="pi pi-save"
-        (onClick)="this.onSaveOrder()"
-        [disabled]="!this.isReordered"
+        (onClick)="onSaveOrder()"
+        [disabled]="!isReordered"
         [label]="'ACTIONS.REORDER.SAVE' | translate"
         [aria-label]="'ACTIONS.REORDER.SAVE_TOOLTIP' | translate"
         [pTooltip]="'ACTIONS.REORDER.SAVE_TOOLTIP' | translate"
@@ -24,10 +24,6 @@
       ></p-button>
     </div>
     <div class="flex flex-row flex-wrap gap-4">
-      <!--  p-overlay-badge 
-            style="_object-fit: cover; cursor: pointer"
-            class="w-full h-13rem"
-        -->
       <div class="p-card" styleClass="h-full" *ngFor="let info of imageData; let i = index">
         <div class="p-card-body w-20rem h-18rem flex flex-column flex-nowrap justify-content-between">
           <div class="my-auto text-center">
@@ -35,8 +31,8 @@
               [id]="'wc_configure_card_item_' + i + '_image'"
               class="max-w-18rem max-h-12rem"
               [alt]="('DETAIL.IMAGE' | translate) + '_' + i"
-              [src]="this.buildImageSrc(info)"
-              (click)="this.displayDetailDialog = true; currentImage = i"
+              [src]="buildImageSrc(info)"
+              (click)="displayDetailDialog = true; currentImage = i"
               [aria-label]="'DETAIL.TOOLTIP' | translate"
               [pTooltip]="'DETAIL.TOOLTIP' | translate"
               tooltipPosition="top"
@@ -50,13 +46,9 @@
                   tabindex="0"
                   [id]="'wc_configure_card_item_' + i + '_action_visibility'"
                   [icon]="info.visible ? 'pi pi-eye' : 'pi pi-eye-slash'"
-                  (onClick)="this.updateVisibility(info)"
-                  [aria-label]="'ACTIONS.VISIBILITY.TOOLTIP' | translate"
-                  [pTooltip]="
-                    info.visible
-                      ? ('ACTIONS.VISIBILITY.TOOLTIP_MAKE_INVISIBLE' | translate)
-                      : ('ACTIONS.VISIBILITY.TOOLTIP_MAKE_VISIBLE' | translate)
-                  "
+                  (onClick)="onChangeVisibility(info)"
+                  [aria-label]="'ACTIONS.VISIBILITY' | translate"
+                  [pTooltip]="'ACTIONS.VISIBILITY.TOOLTIP' | translate"
                   tooltipPosition="bottom"
                   tooltipEvent="hover"
                 ></p-button>
@@ -65,7 +57,7 @@
                   ocxIfPermission="'IMAGE#DELETE'"
                   [id]="'wc_configure_card_item_' + i + '_action_delete'"
                   icon="pi pi-trash"
-                  (onClick)="this.handleDelete(info.id)"
+                  (onClick)="onDeleteImage(info.id)"
                   [aria-label]="'ACTIONS.DELETE.TOOLTIP' | translate"
                   [pTooltip]="'ACTIONS.DELETE.TOOLTIP' | translate"
                   tooltipPosition="bottom"
@@ -78,7 +70,7 @@
                   [id]="'wc_configure_card_item_' + i + '_action_left'"
                   icon="pi pi-arrow-left"
                   [disabled]="!(i > 0)"
-                  (onClick)="this.swapElement(this.imageData, i, i - 1)"
+                  (onClick)="swapElement(imageData, i, i - 1)"
                   [aria-label]="'ACTIONS.REORDER.MOVE_LEFT_TOOLTIP' | translate"
                   [pTooltip]="'ACTIONS.REORDER.MOVE_LEFT_TOOLTIP' | translate"
                   tooltipPosition="bottom"
@@ -90,7 +82,7 @@
                   [id]="'wc_configure_card_item_' + i + '_action_right'"
                   icon="pi pi-arrow-right"
                   [disabled]="!(i !== imageData.length - 1)"
-                  (onClick)="this.swapElement(this.imageData, i, i + 1)"
+                  (onClick)="swapElement(imageData, i, i + 1)"
                   [aria-label]="'ACTIONS.REORDER.MOVE_RIGHT_TOOLTIP' | translate"
                   [pTooltip]="'ACTIONS.REORDER.MOVE_RIGHT_TOOLTIP' | translate"
                   tooltipPosition="bottom"
@@ -102,13 +94,13 @@
         </div>
       </div>
       <a
-        *ngIf="this.imageData.length < 20"
+        *ngIf="imageData.length < 20"
         tabindex="0"
         id="wc_configure_card_action_add"
         class="w-20rem h-18rem new-image-card block flex justify-content-center align-items-center border-primary border-round-xl cursor-pointer"
-        (click)="this.displayCreateDialog = true"
-        (keydown.enter)="this.displayCreateDialog = true"
-        (keydown.space)="this.displayCreateDialog = true"
+        (click)="displayCreateDialog = true"
+        (keydown.enter)="displayCreateDialog = true"
+        (keydown.space)="displayCreateDialog = true"
         [aria-label]="'ACTIONS.ADD.LABEL' | translate"
         [pTooltip]="'ACTIONS.ADD.TOOLTIP' | translate"
         tooltipPosition="bottom"
@@ -123,7 +115,7 @@
 <app-image-create
   [displayCreateDialog]="displayCreateDialog"
   (hideDialogAndChanged)="onCloseCreateDialog($event)"
-  [imageInfoCount]="this.imageData.length"
+  [imageInfoCount]="imageData.length"
 ></app-image-create>
 
 <app-image-detail

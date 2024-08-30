@@ -7,7 +7,7 @@
   [resizable]="true"
   [closable]="true"
   [modal]="true"
-  [style]="{ width: '600px' }"
+  [style]="{ 'min-width': '600px' }"
   [showHeader]="true"
   [breakpoints]="{
     '992px': '65vw',
@@ -17,62 +17,51 @@
   }"
 >
   <form [formGroup]="formGroup" errorTailor>
-    <div class="flex flex-wrap flex-column justify-content-between gap-2">
-      <div class="flex flex-wrap align-items-center justify-content-between mt-2">
-        <div class="w-full mb-2">
-          <span class="p-float-label">
-            <p-fileUpload
-              #fileUpload
-              (onRemove)="this.handleFileRemoval()"
-              (onSelect)="this.handleFileSelected($event.files[0])"
-              [maxFileSize]="1000000"
-              [showUploadButton]="false"
-              [showCancelButton]="false"
-              [disabled]="this.uploadDisabled"
-              [invalidFileSizeMessageDetail]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_SIZE_DETAIL' | translate"
-              [invalidFileSizeMessageSummary]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_SIZE_SUMMARY' | translate"
-              [invalidFileTypeMessageDetail]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_TYPE_DETAIL' | translate"
-              [invalidFileTypeMessageSummary]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_TYPE_SUMMARY' | translate"
-              accept=".jpg, .jpeg, .png"
-              id="image_form_upload"
-              class="w-full"
-              rows="3"
-              [multiple]="false"
-              [autoResize]="true"
-              [chooseLabel]="'ACTIONS.CREATE.SELECT' | translate"
-              appendTo="body"
-              [aria-label]="'ACTIONS.CREATE.SELECT' | translate"
-              [pTooltip]="'ACTIONS.CREATE.SELECT' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            ></p-fileUpload>
-          </span>
-        </div>
-        <div class="w-12 mt-1 sm:mt-2">
-          <span class="p-float-label" controlErrorAnchor>
-            <input
-              pInputText
-              id="image_form_url"
-              style="min-height: 2.5rem"
-              class="w-full textarea-sm"
-              formControlName="url"
-              rows="1"
-              [autoResize]="true"
-              appendTo="body"
-              [aria-label]="'ACTIONS.CREATE.URL' | translate"
-              [pTooltip]="'ACTIONS.CREATE.URL' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            />
-            <label for="image_form_url"> {{ 'ACTIONS.CREATE.URL' | translate }} </label>
-          </span>
-        </div>
+    <div class="flex flex-wrap flex-column justify-content-between row-gap-4">
+      <p-fileUpload
+        #fileUpload
+        id="wc_image_create_action_upload"
+        class="w-full"
+        (onRemove)="this.handleFileRemoval()"
+        (onSelect)="this.handleFileSelected($event.files[0])"
+        [maxFileSize]="1000000"
+        previewWidth="300"
+        [showUploadButton]="false"
+        [showCancelButton]="false"
+        [disabled]="this.uploadDisabled"
+        [invalidFileSizeMessageDetail]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_SIZE_DETAIL' | translate"
+        [invalidFileSizeMessageSummary]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_SIZE_SUMMARY' | translate"
+        [invalidFileTypeMessageDetail]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_TYPE_DETAIL' | translate"
+        [invalidFileTypeMessageSummary]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_TYPE_SUMMARY' | translate"
+        accept=".jpg, .jpeg, .png"
+        [multiple]="false"
+        [autoResize]="true"
+        [chooseLabel]="'ACTIONS.CREATE.SELECT' | translate"
+        [aria-label]="'ACTIONS.CREATE.SELECT' | translate"
+        [pTooltip]="'ACTIONS.CREATE.SELECT.TOOLTIP' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></p-fileUpload>
+      <div class="w-12">
+        <span class="p-float-label" controlErrorAnchor>
+          <input
+            pInputText
+            id="wc_image_create_form_url"
+            class="w-full"
+            formControlName="url"
+            [aria-label]="'ACTIONS.CREATE.URL' | translate"
+            [pTooltip]="'ACTIONS.CREATE.URL.TOOLTIP' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          />
+          <label for="wc_image_create_form_url"> {{ 'ACTIONS.CREATE.URL' | translate }} </label>
+        </span>
         <label
-          for="image_form_url"
           *ngIf="
             formGroup.controls['url'].errors?.hasOwnProperty('srcMissing') && formGroup.controls['url'].value === ''
           "
-          class="col-12 control-error pl-0"
+          for="wc_image_create_form_url"
+          class="control-error"
         >
           {{ 'VALIDATION.ERRORS.MISSING_IMG_SRC' | translate }}
         </label>
@@ -83,22 +72,22 @@
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end gap-2 mb-1">
       <p-button
-        id="wc_add_image_action_cancel"
-        (onClick)="onDialogHide()"
+        id="wc_image_create_action_cancel"
         icon="pi pi-times"
+        (onClick)="onDialogHide()"
         [label]="'GENERAL.CANCEL' | translate"
-        [aria-label]="'GENERAL.TOOLTIPS.CANCEL' | translate"
-        [pTooltip]="'GENERAL.TOOLTIPS.CANCEL' | translate"
+        [aria-label]="'GENERAL.CANCEL' | translate"
+        [pTooltip]="'GENERAL.TOOLTIPS.CANCEL_AND_CLOSE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        id="wc_add_image_action_save"
-        (onClick)="this.onSave()"
+        id="wc_image_create_action_save"
         icon="pi pi-save"
+        (onClick)="onSave()"
         [disabled]="!formGroup.valid"
         [label]="'GENERAL.SAVE' | translate"
-        [aria-label]="'GENERAL.TOOLTIPS.SAVE' | translate"
+        [aria-label]="'GENERAL.SAVE' | translate"
         [pTooltip]="'GENERAL.TOOLTIPS.SAVE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"

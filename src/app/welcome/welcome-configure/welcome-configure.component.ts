@@ -36,7 +36,8 @@ export class WelcomeConfigureComponent implements OnInit {
     // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
       next: (data: ImageInfo[]) => {
-        this.imageData = data.sort((a, b) => this.compareImagePosition(a.position!, b.position!))
+        this.imageData = data
+        this.imageData.sort(this.sortImagesByPosition)
         this.fetchImageData()
       },
       error: () => {
@@ -45,12 +46,8 @@ export class WelcomeConfigureComponent implements OnInit {
     })
   }
 
-  compareImagePosition(infoOne: string, infoTwo: string): number {
-    if (infoOne < infoTwo) {
-      return -1
-    } else if (infoOne > infoTwo) {
-      return 1
-    } else return 0
+  private sortImagesByPosition(a: ImageInfo, b: ImageInfo): number {
+    return (a.position ?? 0) < (b.position ?? 0) ? -1 : (a.position ?? 0) > (b.position ?? 0) ? 1 : 0
   }
 
   public fetchImageData() {
@@ -77,7 +74,7 @@ export class WelcomeConfigureComponent implements OnInit {
     }
   }
 
-  public handleDelete(id: string | undefined) {
+  public onDeleteImage(id: string | undefined) {
     if (id) {
       const indexOfItem = this.imageData.findIndex((i) => i.id === id)
       this.imageData.splice(indexOfItem, 1)
@@ -104,7 +101,7 @@ export class WelcomeConfigureComponent implements OnInit {
     })
   }
 
-  public updateVisibility(info: ImageInfo) {
+  public onChangeVisibility(info: ImageInfo) {
     if (info.id) {
       this.imageService
         .updateImageInfo({
