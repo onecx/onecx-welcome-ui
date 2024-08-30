@@ -11,7 +11,6 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 export class WelcomeConfigureComponent implements OnInit {
   workspace: Portal | undefined
   public currentImage = 0
-  public helpArticleId = 'PAGE_WELCOME_EDIT'
   subscription: Subscription | undefined
   images: ImageDataResponse[] = []
   imageData: ImageInfo[] = []
