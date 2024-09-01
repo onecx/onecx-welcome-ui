@@ -1,18 +1,70 @@
-.background {
-  z-index: 5;
+/* GENERAL arrangements
+*/
+:host {
+  .content {
+    .announcement-slot {
+      color: red;
+      top: 4rem;
+      right: 1rem;
+      background-color: transparent;
+    }
+  }
 }
-.slide {
-  object-fit: cover;
-  z-index: 10;
-}
-.info {
-  top: 3rem;
-  left: 4rem;
-  z-index: 15;
-}
-.announcements {
-  top: 7rem;
-  right: 4rem;
-  z-index: 20;
-  background-color: transparent;
+
+:host ::ng-deep {
+  /* DIMENSIONs of areas
+     depending on screen size
+*/
+  /*
+  @media screen and (min-width: 576px) {
+    .sm\:content {
+      color: blue;
+      .info-area {
+        top: 1rem !important;
+        left: 1rem !important;
+      }
+      .announcement-slot {
+        top: 3rem !important;
+        left: unset !important;
+        right: 1rem !important;
+      }
+    }
+  }
+  @media screen and (min-width: 768px) {
+    .md\:content {
+      .info-area {
+        top: 2rem !important;
+        left: 3rem !important;
+      }
+      .announcement-slot {
+        top: 4rem !important;
+        right: 2rem !important;
+      }
+    }
+  }
+  @media screen and (min-width: 992px) {
+    .lg\:content {
+      .info-area {
+        top: 2rem !important;
+        left: 3rem !important;
+      }
+      .announcement-slot {
+        top: 5rem !important;
+        right: 3rem !important;
+      }
+    }
+  }
+  @media screen and (min-width: 1200px) {
+    .xl\:content {
+      .info-area {
+        top: 3rem !important;
+        left: 4rem !important;
+      }
+      .announcement-slot {
+        top: 7rem !important;
+        right: 4rem !important;
+      }
+    }
+  }
+    */
 }
