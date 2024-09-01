@@ -58,9 +58,7 @@ export class WelcomeOverviewComponent implements OnInit {
         .pipe(
           map((images) => {
             this.fetchImages(images) // get images
-            return images
-              .filter((img) => img.visible === true)
-              .sort((a, b) => (a.position! < b.position! ? -1 : a.position! > b.position! ? 1 : 0))
+            return images.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
           }),
           catchError((err) => {
             console.error('getAllImageInfosByWorkspaceName():', err)

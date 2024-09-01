@@ -1,18 +1,9 @@
-.background {
-  z-index: 5;
-}
-.slide {
-  object-fit: cover;
-  z-index: 10;
-}
-.info {
-  top: 3rem;
-  left: 4rem;
-  z-index: 15;
-}
-.announcements {
-  top: 7rem;
-  right: 4rem;
-  z-index: 20;
-  background-color: transparent;
+:host {
+  .content {
+    .announcement-slot {
+      top: 5rem;
+      right: 1rem;
+      background-color: transparent;
+    }
+  }
 }
