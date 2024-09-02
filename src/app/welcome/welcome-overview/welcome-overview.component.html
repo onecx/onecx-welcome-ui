@@ -12,7 +12,7 @@
         @carouselAnimation
         [src]="this.buildImageSrc(image)"
         [alt]="'LANDING.IMAGE' | translate"
-        [aria-label]="'LANDING.IMAGE' | translate"
+        [attr.aria-label]="'LANDING.IMAGE' | translate"
       />
     </ng-container>
   </div>
@@ -38,7 +38,7 @@
           [text]="true"
           [routerLink]="['./configure']"
           [label]="'GENERAL.CONFIGURE' | translate"
-          [aria-label]="'GENERAL.CONFIGURE' | translate"
+          [attr.aria-label]="'GENERAL.CONFIGURE' | translate"
           [pTooltip]="'GENERAL.TOOLTIPS.CONFIGURE' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"

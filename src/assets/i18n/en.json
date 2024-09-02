@@ -1,11 +1,5 @@
 {
   "ACTIONS": {
-    "CONFIRMATION": {
-      "NO": "No",
-      "YES": "Yes",
-      "NO.TOOLTIP": "Cancel the action",
-      "YES.TOOLTIP": "Proceed with the action"
-    },
     "VISIBILITY": {
       "TOOLTIP": "Change visibility on the start screen",
       "SUCCESS": "Visibility successfully changed",
@@ -49,42 +43,31 @@
       "ERROR": "Image could not be added"
     }
   },
-  "LANDING": {
-    "IMAGE": "Background Image",
-    "TITLE": "Hello"
-  },
-  "DETAIL": {
-    "IMAGE": "Picture",
-    "TITLE": "Enlarged view",
-    "TOOLTIP": "Click for an enlarged view of the image"
-  },
   "GENERAL": {
     "CLOSE": "Close",
     "CANCEL": "Cancel",
     "SAVE": "Save",
-    "SAVE_ORDER": "Save order",
     "VIEW": "View",
     "CONFIGURE": "Configure",
     "IMAGES.NOT_FOUND": "Images could not be loaded",
     "TOOLTIPS": {
       "CLOSE": "Leave dialog",
       "CANCEL": "Cancel action",
-      "CANCEL_EDIT": "Cancel edit mode",
       "CANCEL_AND_CLOSE": "Cancel and close dialog",
-      "CANCEL_WITHOUT_SAVE": "Cancel action without saving",
       "CONFIGURE": "Upload and Editing of Background Images",
       "SAVE": "Save changes",
       "BACK": "Back to Start page"
     },
     "BACK": "Back"
   },
+  "DETAIL": {
+    "IMAGE": "Picture",
+    "TITLE": "Enlarged view",
+    "TOOLTIP": "Click for an enlarged view of the image"
+  },
   "VALIDATION": {
     "ERRORS": {
-      "INTERNAL_ERROR": "Internal error",
       "MISSING_IMG_SRC": "Upload an Image or add an external URL."
     }
-  },
-  "LIST_ACTIVE": {
-    "NOT_AVAILABLE": "Remote component to list active Announcements not available"
   }
 }

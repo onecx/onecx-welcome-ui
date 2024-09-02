@@ -1,11 +1,5 @@
 {
   "ACTIONS": {
-    "CONFIRMATION": {
-      "NO": "Nein",
-      "YES": "Ja",
-      "NO.TOOLTIP": "Abbruch der Aktion",
-      "YES.TOOLTIP": "Fortfahren mit der Aktion"
-    },
     "VISIBILITY": {
       "TOOLTIP": "Sichtbarkeit auf dem Startbildschirm ändern",
       "SUCCESS": "Sichtbarkeit erfolgreich geändert",
@@ -49,42 +43,31 @@
       "ERROR": "Bild konnte nicht hinzugefügt werden"
     }
   },
-  "LANDING": {
-    "IMAGE": "Hintergrundbild",
-    "TITLE": "Hallo"
-  },
-  "DETAIL": {
-    "IMAGE": "Bild",
-    "TITLE": "Vergrößerte Ansicht",
-    "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bildes zu sehen"
-  },
   "GENERAL": {
     "CLOSE": "Schließen",
     "CANCEL": "Abbrechen",
     "SAVE": "Speichern",
-    "SAVE_ORDER": "Anordnung speichern",
     "VIEW": "Ansehen",
     "CONFIGURE": "Konfigurieren",
     "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
     "TOOLTIPS": {
       "CLOSE": "Dialog verlassen",
       "CANCEL": "Aktion abbrechen",
-      "CANCEL_EDIT": "Den Änderungsmodus verlassen",
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
-      "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
       "CONFIGURE": "Hintergrundbilder hochladen und bearbeiten",
       "SAVE": "Änderungen speichern",
       "BACK": "Zurück zur Startseite"
     },
     "BACK": "Zurück"
   },
+  "DETAIL": {
+    "IMAGE": "Bild",
+    "TITLE": "Vergrößerte Ansicht",
+    "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bildes zu sehen"
+  },
   "VALIDATION": {
     "ERRORS": {
-      "INTERNAL_ERROR": "Interner Fehler",
       "MISSING_IMG_SRC": "Laden Sie ein Bild hoch oder geben sie eine externe Bild-URL an"
     }
-  },
-  "LIST_ACTIVE": {
-    "NOT_AVAILABLE": "Remote-Komponente zum Auflisten aktiver Neuigkeiten nicht verfügbar"
   }
 }
