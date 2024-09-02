@@ -36,7 +36,7 @@ const ws: Workspace = {
   microfrontendRegistrations: []
 }
 
-fdescribe('WelcomeConfigureComponent', () => {
+describe('WelcomeConfigureComponent', () => {
   let component: WelcomeConfigureComponent
   let fixture: ComponentFixture<WelcomeConfigureComponent>
 
