@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core'
-import { AppStateService, Portal, PortalMessageService } from '@onecx/portal-integration-angular'
-import { Subscription } from 'rxjs'
+import { Workspace } from '@onecx/integration-interface'
+import { AppStateService, PortalMessageService } from '@onecx/portal-integration-angular'
+import { catchError, map, Observable, of, Subject, Subscription, takeUntil } from 'rxjs'
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
@@ -9,11 +10,14 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
   styleUrls: ['./welcome-configure.component.scss']
 })
 export class WelcomeConfigureComponent implements OnInit {
-  workspace: Portal | undefined
+  private readonly destroy$ = new Subject()
+
+  workspace: Workspace | undefined
   public currentImage = 0
   subscription: Subscription | undefined
   images: ImageDataResponse[] = []
   imageData: ImageInfo[] = []
+  public imageData$!: Observable<ImageInfo[]> | undefined
   public displayCreateDialog = false
   public displayDetailDialog = false
   selectedImageInfo: ImageInfo | undefined
@@ -32,17 +36,22 @@ export class WelcomeConfigureComponent implements OnInit {
   }
 
   public fetchImageInfos() {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    this.imageService.getAllImageInfosByWorkspaceName({ workspaceName: this.workspace?.portalName! }).subscribe({
-      next: (data: ImageInfo[]) => {
-        this.imageData = data
-        this.imageData.sort(this.sortImagesByPosition)
-        this.fetchImageData()
-      },
-      error: () => {
-        this.msgService.error({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
-      }
-    })
+    if (this.workspace)
+      this.imageData$ = this.imageService
+        .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
+        .pipe(
+          map((images) => {
+            this.imageData = images
+            this.imageData.sort(this.sortImagesByPosition)
+            this.fetchImageData() // get images
+            return images.sort((a, b) => Number(a.position) - Number(b.position))
+          }),
+          catchError((err) => {
+            console.error('getAllImageInfosByWorkspaceName():', err)
+            return of([] as ImageInfo[])
+          })
+        )
+        .pipe(takeUntil(this.destroy$))
   }
 
   private sortImagesByPosition(a: ImageInfo, b: ImageInfo): number {
