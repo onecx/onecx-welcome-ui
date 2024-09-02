@@ -43,7 +43,7 @@ export class WelcomeConfigureComponent implements OnInit {
           map((images) => {
             this.imageData = images
             this.imageData.sort(this.sortImagesByPosition)
-            this.fetchImageData() // get images
+            this.fetchImageData()
             return images.sort((a, b) => Number(a.position) - Number(b.position))
           }),
           catchError((err) => {
@@ -82,6 +82,20 @@ export class WelcomeConfigureComponent implements OnInit {
     }
   }
 
+  private updatePositions() {
+    this.imageData.map((info, index) => {
+      info.position = (index + 1).toString()
+    })
+    this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: this.imageData } }).subscribe({
+      next: () => {
+        this.fetchImageInfos()
+      }
+    })
+  }
+
+  /*
+   * UI ACTIONS
+   */
   public onDeleteImage(id: string | undefined) {
     if (id) {
       const indexOfItem = this.imageData.findIndex((i) => i.id === id)
@@ -96,17 +110,6 @@ export class WelcomeConfigureComponent implements OnInit {
         }
       })
     }
-  }
-
-  updatePositions() {
-    this.imageData.map((info, index) => {
-      info.position = (index + 1).toString()
-    })
-    this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: this.imageData } }).subscribe({
-      next: () => {
-        this.fetchImageInfos()
-      }
-    })
   }
 
   public onChangeVisibility(info: ImageInfo) {

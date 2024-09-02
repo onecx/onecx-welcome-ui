@@ -75,67 +75,8 @@ xdescribe('WelcomeOverviewComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
   })
+
   it('should create', () => {
     expect(component).toBeTruthy()
   })
-
-  /*
-  xit('should get all image data onInit', () => {
-    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
-      of([
-        { id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' },
-        { id: '1234', imageId: '1234', visible: true, position: '2', workspaceName: 'w1' },
-        { id: '12345', imageId: '12345', visible: true, position: '4', workspaceName: 'w1' },
-        { id: '123456', imageId: '123456', visible: true, position: '3', workspaceName: 'w1' },
-        { id: '123', url: 'http://onecx.de', visible: true, position: '1', workspaceName: 'w1' }
-      ])
-    )
-    apiServiceSpy.getImageById.and.returnValues(
-      of({ imageId: '123', imageData: new Blob() } as ImageDataResponse),
-      of({ imageId: '1234', imageData: new Blob() } as ImageDataResponse),
-      of({ imageId: '12345', imageData: new Blob() } as ImageDataResponse),
-      of({ imageId: '123456', imageData: new Blob() } as ImageDataResponse)
-    )
-    // component.workspace = 'w1'
-    component.imageData = []
-
-    component.ngOnInit()
-
-    expect(component.imageData).toContain({
-      id: '123',
-      url: 'http://onecx.de',
-      visible: true,
-      position: '1',
-      workspaceName: 'w1'
-    })
-  })
-
-  it('should handle error when fetching image data', () => {
-    apiServiceSpy.getImageById.and.returnValue(throwError(() => new Error()))
-    component.imageData = [{ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' }]
-    component.fetchImages()
-
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
-  })
-
-  xit('should display image in carousel', () => {
-    const imageData = [
-      { id: '123', url: 'http://onecx.de', visible: true, position: '1' } as ImageInfo,
-      { id: '1234', imageId: '1234', visible: true, position: '1' } as ImageInfo
-    ]
-    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageData))
-    apiServiceSpy.getImageById.and.returnValues(of({ imageId: '1234', imageData: new Blob() } as ImageDataResponse))
-    component.imageData = []
-    component.currentSlide = 0
-    component.ngOnInit()
-    fixture.detectChanges()
-    const dElement = fixture.debugElement
-    let slide = dElement.query(By.css('.slide'))
-    expect(slide).toBeTruthy()
-    component.currentSlide = 1
-    fixture.detectChanges()
-    slide = dElement.query(By.css('.slide'))
-    expect(slide).toBeTruthy()
-  })
-    */
 })

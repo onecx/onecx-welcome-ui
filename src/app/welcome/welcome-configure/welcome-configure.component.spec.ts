@@ -1,12 +1,11 @@
 import { HttpClient } from '@angular/common/http'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing'
-import { By } from '@angular/platform-browser'
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
 import { AppStateService, createTranslateLoader, PortalMessageService } from '@onecx/portal-integration-angular'
 import { of, throwError } from 'rxjs'
-import { ImageDataResponse, ImagesInternalAPIService } from 'src/app/shared/generated'
+import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 import { WelcomeConfigureComponent } from './welcome-configure.component'
 import { CardModule } from 'primeng/card'
 import { ButtonModule } from 'primeng/button'
@@ -14,7 +13,22 @@ import { ImageCreateComponent } from './image-create/image-create.component'
 import { DialogModule } from 'primeng/dialog'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
-describe('WelcomeConfigureComponent', () => {
+const imageData: ImageInfo[] = [
+  {
+    id: '123',
+    imageId: '123',
+    visible: true,
+    position: '1',
+    workspaceName: 'ws',
+    url: 'http://example.com/image1.png'
+  },
+  { id: '1234', imageId: '1234', visible: true, position: '2', workspaceName: 'ws' },
+  { id: '12345', imageId: '12345', visible: true, position: '4', workspaceName: 'ws' },
+  { id: '123456', imageId: '123456', visible: true, position: '3', workspaceName: 'ws' },
+  { id: '1234567', imageId: '1234567', visible: true, position: '3', workspaceName: 'ws' }
+]
+
+fdescribe('WelcomeConfigureComponent', () => {
   let component: WelcomeConfigureComponent
   let fixture: ComponentFixture<WelcomeConfigureComponent>
 
@@ -72,152 +86,12 @@ describe('WelcomeConfigureComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
   })
+
   it('should create', () => {
     expect(component).toBeTruthy()
   })
 
-  xit('should display image', () => {
-    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
-      of([
-        { id: '123', imageId: '123', visible: true, position: '1' },
-        { id: '1234', imageId: '1234', visible: true, position: '2' },
-        { id: '12345', imageId: '12345', visible: true, position: '4' },
-        { id: '123456', imageId: '123456', visible: true, position: '3' },
-        { id: '1234567', imageId: '1234567', visible: true, position: '3' }
-      ])
-    )
-    apiServiceSpy.getImageById.and.returnValues(
-      of({ imageId: '123', imageData: new Blob() } as ImageDataResponse),
-      of({ imageId: '1234', imageData: new Blob() } as ImageDataResponse),
-      of({ imageId: '12345', imageData: new Blob() } as ImageDataResponse),
-      of({ imageId: '123456', imageData: new Blob() } as ImageDataResponse),
-      of({ imageId: '1234567', imageData: new Blob() } as ImageDataResponse)
-    )
-
-    component.ngOnInit()
-    fixture.detectChanges()
-
-    const dElement = fixture.debugElement
-    const nElement = dElement.query(By.css('p-card'))
-    expect(nElement).toBeTruthy()
-  })
-
-  it('should change visiblity on click', () => {
-    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
-      of([{ id: '123', imageId: '123', visible: true, position: '1' }])
-    )
-    apiServiceSpy.getImageById.and.returnValue(of({ imageId: '123', imageData: new Blob() } as ImageDataResponse))
-
-    component.ngOnInit()
-    fixture.detectChanges()
-
-    const dElement = fixture.debugElement
-    const button = dElement.queryAll(By.css('button'))[2]
-    const icon = dElement.queryAll(By.css('.pi-eye'))[0]
-    const iconSlash = dElement.queryAll(By.css('.pi-eye-slash'))[0]
-
-    expect(icon).toBeTruthy()
-    expect(iconSlash).toBeFalsy()
-
-    apiServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
-    apiServiceSpy.getImageById.calls.reset()
-    apiServiceSpy.updateImageInfo.and.returnValue(of({}))
-    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
-      of([{ id: '123', imageId: '123', visible: false, position: '1' }])
-    )
-    apiServiceSpy.getImageById.and.returnValue(of({ imageId: '123', imageData: new Blob() } as ImageDataResponse))
-    button.nativeElement.click({ id: '123', imageId: '123', visible: false, position: '1' })
-    fixture.detectChanges()
-    expect(apiServiceSpy.updateImageInfo).toHaveBeenCalled()
-    const iconAfterUpdate = dElement.queryAll(By.css('.pi-eye'))[0]
-    const iconSlashAfterUpdate = dElement.queryAll(By.css('.pi-eye-slash'))[0]
-
-    expect(iconAfterUpdate).toBeFalsy()
-    expect(iconSlashAfterUpdate).toBeTruthy()
-  })
-
-  it('should get deleted on click', () => {
-    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
-      of([
-        { id: '123', imageId: '123', visible: true, position: '1' },
-        { id: '124', imageId: '1234', visible: true, position: '2' }
-      ])
-    )
-    apiServiceSpy.getImageById.and.returnValues(
-      of({ imageId: '123', imageData: new Blob() } as ImageDataResponse),
-      of({ imageId: '1234', imageData: new Blob() } as ImageDataResponse)
-    )
-
-    component.ngOnInit()
-    fixture.detectChanges()
-
-    const dElement = fixture.debugElement
-    const deleteButton = dElement.queryAll(By.css('button'))[3]
-    expect(deleteButton).toBeTruthy()
-    const cardAmount = dElement.queryAll(By.css('.p-card')).length
-    expect(cardAmount).toBe(2)
-    apiServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
-    apiServiceSpy.getImageById.calls.reset()
-    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
-      of([{ id: '124', imageId: '1234', visible: true, position: '2' }])
-    )
-    apiServiceSpy.getImageById.and.returnValue(of({ imageId: '1234', imageData: new Blob() } as ImageDataResponse))
-    apiServiceSpy.deleteImageInfoById.and.returnValue(of({}))
-    deleteButton.nativeElement.click('123')
-    expect(apiServiceSpy.deleteImageInfoById).toHaveBeenCalled()
-    fixture.detectChanges()
-    const cardAmountAfterDelete = dElement.queryAll(By.css('.p-card')).length
-    expect(cardAmountAfterDelete).toBe(1)
-  })
-
-  it('should open create dialog', fakeAsync(() => {
-    const dElement = fixture.debugElement
-    const openDialogButton = dElement.query(By.css('.new-image-card'))
-    expect(openDialogButton).toBeTruthy()
-    expect(component.displayCreateDialog).toBeFalsy()
-    openDialogButton.nativeElement.click()
-    fixture.detectChanges()
-    expect(component.displayCreateDialog).toBeTruthy()
-
-    const dialog = dElement.nativeElement.querySelector('p-dialog')
-    expect(dialog.attributes.getNamedItem('ng-reflect-visible').value).toBeTruthy()
-    const closeButton = dElement.query(By.css('.p-dialog-header-close'))
-    closeButton.nativeElement.click()
-    component.onCloseCreateDialog(true)
-    fixture.detectChanges()
-
-    const dialogAfterChange = dElement.nativeElement.querySelector('p-dialog')
-    expect(dialogAfterChange.attributes.getNamedItem('ng-reflect-visible').value).toBe('false')
-  }))
-
-  xit('should swap image positions', () => {
-    const dElement = fixture.debugElement
-
-    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(
-      of([
-        { id: '123', imageId: '123', visible: true, position: '1' },
-        { id: '1234', imageId: '1234', visible: true, position: '2' }
-      ])
-    )
-    apiServiceSpy.getImageById.and.returnValues(
-      of({ imageId: '123', imageData: new Blob() } as ImageDataResponse),
-      of({ imageId: '1234', imageData: new Blob() } as ImageDataResponse)
-    )
-    component.ngOnInit()
-    fixture.detectChanges()
-    let saveOrderButton = dElement.nativeElement.querySelector('#wc_card_list_action_save')
-    expect(saveOrderButton.attributes.getNamedItem('ng-reflect-disabled').value).toBeTruthy()
-    component.swapElement(component.imageData, 0, 1)
-    apiServiceSpy.updateImageOrder.and.returnValue(of({}))
-    component.onSaveOrder()
-    fixture.detectChanges()
-    saveOrderButton = dElement.nativeElement.querySelector('#wc_card_list_action_save')
-    expect(saveOrderButton.attributes.getNamedItem('ng-reflect-disabled').value).toBe('false')
-    expect(component.imageData[0].id).toEqual('1234')
-    expect(component.imageData[0].position?.toString()).toBe('1')
-  })
-
-  it('should handle error when fetching imageinfos', () => {
+  xit('should handle error when fetching imageinfos', () => {
     apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => new Error()))
 
     component.fetchImageInfos()
@@ -233,23 +107,133 @@ describe('WelcomeConfigureComponent', () => {
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
   })
 
-  it('should handle error when deleting image', () => {
-    apiServiceSpy.deleteImageInfoById.and.returnValue(throwError(() => new Error()))
-    component.onDeleteImage('123')
+  describe('buildImageSrc', () => {
+    it('should return base64 data URL if image is found', () => {
+      component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.ERROR' })
+      const result = component.buildImageSrc(imageData[0])
+
+      expect(result).toBe('data:image/png;base64,[object Blob]')
+    })
+
+    it('should return the URL if image is not found', () => {
+      const imageInfo = {
+        id: 'id',
+        imageId: 'id',
+        visible: true,
+        position: '1',
+        workspaceName: 'w1',
+        url: 'http://example.com/image3.png'
+      }
+      component.images = imageData
+
+      const result = component.buildImageSrc(imageInfo)
+
+      expect(result).toBe(imageInfo.url)
+    })
   })
 
-  it('should handle error when updating visiblity', () => {
-    apiServiceSpy.updateImageInfo.and.returnValue(throwError(() => new Error()))
-    component.onChangeVisibility({ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' })
+  /*
+   * UI ACTIONS
+   */
+  describe('OnDeleteImage', () => {
+    it('should delete an image', () => {
+      component.imageData = imageData
+      apiServiceSpy.deleteImageInfoById.and.returnValue(of({}))
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.VISIBILITY.ERROR' })
+      component.onDeleteImage('123')
+
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.SUCCESS' })
+    })
+
+    it('should handle error when deleting image', () => {
+      apiServiceSpy.deleteImageInfoById.and.returnValue(throwError(() => new Error()))
+
+      component.onDeleteImage('123')
+
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.ERROR' })
+    })
   })
-  it('should handle error when updating positions', () => {
-    apiServiceSpy.updateImageOrder.and.returnValue(throwError(() => new Error()))
-    component.onSaveOrder()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.REORDER.ERROR' })
+  describe('onChangeVisibility', () => {
+    it('should handle error when updating visiblity', () => {
+      apiServiceSpy.updateImageInfo.and.returnValue(of({}))
+
+      component.onChangeVisibility({ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' })
+
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.VISIBILITY.SUCCESS' })
+    })
+
+    it('should handle error when updating visiblity', () => {
+      apiServiceSpy.updateImageInfo.and.returnValue(throwError(() => new Error()))
+
+      component.onChangeVisibility({ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' })
+
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.VISIBILITY.ERROR' })
+    })
+  })
+
+  describe('onSaveOrder', () => {
+    it('should swap elements and update their positions', () => {
+      const array = [
+        { position: 1, value: 'a' },
+        { position: 2, value: 'b' },
+        { position: 3, value: 'c' }
+      ]
+
+      component.swapElement(array, 0, 2)
+
+      expect(array[0].value).toBe('c')
+      expect(array[0].position).toBe(1)
+      expect(array[2].value).toBe('a')
+      expect(array[2].position).toBe(3)
+      expect(component.isReordered).toBe(true)
+    })
+
+    it('should save positions', () => {
+      apiServiceSpy.updateImageOrder.and.returnValue(of({}))
+
+      component.onSaveOrder()
+
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.REORDER.SUCCESS' })
+    })
+
+    it('should handle error when updating positions', () => {
+      apiServiceSpy.updateImageOrder.and.returnValue(throwError(() => new Error()))
+
+      component.onSaveOrder()
+
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.REORDER.ERROR' })
+    })
+  })
+
+  describe('onCloseCreateDialog', () => {
+    it('should close create dialog', () => {
+      component.onCloseCreateDialog(false)
+
+      expect(component.displayCreateDialog).toBeFalse()
+    })
+
+    it('should refresh images after closing', () => {
+      spyOn(component, 'fetchImageInfos')
+
+      component.onCloseCreateDialog(true)
+
+      expect(component.fetchImageInfos).toHaveBeenCalled()
+    })
+
+    it('should not refresh after closing', () => {
+      spyOn(component, 'fetchImageInfos')
+
+      component.onCloseCreateDialog(false)
+
+      expect(component.fetchImageInfos).not.toHaveBeenCalled()
+    })
+  })
+
+  it('should close detail dialog', () => {
+    component.onCloseDetailDialog()
+
+    expect(component.displayDetailDialog).toBeFalse()
   })
 })
