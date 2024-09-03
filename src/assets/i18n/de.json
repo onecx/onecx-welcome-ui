@@ -15,8 +15,8 @@
       "SAVE_TOOLTIP": "Anordnung speichern",
       "SUCCESS": "Anordnung erfolgreich geändert",
       "ERROR": "Anordnung konnte nicht geändert werden",
-      "MOVE_LEFT_TOOLTIP": "Nach links verschieben",
-      "MOVE_RIGHT_TOOLTIP": "Nach rechts verschieben"
+      "MOVE_LEFT": "Nach links verschieben",
+      "MOVE_RIGHT": "Nach rechts verschieben"
     },
     "ADD": {
       "LABEL": "Dialog öffnen und neues Bild hinzufügen",

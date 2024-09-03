@@ -73,7 +73,7 @@
                   [disabled]="!(i > 0)"
                   (onClick)="swapElement(imageData, i, i - 1)"
                   [attr.aria-label]="'ACTIONS.REORDER.MOVE_LEFT' | translate"
-                  [pTooltip]="'ACTIONS.REORDER.MOVE_LEFT_TOOLTIP' | translate"
+                  [pTooltip]="'ACTIONS.REORDER.MOVE_LEFT' | translate"
                   tooltipPosition="bottom"
                   tooltipEvent="hover"
                 >
@@ -85,7 +85,7 @@
                   [disabled]="!(i !== imageData.length - 1)"
                   (onClick)="swapElement(imageData, i, i + 1)"
                   [attr.aria-label]="'ACTIONS.REORDER.MOVE_RIGHT' | translate"
-                  [pTooltip]="'ACTIONS.REORDER.MOVE_RIGHT_TOOLTIP' | translate"
+                  [pTooltip]="'ACTIONS.REORDER.MOVE_RIGHT' | translate"
                   tooltipPosition="bottom"
                   tooltipEvent="hover"
                 ></p-button>
@@ -104,7 +104,7 @@
         (keydown.space)="displayCreateDialog = true"
         [attr.aria-label]="'ACTIONS.ADD.LABEL' | translate"
         [pTooltip]="'ACTIONS.ADD.TOOLTIP' | translate"
-        tooltipPosition="bottom"
+        tooltipPosition="top"
         tooltipEvent="hover"
       >
         <span class="pi pi-plus font-bold text-3xl"> </span>
