@@ -44,6 +44,7 @@
     }
   },
   "GENERAL": {
+    "BACK": "Back",
     "CLOSE": "Close",
     "CANCEL": "Cancel",
     "SAVE": "Save",
@@ -57,8 +58,11 @@
       "CONFIGURE": "Upload and Editing of Background Images",
       "SAVE": "Save changes",
       "BACK": "Back to Start page"
-    },
-    "BACK": "Back"
+    }
+  },
+  "LANDING": {
+    "IMAGE": "Background Image",
+    "TITLE": "Hello"
   },
   "DETAIL": {
     "IMAGE": "Picture",

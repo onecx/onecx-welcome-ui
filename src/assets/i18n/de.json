@@ -44,6 +44,7 @@
     }
   },
   "GENERAL": {
+    "BACK": "Zurück",
     "CLOSE": "Schließen",
     "CANCEL": "Abbrechen",
     "SAVE": "Speichern",
@@ -57,8 +58,11 @@
       "CONFIGURE": "Hintergrundbilder hochladen und bearbeiten",
       "SAVE": "Änderungen speichern",
       "BACK": "Zurück zur Startseite"
-    },
-    "BACK": "Zurück"
+    }
+  },
+  "LANDING": {
+    "IMAGE": "Hintergrundbild",
+    "TITLE": "Hallo"
   },
   "DETAIL": {
     "IMAGE": "Bild",
