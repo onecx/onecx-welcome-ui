@@ -11,7 +11,7 @@ export class ImageDetailComponent {
   @Input() public displayDetailDialog = false
   @Input() public imageInfoCount: number = 0
   @Input() public images: ImageDataResponse[] = []
-  @Input() public imageInfos: ImageInfo[] = []
+  @Input() public imageData: ImageInfo[] = []
   @Input() public imageIndex = 0
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
 

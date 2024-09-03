@@ -1,11 +1,5 @@
 {
   "ACTIONS": {
-    "CONFIRMATION": {
-      "NO": "Nein",
-      "YES": "Ja",
-      "NO.TOOLTIP": "Abbruch der Aktion",
-      "YES.TOOLTIP": "Fortfahren mit der Aktion"
-    },
     "VISIBILITY": {
       "TOOLTIP": "Sichtbarkeit auf dem Startbildschirm ändern",
       "SUCCESS": "Sichtbarkeit erfolgreich geändert",
@@ -21,8 +15,8 @@
       "SAVE_TOOLTIP": "Anordnung speichern",
       "SUCCESS": "Anordnung erfolgreich geändert",
       "ERROR": "Anordnung konnte nicht geändert werden",
-      "MOVE_LEFT_TOOLTIP": "Nach links verschieben",
-      "MOVE_RIGHT_TOOLTIP": "Nach rechts verschieben"
+      "MOVE_LEFT": "Nach links verschieben",
+      "MOVE_RIGHT": "Nach rechts verschieben"
     },
     "ADD": {
       "LABEL": "Dialog öffnen und neues Bild hinzufügen",
@@ -49,6 +43,23 @@
       "ERROR": "Bild konnte nicht hinzugefügt werden"
     }
   },
+  "GENERAL": {
+    "BACK": "Zurück",
+    "CLOSE": "Schließen",
+    "CANCEL": "Abbrechen",
+    "SAVE": "Speichern",
+    "VIEW": "Ansehen",
+    "CONFIGURE": "Konfigurieren",
+    "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
+    "TOOLTIPS": {
+      "CLOSE": "Dialog verlassen",
+      "CANCEL": "Aktion abbrechen",
+      "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
+      "CONFIGURE": "Hintergrundbilder hochladen und bearbeiten",
+      "SAVE": "Änderungen speichern",
+      "BACK": "Zurück zur Startseite"
+    }
+  },
   "LANDING": {
     "IMAGE": "Hintergrundbild",
     "TITLE": "Hallo"
@@ -58,33 +69,9 @@
     "TITLE": "Vergrößerte Ansicht",
     "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bildes zu sehen"
   },
-  "GENERAL": {
-    "CLOSE": "Schließen",
-    "CANCEL": "Abbrechen",
-    "SAVE": "Speichern",
-    "SAVE_ORDER": "Anordnung speichern",
-    "VIEW": "Ansehen",
-    "CONFIGURE": "Konfigurieren",
-    "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
-    "TOOLTIPS": {
-      "CLOSE": "Dialog verlassen",
-      "CANCEL": "Aktion abbrechen",
-      "CANCEL_EDIT": "Den Änderungsmodus verlassen",
-      "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
-      "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
-      "CONFIGURE": "Hintergrundbilder hochladen und bearbeiten",
-      "SAVE": "Änderungen speichern",
-      "BACK": "Zurück zur Startseite"
-    },
-    "BACK": "Zurück"
-  },
   "VALIDATION": {
     "ERRORS": {
-      "INTERNAL_ERROR": "Interner Fehler",
       "MISSING_IMG_SRC": "Laden Sie ein Bild hoch oder geben sie eine externe Bild-URL an"
     }
-  },
-  "LIST_ACTIVE": {
-    "NOT_AVAILABLE": "Remote-Komponente zum Auflisten aktiver Neuigkeiten nicht verfügbar"
   }
 }

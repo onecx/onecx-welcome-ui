@@ -10,20 +10,12 @@
   [style]="{ width: '50vw' }"
   [showHeader]="true"
 >
-  <p-carousel [value]="imageInfos" [numVisible]="1" [numScroll]="1" [page]="imageIndex">
+  <p-carousel [value]="imageData" [numVisible]="1" [numScroll]="1" [page]="imageIndex">
     <ng-template let-info let-i="index" pTemplate="item">
       <div class="border-1 surface-border border-round m-2 p-3">
         <div class="mb-3">
           <div class="relative mx-auto">
-            <img
-              class="w-full border-round"
-              [src]="this.buildImageSrc(info)"
-              [alt]="'DETAIL.IMAGE' | translate"
-              [aria-label]="'DETAIL.IMAGE' | translate"
-              [pTooltip]="'DETAIL.TOOLTIP' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            />
+            <img class="w-full border-round" [src]="this.buildImageSrc(info)" [alt]="'DETAIL.IMAGE' | translate" />
           </div>
         </div>
       </div>
@@ -37,7 +29,7 @@
         icon="pi pi-times"
         (onClick)="onDialogHide()"
         [label]="'GENERAL.CANCEL' | translate"
-        [aria-label]="'GENERAL.CANCEL' | translate"
+        [attr.aria-label]="'GENERAL.CANCEL' | translate"
         [pTooltip]="'GENERAL.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
