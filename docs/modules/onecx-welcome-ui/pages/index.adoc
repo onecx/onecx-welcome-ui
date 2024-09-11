@@ -1,0 +1,4 @@
+
+== onecx-welcome-ui
+
+include::onecx-welcome-ui-docs.adoc[opts=optional]
