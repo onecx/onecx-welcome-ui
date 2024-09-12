@@ -1,0 +1,3 @@
+== onecx-welcome-ui
+
+include::onecx-welcome-ui-userdocs.adoc[opts=optional]
