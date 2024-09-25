@@ -286,4 +286,58 @@ describe('WelcomeConfigureComponent', () => {
 
     expect(component.displayDetailDialog).toBeFalse()
   })
+
+  describe('sortImagesByPosition', () => {
+    it('should sort images by position in ascending order', () => {
+      const images: ImageInfo[] = [
+        { position: '3', workspaceName: 'ws' },
+        { position: '1', workspaceName: 'ws' },
+        { position: '2', workspaceName: 'ws' }
+      ]
+      const sortedImages = images.sort(component['sortImagesByPosition'])
+      expect(sortedImages).toEqual([
+        { position: '1', workspaceName: 'ws' },
+        { position: '2', workspaceName: 'ws' },
+        { position: '3', workspaceName: 'ws' }
+      ])
+    })
+
+    it('should treat undefined positions as 0', () => {
+      const images: ImageInfo[] = [
+        { position: undefined, workspaceName: 'ws' },
+        { position: '0', workspaceName: 'ws' },
+        { position: '1', workspaceName: 'ws' }
+      ]
+      const sortedImages = images.sort(component['sortImagesByPosition'])
+      expect(sortedImages).toEqual([
+        { position: undefined, workspaceName: 'ws' },
+        { position: '0', workspaceName: 'ws' },
+        { position: '1', workspaceName: 'ws' }
+      ])
+    })
+
+    it('should handle an empty array', () => {
+      const images: ImageInfo[] = []
+      const sortedImages = images.sort(component['sortImagesByPosition'])
+      expect(sortedImages).toEqual([])
+    })
+
+    it('should handle a mix of defined and undefined positions', () => {
+      const images: ImageInfo[] = [
+        { position: undefined, workspaceName: 'ws1' },
+        { position: '2', workspaceName: 'ws2' },
+        { position: undefined, workspaceName: 'ws3' },
+        { position: '1', workspaceName: 'ws4' },
+        { position: '3', workspaceName: 'ws5' }
+      ]
+      const sortedImages = images.sort(component['sortImagesByPosition'])
+      expect(sortedImages).toEqual([
+        { position: undefined, workspaceName: 'ws1' },
+        { position: undefined, workspaceName: 'ws3' },
+        { position: '1', workspaceName: 'ws4' },
+        { position: '2', workspaceName: 'ws2' },
+        { position: '3', workspaceName: 'ws5' }
+      ])
+    })
+  })
 })
