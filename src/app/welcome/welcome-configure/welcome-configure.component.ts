@@ -55,11 +55,12 @@ export class WelcomeConfigureComponent implements OnInit {
   }
 
   private sortImagesByPosition(a: ImageInfo, b: ImageInfo): number {
-    return (a.position ?? 0) < (b.position ?? 0) ? -1 : (a.position ?? 0) > (b.position ?? 0) ? 1 : 0
+    if ((a.position ?? 0) < (b.position ?? 0)) return -1
+    else return (a.position ?? 0) > (b.position ?? 0) ? 1 : 0
   }
 
   public fetchImageData() {
-    this.imageData.map((info) => {
+    this.imageData.forEach((info) => {
       if (info.imageId) {
         this.imageService.getImageById({ id: info.imageId }).subscribe({
           next: (imageData: ImageDataResponse) => {
@@ -83,7 +84,7 @@ export class WelcomeConfigureComponent implements OnInit {
   }
 
   private updatePositions() {
-    this.imageData.map((info, index) => {
+    this.imageData.forEach((info, index) => {
       info.position = (index + 1).toString()
     })
     this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: this.imageData } }).subscribe({
