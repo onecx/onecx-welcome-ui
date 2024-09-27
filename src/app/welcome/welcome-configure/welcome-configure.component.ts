@@ -25,9 +25,9 @@ export class WelcomeConfigureComponent implements OnInit {
   isReordered: boolean = false
 
   constructor(
-    private imageService: ImagesInternalAPIService,
-    private msgService: PortalMessageService,
-    private appStateService: AppStateService
+    private readonly imageService: ImagesInternalAPIService,
+    private readonly msgService: PortalMessageService,
+    private readonly appStateService: AppStateService
   ) {
     this.workspace = this.appStateService.currentWorkspace$.getValue()
   }

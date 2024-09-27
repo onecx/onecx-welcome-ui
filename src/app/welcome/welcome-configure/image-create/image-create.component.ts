@@ -24,10 +24,10 @@ export class ImageCreateComponent implements OnInit {
   currentWorkspaceName: string = ''
 
   constructor(
-    private imageApiService: ImagesInternalAPIService,
-    private fb: FormBuilder,
-    private msgService: PortalMessageService,
-    private appstateService: AppStateService
+    private readonly imageApiService: ImagesInternalAPIService,
+    private readonly fb: FormBuilder,
+    private readonly msgService: PortalMessageService,
+    private readonly appstateService: AppStateService
   ) {
     this.formGroup = fb.nonNullable.group({
       url: new FormControl(null, this.imageSrcValidator()),
