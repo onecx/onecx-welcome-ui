@@ -61,11 +61,11 @@
     }
   },
   "LANDING": {
-    "IMAGE": "Background Image",
+    "PIC": "Background Image",
     "TITLE": "Hello"
   },
   "DETAIL": {
-    "IMAGE": "Picture",
+    "PIC": "Picture",
     "TITLE": "Enlarged view",
     "TOOLTIP": "Click for an enlarged view of the image"
   },

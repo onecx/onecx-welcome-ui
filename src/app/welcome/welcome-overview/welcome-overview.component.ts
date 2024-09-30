@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core'
 import { catchError, map, Observable, of, Subject, Subscription, takeUntil, timer } from 'rxjs'
 
 import { Workspace } from '@onecx/integration-interface'
-import { AppStateService, PortalMessageService, UserProfile, UserService } from '@onecx/portal-integration-angular'
+import { AppStateService, UserProfile, UserService } from '@onecx/portal-integration-angular'
 import { SlotService } from '@onecx/angular-remote-components'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
@@ -33,10 +33,9 @@ export class WelcomeOverviewComponent implements OnInit {
   public listActiveSlotName = 'onecx-welcome-list-active'
 
   constructor(
-    private appStateService: AppStateService,
-    private userService: UserService,
-    private imageService: ImagesInternalAPIService,
-    private msgService: PortalMessageService,
+    private readonly appStateService: AppStateService,
+    private readonly userService: UserService,
+    private readonly imageService: ImagesInternalAPIService,
     private readonly slotService: SlotService
   ) {
     this.user$ = this.userService.profile$.asObservable()
