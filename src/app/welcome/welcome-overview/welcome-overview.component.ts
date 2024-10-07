@@ -30,6 +30,8 @@ export class WelcomeOverviewComponent implements OnInit {
   images: ImageDataResponse[] = []
   public imageData$!: Observable<ImageInfo[]>
   public isAnnouncementListActiveComponentAvailable$: Observable<boolean>
+  public isBookmarkListComponentAvailable$: Observable<boolean>
+  public bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public listActiveSlotName = 'onecx-welcome-list-active'
 
   constructor(
@@ -42,6 +44,7 @@ export class WelcomeOverviewComponent implements OnInit {
     this.isAnnouncementListActiveComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(
       this.listActiveSlotName
     )
+    this.isBookmarkListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.bookmarkListSlotName)
   }
 
   ngOnInit(): void {
