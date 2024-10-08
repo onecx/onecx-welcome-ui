@@ -31,7 +31,7 @@
       </div>
       <div>
         <p-button
-          ocxIfPermission="IMAGE#EDIT"
+          *ocxIfPermission="'IMAGE#EDIT'"
           id="wc_overview_info_configure"
           styleClass="p-button-text text-white text-xs sm:text-base"
           icon="pi pi-pencil"
@@ -46,18 +46,18 @@
       </div>
     </div>
 
-    <div class="grid justify-content-between row-gap-2 mt-4 sm:mt-0">
+    <div class="grid flex-column-reverse sm:flex-row justify-content-between row-gap-5 mt-3 sm:mt-0">
       <!-- SLOT: Bookmarks -->
       <div
         *ngIf="isBookmarkListComponentAvailable$ | async"
-        class="col-12 sm:col-6 lg:col-5 max-h-16rem sm:max-h-19rem overflow-y-auto border-round-lg border-solid border-1 border-transparent p-0 sm:p-2"
+        class="col-12 sm:col-6 lg:col-5 max-h-16rem sm:max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent p-0 sm:p-2"
       >
         <ocx-slot [name]="bookmarkListSlotName"></ocx-slot>
       </div>
       <!-- SLOT: Announcements -->
       <div
         *ngIf="isAnnouncementListActiveComponentAvailable$ | async"
-        class="col-12 sm:col-6 lg:col-5 max-h-16rem sm:max-h-19rem overflow-y-auto border-round-lg border-solid border-1 border-transparent p-0 sm:p-2"
+        class="col-12 sm:col-6 lg:col-5 max-h-16rem sm:max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent p-0 sm:p-2"
       >
         <ocx-slot [name]="listActiveSlotName"> </ocx-slot>
       </div>
