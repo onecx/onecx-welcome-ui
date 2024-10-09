@@ -25,6 +25,9 @@ app:
         onecx-welcome-list-active:
           name: 'onecx-welcome-list-active'
           description: 'List active announcements for workspace'
+        onecx-welcome-list-bookmarks:
+          name: 'onecx-welcome-list-bookmarks'
+          description: 'List bookmarks for user and workspace'
     # Permission
     permission:
       enabled: true
