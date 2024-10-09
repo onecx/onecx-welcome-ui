@@ -19,7 +19,7 @@
   <!-- CONTENT -->
   <div class="content relative z-3 w-full flex flex-column row-gap-3">
     <!-- INFO -->
-    <div class="m-0 sm:m-1 md:m-2 lg:m-3 flex flex-row flex-wrap justify-content-between text-white">
+    <div class="m-0 sm:my-1 md:my-2 lg:my-3 flex flex-row flex-wrap justify-content-between text-white">
       <div>
         <div id="wc_overview_info_title" class="mb-1 sm:mb-2 md:mb-4 text-xl sm:text-4xl md:text-6xl font-light">
           {{ 'LANDING.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
@@ -31,7 +31,7 @@
       </div>
       <div>
         <p-button
-          ocxIfPermission="IMAGE#EDIT"
+          *ocxIfPermission="'IMAGE#EDIT'"
           id="wc_overview_info_configure"
           styleClass="p-button-text text-white text-xs sm:text-base"
           icon="pi pi-pencil"
@@ -46,12 +46,21 @@
       </div>
     </div>
 
-    <!-- SLOT: Announcements -->
-    <div
-      *ngIf="isAnnouncementListActiveComponentAvailable$ | async"
-      class="announcement-slot sm:absolute sm:z-4 sm:w-7 md:w-6 lg:w-5 max-h-16rem sm:max-h-19rem overflow-y-auto border-round-lg border-solid border-1 border-transparent"
-    >
-      <ocx-slot [name]="listActiveSlotName"> </ocx-slot>
+    <div class="grid flex-column-reverse sm:flex-row justify-content-between row-gap-5 mt-3 sm:mt-0">
+      <!-- SLOT: Bookmarks -->
+      <div
+        *ngIf="isBookmarkListComponentAvailable$ | async"
+        class="col-12 sm:col-6 lg:col-5 max-h-16rem sm:max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent p-0 sm:p-2"
+      >
+        <ocx-slot [name]="bookmarkListSlotName"></ocx-slot>
+      </div>
+      <!-- SLOT: Announcements -->
+      <div
+        *ngIf="isAnnouncementListActiveComponentAvailable$ | async"
+        class="col-12 sm:col-6 lg:col-5 max-h-16rem sm:max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent p-0 sm:p-2"
+      >
+        <ocx-slot [name]="listActiveSlotName"> </ocx-slot>
+      </div>
     </div>
   </div>
 </ocx-portal-page>
