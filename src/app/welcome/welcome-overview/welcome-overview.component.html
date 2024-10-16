@@ -17,7 +17,7 @@
     </ng-container>
   </div>
   <!-- CONTENT -->
-  <div class="content relative z-3 w-full flex flex-column row-gap-3">
+  <div class="content relative z-3 w-full flex flex-column row-gap-3 sm:px-2">
     <!-- INFO -->
     <div class="m-0 sm:my-1 md:my-2 lg:my-3 flex flex-row flex-wrap justify-content-between text-white">
       <div>
@@ -48,19 +48,17 @@
 
     <div class="grid flex-column-reverse sm:flex-row justify-content-between row-gap-5 mt-3 sm:mt-0">
       <!-- SLOT: Bookmarks -->
-      <div class="col-12 sm:col-6 lg:col-5 p-0 sm:p-2">
+      <div class="col-12 sm:col-6 lg:col-5 py-0 sm:p-2">
         <div
           *ngIf="isBookmarkListComponentAvailable$ | async"
-          class="w-full max-h-16rem sm:max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent"
+          class="w-full max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent"
         >
           <ocx-slot [name]="bookmarkListSlotName"></ocx-slot>
         </div>
       </div>
       <!-- SLOT: Announcements -->
-      <div *ngIf="isAnnouncementListActiveComponentAvailable$ | async" class="col-12 sm:col-6 lg:col-5 p-0 sm:p-2">
-        <div
-          class="w-full max-h-16rem sm:max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent"
-        >
+      <div *ngIf="isAnnouncementListActiveComponentAvailable$ | async" class="col-12 sm:col-6 lg:col-5 py-0 sm:p-2">
+        <div class="w-full max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent">
           <ocx-slot [name]="listActiveSlotName"> </ocx-slot>
         </div>
       </div>
