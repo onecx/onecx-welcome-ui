@@ -48,20 +48,21 @@
 
     <div class="grid flex-column-reverse sm:flex-row justify-content-between row-gap-5 mt-3 sm:mt-0">
       <!-- SLOT: Bookmarks -->
-      <div class="col-12 sm:col-6 lg:col-5">
+      <div class="col-12 sm:col-6 lg:col-5 p-0 sm:p-2">
         <div
           *ngIf="isBookmarkListComponentAvailable$ | async"
-          class="w-full max-h-16rem sm:max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent p-0 sm:p-2"
+          class="w-full max-h-16rem sm:max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent"
         >
           <ocx-slot [name]="bookmarkListSlotName"></ocx-slot>
         </div>
       </div>
       <!-- SLOT: Announcements -->
-      <div
-        *ngIf="isAnnouncementListActiveComponentAvailable$ | async"
-        class="col-12 sm:col-6 lg:col-5 max-h-16rem sm:max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent p-0 sm:p-2"
-      >
-        <ocx-slot [name]="listActiveSlotName"> </ocx-slot>
+      <div *ngIf="isAnnouncementListActiveComponentAvailable$ | async" class="col-12 sm:col-6 lg:col-5 p-0 sm:p-2">
+        <div
+          class="w-full max-h-16rem sm:max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent"
+        >
+          <ocx-slot [name]="listActiveSlotName"> </ocx-slot>
+        </div>
       </div>
     </div>
   </div>
