@@ -18,13 +18,11 @@ speed-measure-plugin*.json
 .project
 .classpath
 .c9/
-*.launch
 .settings/
-*.sublime-workspace
-
-# IDE - VSCode
 .vscode
 .history
+*.launch
+*.sublime-workspace
 
 # misc
 .angular

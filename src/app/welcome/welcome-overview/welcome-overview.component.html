@@ -38,7 +38,7 @@
           [text]="true"
           [routerLink]="['./configure']"
           [label]="'GENERAL.CONFIGURE' | translate"
-          [attr.aria-label]="'GENERAL.CONFIGURE' | translate"
+          [aria-label]="'GENERAL.CONFIGURE' | translate"
           [pTooltip]="'GENERAL.TOOLTIPS.CONFIGURE' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
@@ -48,17 +48,17 @@
 
     <div class="grid flex-column-reverse sm:flex-row justify-content-between row-gap-5 mt-3 sm:mt-0">
       <!-- SLOT: Bookmarks -->
-      <div class="col-12 sm:col-6 lg:col-5 py-0 sm:p-2">
+      <div class="col-12 sm:col-6 md:col-5 xl:col-4 py-0 sm:p-2">
         <div
           *ngIf="isBookmarkListComponentAvailable$ | async"
-          class="w-full max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent"
+          class="w-full max-h-25rem overflow-hidden border-round-lg border-solid border-1 border-transparent"
         >
           <ocx-slot [name]="bookmarkListSlotName"></ocx-slot>
         </div>
       </div>
       <!-- SLOT: Announcements -->
-      <div *ngIf="isAnnouncementListActiveComponentAvailable$ | async" class="col-12 sm:col-6 lg:col-5 py-0 sm:p-2">
-        <div class="w-full max-h-25rem overflow-y-auto border-round-lg border-solid border-1 border-transparent">
+      <div *ngIf="isAnnouncementListActiveComponentAvailable$ | async" class="col-12 sm:col-6 xl:col-5 py-0 sm:p-2">
+        <div class="w-full max-h-25rem overflow-hidden border-round-lg border-solid border-1 border-transparent">
           <ocx-slot [name]="listActiveSlotName"> </ocx-slot>
         </div>
       </div>
