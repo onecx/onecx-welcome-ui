@@ -1,19 +1,20 @@
-import { HttpClient } from '@angular/common/http'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { provideHttpClient, HttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
+import { of, throwError } from 'rxjs'
+
+import { Workspace } from '@onecx/integration-interface'
 import {
   AppStateService,
   createTranslateLoader,
   PortalMessageService,
   UserService
 } from '@onecx/portal-integration-angular'
-import { of, throwError } from 'rxjs'
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 import { WelcomeOverviewComponent } from './welcome-overview.component'
-import { Workspace } from '@onecx/integration-interface'
 
 const imageData: ImageInfo[] = [
   {
@@ -67,7 +68,6 @@ describe('WelcomeOverviewComponent', () => {
     TestBed.configureTestingModule({
       declarations: [WelcomeOverviewComponent],
       imports: [
-        HttpClientTestingModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
@@ -79,6 +79,8 @@ describe('WelcomeOverviewComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
         { provide: UserService, useValue: mockUserService }

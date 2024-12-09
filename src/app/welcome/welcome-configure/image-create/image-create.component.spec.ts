@@ -1,24 +1,26 @@
-import { HttpClient } from '@angular/common/http'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { ComponentFixture, waitForAsync, TestBed } from '@angular/core/testing'
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { provideHttpClient, HttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { By } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
+import { of, throwError } from 'rxjs'
+
+import { OverlayPanelModule } from 'primeng/overlaypanel'
+import { ButtonModule } from 'primeng/button'
+import { DialogModule } from 'primeng/dialog'
+import { InputSwitchModule } from 'primeng/inputswitch'
+
 import {
   PortalMessageService,
   createTranslateLoader,
   AppStateService,
   UserService
 } from '@onecx/portal-integration-angular'
-import { DialogModule } from 'primeng/dialog'
-import { InputSwitchModule } from 'primeng/inputswitch'
-import { of, throwError } from 'rxjs'
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 import { ImageCreateComponent } from './image-create.component'
-import { OverlayPanelModule } from 'primeng/overlaypanel'
-import { By } from '@angular/platform-browser'
-import { ButtonModule } from 'primeng/button'
 
 describe('ImageCreateComponent', () => {
   let component: ImageCreateComponent
@@ -51,7 +53,6 @@ describe('ImageCreateComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ImageCreateComponent],
       imports: [
-        HttpClientTestingModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
@@ -69,6 +70,8 @@ describe('ImageCreateComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
         { provide: UserService, useValue: mockUserService }

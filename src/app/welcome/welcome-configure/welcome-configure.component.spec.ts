@@ -1,18 +1,20 @@
-import { HttpClient } from '@angular/common/http'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { provideHttpClient, HttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
-import { AppStateService, createTranslateLoader, PortalMessageService } from '@onecx/portal-integration-angular'
 import { of, throwError } from 'rxjs'
-import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
-import { WelcomeConfigureComponent } from './welcome-configure.component'
+import { DialogModule } from 'primeng/dialog'
 import { CardModule } from 'primeng/card'
 import { ButtonModule } from 'primeng/button'
-import { ImageCreateComponent } from './image-create/image-create.component'
-import { DialogModule } from 'primeng/dialog'
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { Workspace } from '@onecx/integration-interface'
+import { AppStateService, createTranslateLoader, PortalMessageService } from '@onecx/portal-integration-angular'
+
+import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
+import { WelcomeConfigureComponent } from './welcome-configure.component'
+import { ImageCreateComponent } from './image-create/image-create.component'
 
 const imageData: ImageInfo[] = [
   {
@@ -59,7 +61,6 @@ describe('WelcomeConfigureComponent', () => {
     TestBed.configureTestingModule({
       declarations: [WelcomeConfigureComponent, ImageCreateComponent],
       imports: [
-        HttpClientTestingModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
@@ -74,6 +75,8 @@ describe('WelcomeConfigureComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy }
       ]

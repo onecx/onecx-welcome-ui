@@ -1,15 +1,18 @@
-import { HttpClient } from '@angular/common/http'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { OverlayPanelModule } from 'primeng/overlaypanel'
-import { ButtonModule } from 'primeng/button'
-import { By } from '@angular/platform-browser'
+import { provideHttpClient, HttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, waitForAsync, TestBed } from '@angular/core/testing'
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { By } from '@angular/platform-browser'
+
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
+
 import { DialogModule } from 'primeng/dialog'
 import { InputSwitchModule } from 'primeng/inputswitch'
+import { OverlayPanelModule } from 'primeng/overlaypanel'
+import { ButtonModule } from 'primeng/button'
+
 import { createTranslateLoader, AppStateService } from '@onecx/portal-integration-angular'
 
 import { ImageDetailComponent } from './image-detail.component'
@@ -23,7 +26,6 @@ describe('ImageDetailComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ImageDetailComponent],
       imports: [
-        HttpClientTestingModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
@@ -39,7 +41,8 @@ describe('ImageDetailComponent', () => {
         ReactiveFormsModule,
         ButtonModule
       ],
-      schemas: [NO_ERRORS_SCHEMA]
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [provideHttpClient(), provideHttpClientTesting()]
     }).compileComponents()
   }))
 

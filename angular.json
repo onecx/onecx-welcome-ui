@@ -31,6 +31,11 @@
             ],
             "styles": ["src/styles.scss"],
             "scripts": ["node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"],
+            "allowedCommonJsDependencies": [
+              "@angular-architects/module-federation",
+              "@onecx/accelerator",
+              "@onecx/integration-interface"
+            ],
             "extraWebpackConfig": "webpack.config.js",
             "outputHashing": "all",
             "commonChunk": false
