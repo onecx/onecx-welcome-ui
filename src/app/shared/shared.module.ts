@@ -2,7 +2,6 @@ import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } from '@angular/cor
 import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { ColorSketchModule } from 'ngx-color/sketch'
 import { provideErrorTailorConfig } from '@ngneat/error-tailor'
 
 import { AutoCompleteModule } from 'primeng/autocomplete'
@@ -23,8 +22,9 @@ import { SelectButtonModule } from 'primeng/selectbutton'
 import { TableModule } from 'primeng/table'
 import { ToastModule } from 'primeng/toast'
 
-import { LabelResolver } from './label.resolver'
 import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
+
+import { LabelResolver } from './label.resolver'
 
 @NgModule({
   declarations: [],
@@ -33,7 +33,6 @@ import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
     AutoCompleteModule,
     CalendarModule,
     CarouselModule,
-    ColorSketchModule,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
