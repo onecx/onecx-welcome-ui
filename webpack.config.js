@@ -5,14 +5,13 @@ const config = withModuleFederationPlugin({
   name: 'onecx-welcome-ui',
   filename: 'remoteEntry.js',
   exposes: {
-    './OneCXWelcomeModule': 'src/bootstrap.ts'
+    './OneCXWelcomeModule': 'src/main.ts'
   },
   shared: share({
-    '@angular/core': { requiredVersion: 'auto' },
+    '@angular/core': { requiredVersion: 'auto', includeSecondaries: true },
     '@angular/common': { requiredVersion: 'auto', includeSecondaries: { skip: ['@angular/common/http/testing'] } },
     '@angular/common/http': { requiredVersion: 'auto', includeSecondaries: true },
-    '@angular/elements': { requiredVersion: 'auto', includeSecondaries: true },
-    '@angular/forms': { requiredVersion: 'auto', includeSecondaries: true, eager: false },
+    '@angular/forms': { requiredVersion: 'auto', includeSecondaries: true },
     '@angular/platform-browser': { requiredVersion: 'auto', includeSecondaries: true },
     '@angular/router': { requiredVersion: 'auto', includeSecondaries: true },
     '@ngx-translate/core': { requiredVersion: 'auto' },

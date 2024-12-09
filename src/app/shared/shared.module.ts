@@ -1,9 +1,8 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } from '@angular/core'
+import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { ColorSketchModule } from 'ngx-color/sketch'
-import { provideErrorTailorConfig } from '@ngneat/error-tailor'
+import { provideErrorTailorConfig, errorTailorImports } from '@ngneat/error-tailor'
 
 import { AutoCompleteModule } from 'primeng/autocomplete'
 import { CalendarModule } from 'primeng/calendar'
@@ -13,6 +12,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup'
 import { ConfirmationService } from 'primeng/api'
 import { DataViewModule } from 'primeng/dataview'
 import { DialogModule } from 'primeng/dialog'
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
 import { DropdownModule } from 'primeng/dropdown'
 import { InputTextModule } from 'primeng/inputtext'
 import { InputTextareaModule } from 'primeng/inputtextarea'
@@ -22,24 +22,28 @@ import { MultiSelectModule } from 'primeng/multiselect'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { TableModule } from 'primeng/table'
 import { ToastModule } from 'primeng/toast'
+import { TooltipModule } from 'primeng/tooltip'
+
+import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
+import { PortalCoreModule, PortalDialogService } from '@onecx/portal-integration-angular'
 
 import { LabelResolver } from './label.resolver'
-import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 
 @NgModule({
   declarations: [],
   imports: [
+    PortalCoreModule.forMicroFrontend(),
     AngularRemoteComponentsModule,
     AutoCompleteModule,
     CalendarModule,
     CarouselModule,
-    ColorSketchModule,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
     DataViewModule,
     DialogModule,
     DropdownModule,
+    DynamicDialogModule,
     FormsModule,
     InputTextModule,
     InputTextareaModule,
@@ -50,7 +54,9 @@ import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
     SelectButtonModule,
     TableModule,
     ToastModule,
-    TranslateModule
+    TooltipModule,
+    TranslateModule,
+    errorTailorImports
   ],
   exports: [
     AngularRemoteComponentsModule,
@@ -63,6 +69,7 @@ import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
     DataViewModule,
     DialogModule,
     DropdownModule,
+    DynamicDialogModule,
     FormsModule,
     InputTextModule,
     InputTextareaModule,
@@ -73,12 +80,15 @@ import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
     SelectButtonModule,
     TableModule,
     ToastModule,
-    TranslateModule
+    TooltipModule,
+    TranslateModule,
+    errorTailorImports
   ],
   //this is not elegant, for some reason the injection token from primeng does not work across federated module
   providers: [
     ConfirmationService,
     LabelResolver,
+    { provide: DialogService, useClass: PortalDialogService },
     provideErrorTailorConfig({
       controlErrorsOn: { async: true, blur: true, change: true },
       errors: {
@@ -101,7 +111,6 @@ import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
         )
       }
     })
-  ],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
+  ]
 })
 export class SharedModule {}

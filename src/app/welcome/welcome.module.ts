@@ -1,13 +1,14 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } from '@angular/core'
+import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { RouterModule, Routes } from '@angular/router'
 import { CardModule } from 'primeng/card'
 import { FileUploadModule } from 'primeng/fileupload'
 
-import { addInitializeModuleGuard, InitializeModuleGuard, PortalCoreModule } from '@onecx/portal-integration-angular'
-import { SharedModule } from '../shared/shared.module'
+import { PortalCoreModule } from '@onecx/portal-integration-angular'
+import { InitializeModuleGuard, addInitializeModuleGuard } from '@onecx/angular-integration-interface'
 
+import { SharedModule } from '../shared/shared.module'
 import { WelcomeOverviewComponent } from './welcome-overview/welcome-overview.component'
 import { WelcomeConfigureComponent } from './welcome-configure/welcome-configure.component'
 import { ImageDetailComponent } from './welcome-configure/image-detail/image-detail.component'
@@ -36,8 +37,7 @@ const routes: Routes = [
     [RouterModule.forChild(addInitializeModuleGuard(routes))],
     SharedModule
   ],
-  providers: [InitializeModuleGuard],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
+  providers: [InitializeModuleGuard]
 })
 export class WelcomeModule {
   constructor() {

@@ -34,7 +34,7 @@ export class ImageCreateComponent implements OnInit {
       image: new FormControl(null)
     })
     this.autoResize = true
-    this.currentWorkspaceName = this.appstateService.currentWorkspace$.getValue()?.portalName || ''
+    this.currentWorkspaceName = this.appstateService.currentWorkspace$.getValue()?.workspaceName || ''
   }
 
   ngOnInit() {
