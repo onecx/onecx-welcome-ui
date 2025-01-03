@@ -1,14 +1,11 @@
 <ocx-portal-page helpArticleId="PAGE_WELCOME_VIEW" permission="IMAGE#VIEW">
   <!-- BACKGROUND (below the content) -->
   <div class="absolute top-0 left-0 w-full h-full">
-    <!-- Default background if no image can be displayed -->
-    <div class="absolute surface-600 w-full h-full z-1"></div>
-
     <!-- Bachground Image -->
     <ng-container *ngFor="let image of imageData$ | async; let i = index">
       <img
         *ngIf="!loading && i === currentSlide"
-        class="absolute w-full h-full z-2"
+        class="w-full h-full"
         @carouselAnimation
         [src]="this.buildImageSrc(image)"
         [alt]="'LANDING.PIC' | translate"
@@ -17,7 +14,7 @@
     </ng-container>
   </div>
   <!-- CONTENT -->
-  <div class="content relative z-3 w-full flex flex-column row-gap-3 sm:px-2">
+  <div class="content relative z-1 w-full flex flex-column row-gap-3 sm:px-2">
     <!-- INFO -->
     <div class="m-0 sm:my-1 md:my-2 lg:my-3 flex flex-row flex-wrap justify-content-between text-white">
       <div>

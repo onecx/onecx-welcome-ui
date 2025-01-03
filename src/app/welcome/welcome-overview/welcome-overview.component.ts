@@ -10,7 +10,6 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 @Component({
   selector: 'app-welcome-overview',
   templateUrl: './welcome-overview.component.html',
-  styleUrls: ['./welcome-overview.component.scss'],
   animations: [
     trigger('carouselAnimation', [
       transition('void => *', [style({ opacity: 0 }), animate('300ms', style({ opacity: 1 }))]),
