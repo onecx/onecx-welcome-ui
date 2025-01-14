@@ -11,6 +11,7 @@
 @import 'node_modules/@onecx/portal-integration-angular/assets/styles.scss';
 
 .layout-content {
+  overflow: hidden;
   background-size: 500px !important;
   background-color: var(--surface-600) !important;
   background-image: url(assets/images/onecx_watermark_dark.png);
