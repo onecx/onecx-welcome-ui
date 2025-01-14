@@ -1,12 +1,13 @@
-import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, OnInit } from '@angular/core'
+import { animate, style, transition, trigger } from '@angular/animations'
 import { catchError, map, Observable, of, Subject, Subscription, takeUntil, timer } from 'rxjs'
 
 import { Workspace } from '@onecx/integration-interface'
-import { AppStateService, UserProfile, UserService } from '@onecx/portal-integration-angular'
 import { SlotService } from '@onecx/angular-remote-components'
+import { AppStateService, UserProfile, UserService } from '@onecx/portal-integration-angular'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
+
 @Component({
   selector: 'app-welcome-overview',
   templateUrl: './welcome-overview.component.html',
@@ -20,7 +21,7 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 export class WelcomeOverviewComponent implements OnInit {
   private readonly destroy$ = new Subject()
   public loading = true
-  readonly CAROUSEL_SPEED: number = 15000
+  readonly CAROUSEL_SPEED: number = 15000 // ms
   workspace: Workspace | undefined
   currentSlide = 0
   user$: Observable<UserProfile>
