@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core'
+import { AfterViewInit, Component, ElementRef, Inject, OnInit, Renderer2, ViewChild } from '@angular/core'
+import { DOCUMENT } from '@angular/common'
 import { animate, style, transition, trigger } from '@angular/animations'
 import { catchError, map, Observable, of, Subject, Subscription, takeUntil, timer } from 'rxjs'
 
@@ -11,6 +12,7 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 @Component({
   selector: 'app-welcome-overview',
   templateUrl: './welcome-overview.component.html',
+  styleUrls: ['./welcome-overview.component.scss'],
   animations: [
     trigger('carouselAnimation', [
       transition('void => *', [style({ opacity: 0 }), animate('300ms', style({ opacity: 1 }))]),
@@ -18,27 +20,36 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
     ])
   ]
 })
-export class WelcomeOverviewComponent implements OnInit {
+export class WelcomeOverviewComponent implements OnInit, AfterViewInit {
   private readonly destroy$ = new Subject()
+  // dialog
+  public readonly CAROUSEL_SPEED: number = 3000 // ms
   public loading = true
-  readonly CAROUSEL_SPEED: number = 15000 // ms
-  workspace: Workspace | undefined
-  currentSlide = 0
-  user$: Observable<UserProfile>
-  currentDate = new Date()
-  subscription: Subscription | undefined
-  images: ImageDataResponse[] = []
+  public currentSlide = 0
+  public currentDate = new Date()
+  private contentSection: Element | undefined = undefined
+  // data
+  public workspace: Workspace | undefined
+  public user$: Observable<UserProfile>
+  public subscription: Subscription | undefined
+  public images: ImageDataResponse[] = []
   public imageData$!: Observable<ImageInfo[]>
+  // slot
   public isAnnouncementListActiveComponentAvailable$: Observable<boolean>
   public isBookmarkListComponentAvailable$: Observable<boolean>
   public bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public listActiveSlotName = 'onecx-welcome-list-active'
 
+  //@ViewChild('.layout-content') content: ElementRef<HTMLInputElement>
+
   constructor(
-    private readonly appStateService: AppStateService,
+    @Inject(DOCUMENT) private _document: Document,
+    //private elRef: ElementRef,
+    //private renderer: Renderer2,
     private readonly userService: UserService,
-    private readonly imageService: ImagesInternalAPIService,
-    private readonly slotService: SlotService
+    private readonly slotService: SlotService,
+    private readonly appStateService: AppStateService,
+    private readonly imageService: ImagesInternalAPIService
   ) {
     this.user$ = this.userService.profile$.asObservable()
     this.isAnnouncementListActiveComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(
@@ -47,9 +58,20 @@ export class WelcomeOverviewComponent implements OnInit {
     this.isBookmarkListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.bookmarkListSlotName)
   }
 
+  ngAfterViewInit() {
+    //this.contentSection = this.elRef.nativeElement.querySelectorAll('.layout-content')
+    console.log(this.contentSection)
+    //console.log(this.content.nativeElement)
+    //console.log(this.content)
+  }
   ngOnInit(): void {
+    //this.contentSection = this._document.querySelectorAll('.layout-content')[0]
     this.workspace = this.appStateService.currentWorkspace$.getValue()
     this.getImageData()
+  }
+
+  public prepareImage(imageInfo: ImageInfo): void {
+    //this.contentSection?.firstChild.
   }
 
   private getImageData(): void {
@@ -58,7 +80,7 @@ export class WelcomeOverviewComponent implements OnInit {
       this.imageData$ = this.imageService
         .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
         .pipe(
-          map((images) => {
+          map((images: ImageInfo[]) => {
             this.fetchImages(images) // get images
             return images.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
           }),

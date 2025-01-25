@@ -1,0 +1,13 @@
+:host ::ng-deep {
+  .wc-overview-image {
+    display: block;
+    object-fit: none; /* fill | contain | cover | none | scale-down */
+    object-position: center center; /* [left | center | right] [ top | center | bottom ] [percentage percentage] */
+  }
+  .wc-overview-info {
+    mix-blend-mode: difference;
+  }
+  .wc-overview-slot {
+    top: 130px;
+  }
+}

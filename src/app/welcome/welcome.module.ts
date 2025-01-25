@@ -1,9 +1,5 @@
 import { NgModule } from '@angular/core'
-import { CommonModule } from '@angular/common'
-import { FormsModule } from '@angular/forms'
 import { RouterModule, Routes } from '@angular/router'
-import { CardModule } from 'primeng/card'
-import { FileUploadModule } from 'primeng/fileupload'
 
 import { PortalCoreModule } from '@onecx/portal-integration-angular'
 import { InitializeModuleGuard, addInitializeModuleGuard } from '@onecx/angular-integration-interface'
@@ -29,10 +25,6 @@ const routes: Routes = [
 @NgModule({
   declarations: [WelcomeOverviewComponent, WelcomeConfigureComponent, ImageCreateComponent, ImageDetailComponent],
   imports: [
-    CommonModule,
-    FormsModule,
-    CardModule,
-    FileUploadModule,
     PortalCoreModule.forMicroFrontend(),
     [RouterModule.forChild(addInitializeModuleGuard(routes))],
     SharedModule

@@ -4,8 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { provideErrorTailorConfig, errorTailorImports } from '@ngneat/error-tailor'
 
-import { AutoCompleteModule } from 'primeng/autocomplete'
-import { CalendarModule } from 'primeng/calendar'
 import { CarouselModule } from 'primeng/carousel'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { ConfirmPopupModule } from 'primeng/confirmpopup'
@@ -13,14 +11,8 @@ import { ConfirmationService } from 'primeng/api'
 import { DataViewModule } from 'primeng/dataview'
 import { DialogModule } from 'primeng/dialog'
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
-import { DropdownModule } from 'primeng/dropdown'
+import { FileUploadModule } from 'primeng/fileupload'
 import { InputTextModule } from 'primeng/inputtext'
-import { InputTextareaModule } from 'primeng/inputtextarea'
-import { KeyFilterModule } from 'primeng/keyfilter'
-import { ListboxModule } from 'primeng/listbox'
-import { MultiSelectModule } from 'primeng/multiselect'
-import { SelectButtonModule } from 'primeng/selectbutton'
-import { TableModule } from 'primeng/table'
 import { ToastModule } from 'primeng/toast'
 import { TooltipModule } from 'primeng/tooltip'
 
@@ -34,25 +26,17 @@ import { LabelResolver } from './label.resolver'
   imports: [
     PortalCoreModule.forMicroFrontend(),
     AngularRemoteComponentsModule,
-    AutoCompleteModule,
-    CalendarModule,
     CarouselModule,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
     DataViewModule,
     DialogModule,
-    DropdownModule,
     DynamicDialogModule,
+    FileUploadModule,
     FormsModule,
     InputTextModule,
-    InputTextareaModule,
-    KeyFilterModule,
-    ListboxModule,
-    MultiSelectModule,
     ReactiveFormsModule,
-    SelectButtonModule,
-    TableModule,
     ToastModule,
     TooltipModule,
     TranslateModule,
@@ -60,25 +44,17 @@ import { LabelResolver } from './label.resolver'
   ],
   exports: [
     AngularRemoteComponentsModule,
-    AutoCompleteModule,
-    CalendarModule,
     CarouselModule,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
     DataViewModule,
     DialogModule,
-    DropdownModule,
     DynamicDialogModule,
+    FileUploadModule,
     FormsModule,
     InputTextModule,
-    InputTextareaModule,
-    KeyFilterModule,
-    ListboxModule,
-    MultiSelectModule,
     ReactiveFormsModule,
-    SelectButtonModule,
-    TableModule,
     ToastModule,
     TooltipModule,
     TranslateModule,
