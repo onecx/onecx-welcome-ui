@@ -1,8 +1,9 @@
 <ocx-portal-page helpArticleId="PAGE_WELCOME_VIEW" permission="IMAGE#VIEW">
   <!-- BACKGROUND -->
-  <div class="absolute top-0 left-0 w-full h-full">
+  <div #backgroundContainer class="absolute top-0 left-0 w-full h-full">
     <ng-container *ngFor="let image of imageData$ | async; let i = index">
       <img
+        #backgroundImage
         *ngIf="!loading && i === currentSlide"
         @carouselAnimation
         class="w-full h-full bg-white wc-overview-image"

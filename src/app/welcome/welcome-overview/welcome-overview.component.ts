@@ -23,14 +23,14 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 export class WelcomeOverviewComponent implements OnInit, AfterViewInit {
   private readonly destroy$ = new Subject()
   // dialog
-  public readonly CAROUSEL_SPEED: number = 3000 // ms
+  public readonly CAROUSEL_SPEED: number = 30000 // ms
   public loading = true
   public currentSlide = 0
   public currentDate = new Date()
   private contentSection: Element | undefined = undefined
   // data
-  public workspace: Workspace | undefined
   public user$: Observable<UserProfile>
+  public workspace: Workspace | undefined
   public subscription: Subscription | undefined
   public images: ImageDataResponse[] = []
   public imageData$!: Observable<ImageInfo[]>
@@ -40,12 +40,11 @@ export class WelcomeOverviewComponent implements OnInit, AfterViewInit {
   public bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public listActiveSlotName = 'onecx-welcome-list-active'
 
-  //@ViewChild('.layout-content') content: ElementRef<HTMLInputElement>
+  @ViewChild('backgroundContainer') backgroundContainer!: ElementRef<HTMLElement>
 
   constructor(
     @Inject(DOCUMENT) private _document: Document,
-    //private elRef: ElementRef,
-    //private renderer: Renderer2,
+    private renderer: Renderer2,
     private readonly userService: UserService,
     private readonly slotService: SlotService,
     private readonly appStateService: AppStateService,
@@ -58,20 +57,14 @@ export class WelcomeOverviewComponent implements OnInit, AfterViewInit {
     this.isBookmarkListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.bookmarkListSlotName)
   }
 
-  ngAfterViewInit() {
-    //this.contentSection = this.elRef.nativeElement.querySelectorAll('.layout-content')
-    console.log(this.contentSection)
-    //console.log(this.content.nativeElement)
-    //console.log(this.content)
-  }
-  ngOnInit(): void {
-    //this.contentSection = this._document.querySelectorAll('.layout-content')[0]
-    this.workspace = this.appStateService.currentWorkspace$.getValue()
-    this.getImageData()
+  ngAfterViewInit(): void {
+    console.log(this.backgroundContainer)
+    this.renderer.addClass(this.backgroundContainer.nativeElement, 'henry')
   }
 
-  public prepareImage(imageInfo: ImageInfo): void {
-    //this.contentSection?.firstChild.
+  ngOnInit(): void {
+    this.workspace = this.appStateService.currentWorkspace$.getValue()
+    this.getImageData()
   }
 
   private getImageData(): void {
