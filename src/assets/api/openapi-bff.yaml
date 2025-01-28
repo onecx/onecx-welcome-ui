@@ -1,18 +1,18 @@
+---
 openapi: 3.0.3
 info:
   title: onecx-welcome-bff
   description: OneCX Welcome BFF
   version: 1.0.0
   contact:
-    email: 'tkit_dev@1000kit.org'
+    email: "tkit_dev@1000kit.org"
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 servers:
-  - url: 'http://onecx-welcome-bff:8080'
+  - url: "http://onecx-welcome-bff:8080"
 tags:
   - name: imagesInternal
-  - name: announcements
 paths:
   /images/info/{id}:
     get:
@@ -27,13 +27,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ImageInfo'
-        '404':
+                $ref: "#/components/schemas/ImageInfo"
+        "404":
           description: NOT FOUND
     put:
       x-onecx:
@@ -53,13 +53,13 @@ paths:
             schema:
               $ref: '#/components/schemas/ImageInfo'
       responses:
-        '200':
+        "200":
           description: UPDATED
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageInfo'
-        '400':
+        "400":
           description: BAD REQUEST
           content:
             application/json:
@@ -77,9 +77,9 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        '204':
+        "204":
           description: DELETED
-        '404':
+        "404":
           description: NOT FOUND
   /images/info:
     post:
@@ -98,13 +98,13 @@ paths:
             schema:
               $ref: '#/components/schemas/ImageInfo'
       responses:
-        '201':
+        "201":
           description: CREATED
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageInfo'
-        '400':
+        "400":
           description: BAD REQUEST
           content:
             application/json:
@@ -127,7 +127,7 @@ paths:
             type: string
           required: true
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -152,9 +152,9 @@ paths:
             schema:
               $ref: '#/components/schemas/ImageInfoReorderRequest'
       responses:
-        '200':
+        "200":
           description: UPDATED
-        '400':
+        "400":
           description: BAD REQUEST
           content:
             application/json:
@@ -177,13 +177,13 @@ paths:
               type: string
               format: binary
       responses:
-        '201':
+        "201":
           description: CREATED
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageDataResponse'
-        '400':
+        "400":
           description: BAD REQUEST
           content:
             application/json:
@@ -202,13 +202,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageDataResponse'
-        '404':
+        "404":
           description: NOT FOUND
     put:
       x-onecx:
@@ -228,42 +228,13 @@ paths:
               type: string
               format: binary
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageDataResponse'
-        '400':
-          description: BAD REQUEST
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
-  /announcements/search:
-    post:
-      x-onecx:
-        permissions:
-          announcement:
-            - read
-      tags:
-        - announcements
-      description: search announcements by criteria
-      operationId: searchAnnouncementsByCriteria
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AnnouncementSearchCriteria'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AnnouncementPageResult'
-        '400':
+        "400":
           description: BAD REQUEST
           content:
             application/json:
@@ -303,6 +274,12 @@ components:
           type: string
         visible:
           type: boolean
+        objectFit:
+          $ref: '#/components/schemas/ObjectFit'
+        objectPosition:
+          type: string
+        backgroundColor:
+          type: string
         url:
           type: string
         imageId:
@@ -322,6 +299,9 @@ components:
           type: string
         workspaceName:
           type: string
+    ObjectFit:
+      type: string
+      enum: [ none, contain, cover, fill, scale-down ]
     ImageInfoReorderRequest:
       type: object
       properties:
@@ -329,95 +309,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ImageInfo'
-    Announcement:
-      type: object
-      properties:
-        title:
-          type: string
-        content:
-          type: string
-        type:
-          $ref: '#/components/schemas/Type'
-        priority:
-          $ref: '#/components/schemas/Priority'
-        status:
-          $ref: '#/components/schemas/Status'
-        startDate:
-          $ref: '#/components/schemas/OffsetDateTime'
-        endDate:
-          $ref: '#/components/schemas/OffsetDateTime'
-        productName:
-          type: string
-    AnnouncementPageResult:
-      description: PageResult  for Announcements
-      type: object
-      properties:
-        totalElements:
-          format: int64
-          type: integer
-        number:
-          format: int32
-          type: integer
-        size:
-          format: int32
-          type: integer
-        totalPages:
-          format: int64
-          type: integer
-        stream:
-          type: array
-          items:
-            $ref: '#/components/schemas/Announcement'
-    AnnouncementSearchCriteria:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/Type'
-        priority:
-          $ref: '#/components/schemas/Priority'
-        status:
-          $ref: '#/components/schemas/Status'
-        startDateFrom:
-          $ref: '#/components/schemas/OffsetDateTime'
-        startDateTo:
-          $ref: '#/components/schemas/OffsetDateTime'
-        endDateFrom:
-          $ref: '#/components/schemas/OffsetDateTime'
-        endDateTo:
-          $ref: '#/components/schemas/OffsetDateTime'
-        productName:
-          type: string
-        title:
-          type: string
-        workspaceName:
-          type: string
-        pageNumber:
-          format: int32
-          description: The number of page.
-          default: 0
-          type: integer
-        pageSize:
-          format: int32
-          description: The size of page
-          default: 100
-          type: integer
-    Priority:
-      enum:
-        - IMPORTANT
-        - NORMAL
-        - LOW
-      type: string
-    Status:
-      enum:
-        - ACTIVE
-        - INACTIVE
-      type: string
-    Type:
-      enum:
-        - EVENT
-        - INFO
-        - SYSTEM_MAINTENANCE
-      type: string
     OffsetDateTime:
       format: date-time
       type: string
@@ -458,3 +349,4 @@ components:
       required: true
       schema:
         type: string
+
