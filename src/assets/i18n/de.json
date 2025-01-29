@@ -22,6 +22,17 @@
       "LABEL": "Dialog öffnen und neues Bild hinzufügen",
       "TOOLTIP": "Neues Bild hinzufügen"
     },
+    "NAVIGATION": {
+      "CLOSE": "Schließen",
+      "CLOSE.TOOLTIP": "Dialog schließen",
+      "CLOSE_WITHOUT_SAVE": "Dialog ohne Änderungen schließen",
+      "BACK": "Zurück",
+      "NEXT": "Weiter",
+      "NEXT.TOOLTIP": "Nächste Seite",
+      "BACK.TOOLTIP": "Vorherige Seite",
+      "DETAILS.TOOLTIP": "Details anzeigen",
+      "NEW.TOOLTIP": "Erstelle neuen Eintrag"
+    },
     "CREATE": {
       "TITLE": "Bild hinzufügen",
       "UPLOAD": "Hochladen",
@@ -41,36 +52,54 @@
       "SELECT.TOOLTIP": "Ein Bild auswählen und hochladen",
       "SUCCESS": "Bild erfolgreich hinzugefügt",
       "ERROR": "Bild konnte nicht hinzugefügt werden"
-    }
-  },
-  "GENERAL": {
-    "BACK": "Zurück",
+    },
+    "SAVE": {
+      "LABEL": "Speichern",
+      "TOOLTIP": "Änderungen speichern",
+      "MESSAGE_OK": "Bild erfolgreich gespeichert",
+      "MESSAGE_NOK": "Bild konnte nicht gespeichert werden"
+    },
     "CLOSE": "Schließen",
     "CANCEL": "Abbrechen",
-    "SAVE": "Speichern",
     "VIEW": "Ansehen",
     "CONFIGURE": "Konfigurieren",
-    "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
     "TOOLTIPS": {
       "CLOSE": "Dialog verlassen",
       "CANCEL": "Aktion abbrechen",
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
-      "CONFIGURE": "Hintergrundbilder hochladen und bearbeiten",
-      "SAVE": "Änderungen speichern",
-      "BACK": "Zurück zur Startseite"
+      "CONFIGURE": "Hintergrundbilder hochladen und bearbeiten"
     }
   },
-  "LANDING": {
-    "PIC": "Hintergrundbild",
-    "TITLE": "Hallo"
+  "DIALOG": {
+    "OVERVIEW": {
+      "PIC": "Hintergrundbild",
+      "TITLE": "Hallo"
+    },
+    "DETAIL": {
+      "PIC": "Bild",
+      "HEADER": "Bild konfigurieren",
+      "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bildes zu sehen"
+    }
   },
-  "DETAIL": {
-    "PIC": "Bild",
-    "TITLE": "Vergrößerte Ansicht",
-    "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bildes zu sehen"
+  "IMAGE": {
+    "DEFAULT": "Standardwert",
+    "OBJECT_FIT": "Anpassung",
+    "OBJECT_POSITION": "Position",
+    "BACKGROUND_COLOR": "Hintergrundfarbe",
+    "FORMAT": {
+      "OBJECT_POSITION": "[left | center | right] [ top | center | bottom ] [percentage percentage]",
+      "BACKGROUND_COLOR": "[unset | <color-name> | <color-value>]"
+    },
+    "TOOLTIPS": {
+      "DEFAULT": "Der verwendete Wert, wenn kein Wert angegeben wurde.",
+      "OBJECT_FIT": "Bestimmt wie das Bild an den Platz im Browserfenster angepasst werden soll. CSS: object-fit",
+      "OBJECT_POSITION": "Bestimmt wo das Bild im Browserfenster erscheinen soll. CSS: object-position. Inhalt wird nicht validiert.",
+      "BACKGROUND_COLOR": "Farbe des Hintergrunds im vom Bild nicht abgedeckten Bereich. Inhalt wird nicht validiert."
+    }
   },
   "VALIDATION": {
     "ERRORS": {
+      "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
       "MISSING_IMG_SRC": "Laden Sie ein Bild hoch oder geben sie eine externe Bild-URL an"
     }
   }

@@ -1,15 +1,20 @@
 <ocx-portal-page helpArticleId="PAGE_WELCOME_VIEW" permission="IMAGE#VIEW">
   <!-- BACKGROUND -->
   <div #backgroundContainer class="absolute top-0 left-0 w-full h-full">
-    <ng-container *ngFor="let image of imageData$ | async; let i = index">
+    <ng-container *ngFor="let info of imageInfo$ | async; let i = index">
       <img
         #backgroundImage
         *ngIf="!loading && i === currentSlide"
         @carouselAnimation
-        class="w-full h-full bg-white wc-overview-image"
-        [src]="this.buildImageSrc(image)"
-        [alt]="'LANDING.PIC' | translate"
-        [attr.aria-label]="'LANDING.PIC' | translate"
+        class="w-full h-full"
+        [ngStyle]="{
+          'object-fit': info.objectFit ?? 'scale-down',
+          'object-position': info.objectPosition ?? 'center center',
+          'background-color': info.backgroundColor ?? 'unset'
+        }"
+        [src]="this.buildImageSrc(info)"
+        [alt]="'DIALOG.OVERVIEW.PIC' | translate"
+        [attr.aria-label]="'DIALOG.OVERVIEW.PIC' | translate"
       />
     </ng-container>
   </div>
@@ -19,7 +24,7 @@
     <div class="p-3 sm:py-4 sm:px-5 flex flex-row flex-wrap justify-content-between">
       <div class="flex flex-column gap-2 sm:gap-3 wc_overview_info text-white">
         <div id="wc_overview_info_title" class="text-xl sm:text-2xl md:text-4xl">
-          {{ 'LANDING.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
+          {{ 'DIALOG.OVERVIEW.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
         </div>
         <div id="wc_overview_info_workspace" class="text-sm sm:text-base">Workspace: {{ workspace?.displayName }}</div>
       </div>
@@ -30,9 +35,9 @@
         icon="pi pi-pencil"
         [text]="true"
         [routerLink]="['./configure']"
-        [label]="'GENERAL.CONFIGURE' | translate"
-        [ariaLabel]="'GENERAL.CONFIGURE' | translate"
-        [pTooltip]="'GENERAL.TOOLTIPS.CONFIGURE' | translate"
+        [label]="'ACTIONS.CONFIGURE' | translate"
+        [ariaLabel]="'ACTIONS.CONFIGURE' | translate"
+        [pTooltip]="'ACTIONS.TOOLTIPS.CONFIGURE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       ></p-button>

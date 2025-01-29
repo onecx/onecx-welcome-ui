@@ -23,17 +23,16 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 export class WelcomeOverviewComponent implements OnInit, AfterViewInit {
   private readonly destroy$ = new Subject()
   // dialog
-  public readonly CAROUSEL_SPEED: number = 30000 // ms
+  public readonly CAROUSEL_SPEED: number = 5000 // ms
   public loading = true
   public currentSlide = 0
   public currentDate = new Date()
-  private contentSection: Element | undefined = undefined
   // data
   public user$: Observable<UserProfile>
   public workspace: Workspace | undefined
   public subscription: Subscription | undefined
   public images: ImageDataResponse[] = []
-  public imageData$!: Observable<ImageInfo[]>
+  public imageInfo$!: Observable<ImageInfo[]>
   // slot
   public isAnnouncementListActiveComponentAvailable$: Observable<boolean>
   public isBookmarkListComponentAvailable$: Observable<boolean>
@@ -70,7 +69,7 @@ export class WelcomeOverviewComponent implements OnInit, AfterViewInit {
   private getImageData(): void {
     this.loading = true
     if (this.workspace)
-      this.imageData$ = this.imageService
+      this.imageInfo$ = this.imageService
         .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
         .pipe(
           map((images: ImageInfo[]) => {
@@ -106,11 +105,9 @@ export class WelcomeOverviewComponent implements OnInit, AfterViewInit {
 
   public buildImageSrc(imageInfo: ImageInfo): string | undefined {
     if (this.loading || this.images.length === 0) return undefined
-    let data: string | undefined = undefined
     const existingImage = this.images.find((image) => {
       return image.imageId === imageInfo.imageId
     })
-    data = existingImage ? 'data:' + existingImage.mimeType + ';base64,' + existingImage.imageData : imageInfo.url
-    return data
+    return existingImage ? 'data:' + existingImage.mimeType + ';base64,' + existingImage.imageData : imageInfo.url
   }
 }

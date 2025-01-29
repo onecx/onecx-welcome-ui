@@ -156,7 +156,7 @@ describe('WelcomeConfigureComponent', () => {
 
       component.fetchImageData()
 
-      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'VALIDATION.ERRORS.IMAGES.NOT_FOUND' })
     })
   })
 

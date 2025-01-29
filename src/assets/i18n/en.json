@@ -22,6 +22,17 @@
       "LABEL": "Open Dialog to add a new Image",
       "TOOLTIP": "Add new Image"
     },
+    "NAVIGATION": {
+      "CLOSE": "Close",
+      "CLOSE.TOOLTIP": "Close dialog",
+      "CLOSE_WITHOUT_SAVE": "Close dialog without changes",
+      "BACK": "Back",
+      "NEXT": "Next",
+      "NEXT.TOOLTIP": "Next page",
+      "BACK.TOOLTIP": "Previous page",
+      "DETAILS.TOOLTIP": "Display details",
+      "NEW.TOOLTIP": "Create new entry"
+    },
     "CREATE": {
       "TITLE": "Add Image",
       "UPLOAD": "Upload Image",
@@ -41,36 +52,50 @@
       "SELECT.TOOLTIP": "Select and Upload an Image",
       "SUCCESS": "Image successfully added",
       "ERROR": "Image could not be added"
-    }
-  },
-  "GENERAL": {
-    "BACK": "Back",
+    },
+    "SAVE": {
+      "LABEL": "Save",
+      "TOOLTIP": "Save changes",
+      "MESSAGE_OK": "Image successfully saved",
+      "MESSAGE_NOK": "Image could not be saved"
+    },
     "CLOSE": "Close",
     "CANCEL": "Cancel",
-    "SAVE": "Save",
     "VIEW": "View",
     "CONFIGURE": "Configure",
-    "IMAGES.NOT_FOUND": "Images could not be loaded",
     "TOOLTIPS": {
       "CLOSE": "Leave dialog",
       "CANCEL": "Cancel action",
       "CANCEL_AND_CLOSE": "Cancel and close dialog",
-      "CONFIGURE": "Upload and Editing of Background Images",
-      "SAVE": "Save changes",
-      "BACK": "Back to Start page"
+      "CONFIGURE": "Upload and Editing of Background Images"
     }
   },
-  "LANDING": {
-    "PIC": "Background Image",
-    "TITLE": "Hello"
+  "DIALOG": {
+    "OVERVIEW": {
+      "PIC": "Background Image",
+      "TITLE": "Hello"
+    },
+    "DETAIL": {
+      "PIC": "Picture",
+      "HEADER": "Image configuration",
+      "TOOLTIP": "Click for an enlarged view of the image"
+    }
   },
-  "DETAIL": {
-    "PIC": "Picture",
-    "TITLE": "Enlarged view",
-    "TOOLTIP": "Click for an enlarged view of the image"
+  "IMAGE": {
+    "DEFAULT": "Default value",
+    "OBJECT_FIT": "Object Fit",
+    "OBJECT_POSITION": "Object Position",
+    "BACKGROUND_COLOR": "Background Color",
+    "TOOLTIPS": {
+      "DEFAULT": "Value used if no value was specified.",
+      "OBJECT_FIT": "Determines how the image should be adjusted to the space in the browser window. CSS: object-fit",
+      "OBJECT_POSITION": "Determines where the image should appear in the browser window. CSS: object-position. Content is not validated.",
+      "BACKGROUND_COLOR": "Color of the background in the area not covered by the image. Content is not validated."
+    }
   },
   "VALIDATION": {
     "ERRORS": {
+      "IMAGES.NOT_FOUND": "Images could not be loaded",
       "MISSING_IMG_SRC": "Upload an Image or add an external URL."
     }
   }
