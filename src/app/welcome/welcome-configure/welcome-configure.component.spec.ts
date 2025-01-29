@@ -1,22 +1,23 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient, HttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
 import { of, throwError } from 'rxjs'
 import { DialogModule } from 'primeng/dialog'
 import { CardModule } from 'primeng/card'
 import { ButtonModule } from 'primeng/button'
 
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { Workspace } from '@onecx/integration-interface'
-import { AppStateService, createTranslateLoader, PortalMessageService } from '@onecx/portal-integration-angular'
+import { AppStateService } from '@onecx/angular-integration-interface'
+import { createTranslateLoader, PortalMessageService } from '@onecx/portal-integration-angular'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 import { WelcomeConfigureComponent } from './welcome-configure.component'
 import { ImageCreateComponent } from './image-create/image-create.component'
 
-const imageData: ImageInfo[] = [
+const imageInfos: ImageInfo[] = [
   {
     id: '123',
     imageId: '123',
@@ -42,13 +43,7 @@ describe('WelcomeConfigureComponent', () => {
   let component: WelcomeConfigureComponent
   let fixture: ComponentFixture<WelcomeConfigureComponent>
 
-  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', [
-    'success',
-    'error',
-    'info',
-    'warning'
-  ])
-
+  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const apiServiceSpy = {
     getAllImageInfosByWorkspaceName: jasmine.createSpy('getAllImageInfosByWorkspaceName').and.returnValue(of([])),
     getImageById: jasmine.createSpy('getImageById').and.returnValue(of({})),
@@ -81,10 +76,9 @@ describe('WelcomeConfigureComponent', () => {
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy }
       ]
     }).compileComponents()
+    // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
-    msgServiceSpy.info.calls.reset()
-    msgServiceSpy.warning.calls.reset()
     apiServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
     apiServiceSpy.getImageById.calls.reset()
     apiServiceSpy.deleteImageInfoById.calls.reset()
@@ -108,11 +102,11 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should get infos for all images', (done) => {
-      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageData))
+      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
 
       component.fetchImageInfos()
 
-      component.imageData$?.subscribe({
+      component.imageInfo$?.subscribe({
         next: (images) => {
           expect(images.length).toBe(5)
           done()
@@ -122,16 +116,15 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should handle error when fetching imageinfos', (done) => {
-      const err = { status: 404 }
-      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => err))
+      const errorResponse = { status: 404, statusText: 'Not found' }
+      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
-      component.imageData = imageData
 
       component.fetchImageInfos()
 
-      component.imageData$?.subscribe({
+      component.imageInfo$?.subscribe({
         next: () => {
-          expect(console.error).toHaveBeenCalledWith('getAllImageInfosByWorkspaceName():', err)
+          expect(console.error).toHaveBeenCalledWith('getAllImageInfosByWorkspaceName', errorResponse)
           done()
         },
         error: done.fail
@@ -143,18 +136,17 @@ describe('WelcomeConfigureComponent', () => {
     it('should get data for one image', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
       apiServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
-      component.imageData = imageData
 
-      component.fetchImageData()
+      component.fetchImageData(imageInfos)
 
       expect(component.images).toContain(imgDataResponse)
     })
 
-    it('should handle error when fetching imageData', () => {
+    it('should handle error when fetching imageInfos', () => {
       apiServiceSpy.getImageById.and.returnValue(throwError(() => new Error()))
-      component.imageData = [{ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' }]
+      const imageInfos = [{ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' }]
 
-      component.fetchImageData()
+      component.fetchImageData(imageInfos)
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'VALIDATION.ERRORS.IMAGES.NOT_FOUND' })
     })
@@ -164,7 +156,7 @@ describe('WelcomeConfigureComponent', () => {
     it('should return base64 string if image is found', () => {
       component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
 
-      const result = component.buildImageSrc(imageData[0])
+      const result = component.buildImageSrc(imageInfos[0])
 
       expect(result).toBe('data:image/png;base64,[object Blob]')
     })
@@ -178,7 +170,7 @@ describe('WelcomeConfigureComponent', () => {
         workspaceName: 'w1',
         url: 'http://example.com/image3.png'
       }
-      component.images = imageData
+      component.images = imageInfos
 
       const result = component.buildImageSrc(imageInfo)
 
@@ -191,10 +183,9 @@ describe('WelcomeConfigureComponent', () => {
    */
   describe('OnDeleteImage', () => {
     it('should delete an image', () => {
-      component.imageData = imageData
       apiServiceSpy.deleteImageInfoById.and.returnValue(of({}))
 
-      component.onDeleteImage('123')
+      component.onDeleteImage('123', 0, imageInfos)
 
       expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.SUCCESS' })
     })
@@ -202,7 +193,7 @@ describe('WelcomeConfigureComponent', () => {
     it('should handle error when deleting image', () => {
       apiServiceSpy.deleteImageInfoById.and.returnValue(throwError(() => new Error()))
 
-      component.onDeleteImage('123')
+      component.onDeleteImage('123', 0, imageInfos)
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.ERROR' })
     })

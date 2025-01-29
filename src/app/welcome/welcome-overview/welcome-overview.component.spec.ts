@@ -41,23 +41,13 @@ const ws: Workspace = {
 describe('WelcomeOverviewComponent', () => {
   let component: WelcomeOverviewComponent
   let fixture: ComponentFixture<WelcomeOverviewComponent>
-
-  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', [
-    'success',
-    'error',
-    'info',
-    'warning'
-  ])
-
+  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const apiServiceSpy = {
     getAllImageInfosByWorkspaceName: jasmine.createSpy('getAllImageInfosByWorkspaceName').and.returnValue(of({})),
     getImageById: jasmine.createSpy('getImageById').and.returnValue(of({}))
   }
-
   const mockUserService = {
-    lang$: {
-      getValue: jasmine.createSpy('getValue')
-    },
+    lang$: { getValue: jasmine.createSpy('getValue') },
     profile$: {
       getValue: jasmine.createSpy('getValue'),
       asObservable: jasmine.createSpy('asObservable')
@@ -115,7 +105,7 @@ describe('WelcomeOverviewComponent', () => {
 
       component['getImageData']()
 
-      component.imageData$?.subscribe({
+      component.imageInfo$?.subscribe({
         next: (images) => {
           expect(images.length).toBe(5)
           done()
@@ -131,7 +121,7 @@ describe('WelcomeOverviewComponent', () => {
 
       component['getImageData']()
 
-      component.imageData$?.subscribe({
+      component.imageInfo$?.subscribe({
         next: () => {
           expect(console.error).toHaveBeenCalledWith('getAllImageInfosByWorkspaceName():', err)
           done()

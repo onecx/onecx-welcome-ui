@@ -17,7 +17,7 @@
           'object-position': formGroup.controls['objectPosition'].value,
           'background-color': formGroup.controls['backgroundColor'].value
         }"
-        [src]="buildImageSrc(imageInfos[imageIndex])"
+        [src]="buildImageSrc(imageInfos[imageIndex], images)"
         [alt]="'DIALOG.DETAIL.PIC' | translate"
       />
     </div>

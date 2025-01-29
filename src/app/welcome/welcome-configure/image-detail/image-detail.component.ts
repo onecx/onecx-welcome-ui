@@ -25,10 +25,6 @@ export class ImageDetailComponent implements OnChanges {
   public formGroup: FormGroup
   public objectFitOptions = [ObjectFit.None, ObjectFit.Contain, ObjectFit.Cover, ObjectFit.Fill, ObjectFit.ScaleDown]
 
-  selectedFile: any
-  uploadDisabled: boolean = false
-  currentWorkspaceName: string = ''
-
   constructor(
     private readonly imageApi: ImagesInternalAPIService,
     private readonly translate: TranslateService,
@@ -50,10 +46,12 @@ export class ImageDetailComponent implements OnChanges {
     })
   }
 
-  public buildImageSrc(imageInfo: ImageInfo) {
-    const currentImage = this.images.find((image) => {
+  public buildImageSrc(imageInfo: ImageInfo, images: ImageDataResponse[]): string | undefined {
+    console.log(images)
+    const currentImage = images.find((image) => {
       return image.imageId === imageInfo.imageId
     })
+    console.log(currentImage)
     if (currentImage) {
       return 'data:' + currentImage.mimeType + ';base64,' + currentImage.imageData
     } else {
