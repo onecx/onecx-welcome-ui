@@ -31,9 +31,9 @@ export class ImageDetailComponent implements OnChanges {
     private readonly msgService: PortalMessageService
   ) {
     this.formGroup = new FormGroup({
-      objectFit: new FormControl('scale-down'),
-      objectPosition: new FormControl('center center', [Validators.minLength(2), Validators.maxLength(50)]),
-      backgroundColor: new FormControl('unset', [Validators.minLength(3), Validators.maxLength(100)])
+      objectFit: new FormControl(null),
+      objectPosition: new FormControl(null, [Validators.minLength(2), Validators.maxLength(50)]),
+      backgroundColor: new FormControl(null, [Validators.minLength(3), Validators.maxLength(100)])
     })
   }
 
@@ -46,17 +46,14 @@ export class ImageDetailComponent implements OnChanges {
     })
   }
 
+  // if image data was captured before then use this data
+  // otherwise use the image url
   public buildImageSrc(imageInfo: ImageInfo, images: ImageDataResponse[]): string | undefined {
-    console.log(images)
+    if (!imageInfo) return undefined
     const currentImage = images.find((image) => {
       return image.imageId === imageInfo.imageId
     })
-    console.log(currentImage)
-    if (currentImage) {
-      return 'data:' + currentImage.mimeType + ';base64,' + currentImage.imageData
-    } else {
-      return imageInfo.url
-    }
+    return currentImage ? 'data:' + currentImage.mimeType + ';base64,' + currentImage.imageData : imageInfo.url
   }
 
   public onDialogHide() {

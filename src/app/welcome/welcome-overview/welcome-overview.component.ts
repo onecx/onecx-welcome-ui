@@ -1,11 +1,12 @@
-import { AfterViewInit, Component, ElementRef, Inject, OnInit, Renderer2, ViewChild } from '@angular/core'
+import { Component, Inject, OnInit } from '@angular/core'
 import { DOCUMENT } from '@angular/common'
 import { animate, style, transition, trigger } from '@angular/animations'
 import { catchError, map, Observable, of, Subject, Subscription, takeUntil, timer } from 'rxjs'
 
 import { Workspace } from '@onecx/integration-interface'
 import { SlotService } from '@onecx/angular-remote-components'
-import { AppStateService, UserProfile, UserService } from '@onecx/portal-integration-angular'
+import { UserProfile } from '@onecx/portal-integration-angular'
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
@@ -20,7 +21,7 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
     ])
   ]
 })
-export class WelcomeOverviewComponent implements OnInit, AfterViewInit {
+export class WelcomeOverviewComponent implements OnInit {
   private readonly destroy$ = new Subject()
   // dialog
   public readonly CAROUSEL_SPEED: number = 15000 // ms
@@ -39,11 +40,8 @@ export class WelcomeOverviewComponent implements OnInit, AfterViewInit {
   public bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public listActiveSlotName = 'onecx-welcome-list-active'
 
-  @ViewChild('backgroundContainer') backgroundContainer!: ElementRef<HTMLElement>
-
   constructor(
     @Inject(DOCUMENT) private _document: Document,
-    private renderer: Renderer2,
     private readonly userService: UserService,
     private readonly slotService: SlotService,
     private readonly appStateService: AppStateService,
@@ -54,11 +52,6 @@ export class WelcomeOverviewComponent implements OnInit, AfterViewInit {
       this.listActiveSlotName
     )
     this.isBookmarkListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.bookmarkListSlotName)
-  }
-
-  ngAfterViewInit(): void {
-    console.log(this.backgroundContainer)
-    this.renderer.addClass(this.backgroundContainer.nativeElement, 'henry')
   }
 
   ngOnInit(): void {

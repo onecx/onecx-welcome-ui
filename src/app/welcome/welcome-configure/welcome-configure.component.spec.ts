@@ -1,17 +1,10 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { provideHttpClient, HttpClient } from '@angular/common/http'
-import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
-import { DialogModule } from 'primeng/dialog'
-import { CardModule } from 'primeng/card'
-import { ButtonModule } from 'primeng/button'
 
 import { Workspace } from '@onecx/integration-interface'
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { createTranslateLoader, PortalMessageService } from '@onecx/portal-integration-angular'
+import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 import { WelcomeConfigureComponent } from './welcome-configure.component'
@@ -56,22 +49,13 @@ describe('WelcomeConfigureComponent', () => {
     TestBed.configureTestingModule({
       declarations: [WelcomeConfigureComponent, ImageCreateComponent],
       imports: [
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: createTranslateLoader,
-            deps: [HttpClient, AppStateService]
-          }
-        }),
-        CardModule,
-        ButtonModule,
-        DialogModule,
-        BrowserAnimationsModule
+        TranslateTestingModule.withTranslations({
+          de: require('src/assets/i18n/de.json'),
+          en: require('src/assets/i18n/en.json')
+        }).withDefaultLanguage('en')
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy }
       ]

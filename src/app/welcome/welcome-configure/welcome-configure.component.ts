@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core'
-import { Workspace } from '@onecx/integration-interface'
-import { AppStateService, PortalMessageService } from '@onecx/portal-integration-angular'
 import { catchError, map, Observable, of, Subject, Subscription, takeUntil } from 'rxjs'
+
+import { Workspace } from '@onecx/integration-interface'
+import { AppStateService, PortalMessageService } from '@onecx/angular-integration-interface'
+
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
