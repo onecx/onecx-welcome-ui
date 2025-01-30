@@ -148,15 +148,14 @@ export class WelcomeConfigureComponent implements OnInit {
   }
 
   public onSwapElement(ii: ImageInfo[], indexA: number, indexB: number) {
-    console.log('indexA: ' + indexA)
-    console.log('indexB: ' + indexB)
     const tmp = ii[indexA]
-    // switch start <> end
+    // switch start => end
     if (indexA === 0 && indexB === -1) {
       ii[0].position = (ii.length - 1).toString()
       ii[ii.length - 1].position = '0'
       ii[0] = ii[ii.length - 1]
       ii[ii.length - 1] = tmp
+      // switch end => start
     } else if (indexA === ii.length - 1 && indexB === ii.length) {
       ii[indexA].position = '0'
       ii[0].position = (ii.length - 1).toString()

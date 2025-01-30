@@ -203,18 +203,16 @@ describe('WelcomeConfigureComponent', () => {
 
   describe('onSaveOrder', () => {
     it('should swap elements and update their positions', () => {
-      const array = [
-        { position: 1, value: 'a' },
-        { position: 2, value: 'b' },
-        { position: 3, value: 'c' }
+      const ii: ImageInfo[] = [
+        { position: '1', workspaceName: 'ws' },
+        { position: '2', workspaceName: 'ws' },
+        { position: '3', workspaceName: 'ws' }
       ]
 
-      component.onSwapElement(array, 0, 2)
+      component.onSwapElement(ii, 0, 2)
 
-      expect(array[0].value).toBe('c')
-      expect(array[0].position).toBe(1)
-      expect(array[2].value).toBe('a')
-      expect(array[2].position).toBe(3)
+      expect(ii[0].position).toBe('1')
+      expect(ii[2].position).toBe('3')
       expect(component.isReordered).toBe(true)
     })
 
