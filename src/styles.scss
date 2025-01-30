@@ -10,9 +10,7 @@
 @import 'node_modules/@onecx/portal-layout-styles/src/styles/primeng/theme-light.scss';
 @import 'node_modules/@onecx/portal-integration-angular/assets/styles.scss';
 
-//.content-wrapper {
 .layout-content {
-  overflow: hidden;
   background-color: var(--surface-600) !important;
   background-image: url(assets/images/onecx_watermark_dark.png);
   background-size: 500px !important;

@@ -10,16 +10,24 @@
   /* SLOT area */
   .wc-overview-slot {
     isolation: isolate;
+    padding-top: 110px;
   }
 
-  @media screen and (max-width: 767px) {
-    .top-slot {
-      top: 90px;
+  @media screen and (max-width: 575px) {
+    .pt-slot {
+      padding-top: 70px;
     }
   }
+  // sm
+  @media screen and (min-width: 576px) {
+    .pt-slot {
+      padding-top: 90px;
+    }
+  }
+  // md
   @media screen and (min-width: 768px) {
-    .sm\:top-slot {
-      top: 130px;
+    .pt-slot {
+      padding-top: 110px;
     }
   }
 }

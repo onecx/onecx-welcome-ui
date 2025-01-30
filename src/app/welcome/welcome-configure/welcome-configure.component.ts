@@ -161,6 +161,7 @@ export class WelcomeConfigureComponent implements OnInit {
       ii[0].position = (ii.length - 1).toString()
       ii[ii.length - 1] = ii[0]
       ii[0] = tmp
+      // moving within the array
     } else {
       ii[indexA].position = (indexB + 1).toString()
       ii[indexB].position = (indexA + 1).toString()
