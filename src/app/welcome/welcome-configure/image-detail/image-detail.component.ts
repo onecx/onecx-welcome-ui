@@ -17,9 +17,10 @@ export class ImageDetailComponent implements OnChanges {
   @Input() public images: ImageDataResponse[] = []
   @Input() public imageInfos: ImageInfo[] = []
   @Input() public imageIndex = 0
-  @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
+  @Output() public closeDialog = new EventEmitter<boolean>() // true on image changes
 
   public isLoading = false
+  public changes = false
   public formGroup: FormGroup
   public objectFitOptions = [ObjectFit.None, ObjectFit.Contain, ObjectFit.Cover, ObjectFit.Fill, ObjectFit.ScaleDown]
 
@@ -59,7 +60,7 @@ export class ImageDetailComponent implements OnChanges {
   }
 
   public onDialogHide() {
-    this.hideDialogAndChanged.emit(false)
+    this.closeDialog.emit(this.changes)
   }
 
   public onSave() {
@@ -68,7 +69,7 @@ export class ImageDetailComponent implements OnChanges {
       next: (data) => {
         this.imageInfos[this.imageIndex] = data
         this.msgService.success({ summaryKey: 'ACTIONS.SAVE.MESSAGE_OK' })
-        this.hideDialogAndChanged.emit(true)
+        this.changes = true
       },
       error: (err) => {
         this.msgService.error({ summaryKey: 'ACTIONS.SAVE.MESSAGE_NOK' })

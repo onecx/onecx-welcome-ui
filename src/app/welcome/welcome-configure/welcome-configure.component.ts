@@ -168,18 +168,13 @@ export class WelcomeConfigureComponent implements OnInit {
     })
   }
 
-  public onCloseCreateDialog(refresh: boolean): void {
-    this.displayCreateDialog = false
-    if (refresh) {
-      this.fetchImageInfos()
-    }
-  }
-
   public onOpenDetailDialog(idx: number): void {
     this.displayDetailDialog = true
     this.detailImageIndex = idx
   }
-  public onCloseDetailDialog(): void {
+  public onCloseDetailDialog(refresh: boolean): void {
+    this.displayCreateDialog = false
     this.displayDetailDialog = false
+    if (refresh) this.fetchImageInfos()
   }
 }

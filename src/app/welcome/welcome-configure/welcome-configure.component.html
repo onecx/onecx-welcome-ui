@@ -119,14 +119,14 @@
     <!-- CREATE -->
     <app-image-create
       [displayCreateDialog]="displayCreateDialog"
-      (hideDialogAndChanged)="onCloseCreateDialog($event)"
+      (hideDialogAndChanged)="onCloseDetailDialog($event)"
       [imageInfoCount]="imageInfos.length"
     ></app-image-create>
 
     <!-- DETAIL -->
     <app-image-detail
       [displayDetailDialog]="displayDetailDialog"
-      (hideDialogAndChanged)="onCloseDetailDialog()"
+      (closeDialog)="onCloseDetailDialog(false)"
       [images]="images"
       [imageInfos]="imageInfos"
       [imageIndex]="detailImageIndex"

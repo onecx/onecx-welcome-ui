@@ -94,7 +94,7 @@
         <p-button
           id="wc_image_detail_action_prev"
           icon="pi pi-times"
-          (onClick)="imageIndex = imageIndex - 1"
+          (onClick)="onGoToImage(imageIndex - 1)"
           [disabled]="imageIndex === 0"
           [label]="'ACTIONS.NAVIGATION.BACK' | translate"
           [attr.aria-label]="'ACTIONS.NAVIGATION.BACK' | translate"
@@ -117,12 +117,12 @@
       <div class="flex flex-wrap justify-content-start gap-2 mb-1">{{ imageIndex + 1 }} / {{ imageInfos.length }}</div>
       <div class="flex flex-wrap justify-content-end gap-2 mb-1">
         <p-button
-          id="wc_image_detail_action_cancel"
+          id="wc_image_detail_action_close"
           icon="pi pi-times"
           (onClick)="onDialogHide()"
           [label]="'ACTIONS.CANCEL' | translate"
-          [attr.aria-label]="'ACTIONS.CANCEL' | translate"
-          [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL' | translate"
+          [attr.aria-label]="'ACTIONS.CLOSE' | translate"
+          [pTooltip]="'ACTIONS.TOOLTIPS.CLOSE' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
         ></p-button>
