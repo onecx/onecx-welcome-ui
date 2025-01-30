@@ -1,24 +1,15 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { provideHttpClient, HttpClient } from '@angular/common/http'
-import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { By } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
-import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
-import { InputSwitchModule } from 'primeng/inputswitch'
 
-import {
-  PortalMessageService,
-  createTranslateLoader,
-  AppStateService,
-  UserService
-} from '@onecx/portal-integration-angular'
+import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 import { ImageCreateComponent } from './image-create.component'
 
@@ -26,19 +17,12 @@ describe('ImageCreateComponent', () => {
   let component: ImageCreateComponent
   let fixture: ComponentFixture<ImageCreateComponent>
 
-  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', [
-    'success',
-    'error',
-    'info',
-    'warning'
-  ])
-
+  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const apiServiceSpy = {
     createImageInfo: jasmine.createSpy('createImageInfo').and.returnValue(of({})),
     createImage: jasmine.createSpy('createImage').and.returnValue(of({})),
     updateImageInfo: jasmine.createSpy('updateImageInfo').and.returnValue(of({}))
   }
-
   const mockUserService = {
     lang$: {
       getValue: jasmine.createSpy('getValue')
@@ -53,37 +37,28 @@ describe('ImageCreateComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ImageCreateComponent],
       imports: [
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: createTranslateLoader,
-            deps: [HttpClient, AppStateService]
-          }
-        }),
+        TranslateTestingModule.withTranslations({
+          de: require('src/assets/i18n/de.json'),
+          en: require('src/assets/i18n/en.json')
+        }).withDefaultLanguage('en'),
         BrowserAnimationsModule,
         DialogModule,
-        FormsModule,
-        InputSwitchModule,
-        OverlayPanelModule,
-        ReactiveFormsModule,
         ButtonModule
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
         { provide: UserService, useValue: mockUserService }
       ]
     }).compileComponents()
+    // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
-    msgServiceSpy.info.calls.reset()
-    msgServiceSpy.warning.calls.reset()
     apiServiceSpy.createImage.calls.reset()
     apiServiceSpy.createImageInfo.calls.reset()
     apiServiceSpy.updateImageInfo.calls.reset()
+    // default data
     mockUserService.lang$.getValue.and.returnValue('de')
   }))
 
@@ -93,6 +68,7 @@ describe('ImageCreateComponent', () => {
     component.displayCreateDialog = true
     fixture.detectChanges()
   })
+
   it('should create', () => {
     expect(component).toBeTruthy()
   })

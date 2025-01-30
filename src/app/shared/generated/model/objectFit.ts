@@ -11,9 +11,11 @@
  */
 
 
-export enum Type {
-    Event = 'EVENT',
-    Info = 'INFO',
-    SystemMaintenance = 'SYSTEM_MAINTENANCE'
+export enum ObjectFit {
+    None = 'none',
+    Contain = 'contain',
+    Cover = 'cover',
+    Fill = 'fill',
+    ScaleDown = 'scale-down'
 }
 

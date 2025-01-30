@@ -1,0 +1,25 @@
+:host ::ng-deep {
+  .wc-overview-image {
+    display: block;
+    object-fit: none; /* fill | contain | cover | none | scale-down */
+    object-position: center center; /* [left | center | right] [ top | center | bottom ] [percentage percentage] */
+  }
+  .wc-overview-info {
+    mix-blend-mode: difference;
+  }
+  /* SLOT area */
+  .wc-overview-slot {
+    isolation: isolate;
+  }
+
+  @media screen and (max-width: 767px) {
+    .top-slot {
+      top: 90px;
+    }
+  }
+  @media screen and (min-width: 768px) {
+    .sm\:top-slot {
+      top: 130px;
+    }
+  }
+}

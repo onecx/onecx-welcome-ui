@@ -10,11 +10,12 @@
 @import 'node_modules/@onecx/portal-layout-styles/src/styles/primeng/theme-light.scss';
 @import 'node_modules/@onecx/portal-integration-angular/assets/styles.scss';
 
+//.content-wrapper {
 .layout-content {
   overflow: hidden;
-  background-size: 500px !important;
   background-color: var(--surface-600) !important;
   background-image: url(assets/images/onecx_watermark_dark.png);
+  background-size: 500px !important;
   background-repeat: no-repeat;
   background-position: center center;
 }

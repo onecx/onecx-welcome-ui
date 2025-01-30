@@ -1,3 +1,21 @@
 @import 'src/app/_wc-mixins.scss';
 
 @include dialog-footer-buttons;
+@include dropdown-zebra-rows;
+@include compact-dropdown-list-items;
+
+:host ::ng-deep {
+  .wc-detail-preview-frame {
+    border: var(--panel-content-border);
+  }
+  .p-fieldset {
+    &.p-fieldset-toggleable .p-fieldset-legend a,
+    .p-fieldset-legend {
+      background-color: transparent;
+      padding: 0.3rem 0.4rem;
+    }
+    .p-fieldset-content {
+      padding: 0.5rem 0.2rem 0rem;
+    }
+  }
+}

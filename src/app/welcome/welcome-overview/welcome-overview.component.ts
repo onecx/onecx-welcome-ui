@@ -4,13 +4,15 @@ import { catchError, map, Observable, of, Subject, Subscription, takeUntil, time
 
 import { Workspace } from '@onecx/integration-interface'
 import { SlotService } from '@onecx/angular-remote-components'
-import { AppStateService, UserProfile, UserService } from '@onecx/portal-integration-angular'
+import { UserProfile } from '@onecx/portal-integration-angular'
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
   selector: 'app-welcome-overview',
   templateUrl: './welcome-overview.component.html',
+  styleUrls: ['./welcome-overview.component.scss'],
   animations: [
     trigger('carouselAnimation', [
       transition('void => *', [style({ opacity: 0 }), animate('300ms', style({ opacity: 1 }))]),
@@ -20,25 +22,28 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 })
 export class WelcomeOverviewComponent implements OnInit {
   private readonly destroy$ = new Subject()
+  // dialog
+  public readonly CAROUSEL_SPEED: number = 2000 // ms
   public loading = true
-  readonly CAROUSEL_SPEED: number = 15000 // ms
-  workspace: Workspace | undefined
-  currentSlide = 0
-  user$: Observable<UserProfile>
-  currentDate = new Date()
-  subscription: Subscription | undefined
-  images: ImageDataResponse[] = []
-  public imageData$!: Observable<ImageInfo[]>
+  public currentSlide = 0
+  public currentDate = new Date()
+  // data
+  public user$: Observable<UserProfile>
+  public workspace: Workspace | undefined
+  public subscription: Subscription | undefined
+  public images: ImageDataResponse[] = []
+  public imageInfo$!: Observable<ImageInfo[]>
+  // slot
   public isAnnouncementListActiveComponentAvailable$: Observable<boolean>
   public isBookmarkListComponentAvailable$: Observable<boolean>
   public bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public listActiveSlotName = 'onecx-welcome-list-active'
 
   constructor(
-    private readonly appStateService: AppStateService,
     private readonly userService: UserService,
-    private readonly imageService: ImagesInternalAPIService,
-    private readonly slotService: SlotService
+    private readonly slotService: SlotService,
+    private readonly appStateService: AppStateService,
+    private readonly imageService: ImagesInternalAPIService
   ) {
     this.user$ = this.userService.profile$.asObservable()
     this.isAnnouncementListActiveComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(
@@ -55,10 +60,10 @@ export class WelcomeOverviewComponent implements OnInit {
   private getImageData(): void {
     this.loading = true
     if (this.workspace)
-      this.imageData$ = this.imageService
+      this.imageInfo$ = this.imageService
         .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
         .pipe(
-          map((images) => {
+          map((images: ImageInfo[]) => {
             this.fetchImages(images) // get images
             return images.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
           }),
@@ -91,11 +96,9 @@ export class WelcomeOverviewComponent implements OnInit {
 
   public buildImageSrc(imageInfo: ImageInfo): string | undefined {
     if (this.loading || this.images.length === 0) return undefined
-    let data: string | undefined = undefined
     const existingImage = this.images.find((image) => {
       return image.imageId === imageInfo.imageId
     })
-    data = existingImage ? 'data:' + existingImage.mimeType + ';base64,' + existingImage.imageData : imageInfo.url
-    return data
+    return existingImage ? 'data:' + existingImage.mimeType + ';base64,' + existingImage.imageData : imageInfo.url
   }
 }

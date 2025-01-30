@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core'
-import { Workspace } from '@onecx/integration-interface'
-import { AppStateService, PortalMessageService } from '@onecx/portal-integration-angular'
 import { catchError, map, Observable, of, Subject, Subscription, takeUntil } from 'rxjs'
+
+import { Workspace } from '@onecx/integration-interface'
+import { AppStateService, PortalMessageService } from '@onecx/angular-integration-interface'
+
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
@@ -11,18 +13,20 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 })
 export class WelcomeConfigureComponent implements OnInit {
   private readonly destroy$ = new Subject()
-
-  workspace: Workspace | undefined
-  public currentImage = 0
-  subscription: Subscription | undefined
-  images: ImageDataResponse[] = []
-  imageData: ImageInfo[] = []
-  public imageData$!: Observable<ImageInfo[]> | undefined
+  // dialog
   public displayCreateDialog = false
   public displayDetailDialog = false
-  selectedImageInfo: ImageInfo | undefined
-  selectedImageData: ImageDataResponse | undefined
-  isReordered: boolean = false
+  public isReordered = false
+  public detailImageIndex = 0
+  // data
+  public workspace: Workspace | undefined
+  public subscription: Subscription | undefined
+  public images: ImageDataResponse[] = []
+  public imageInfos: ImageInfo[] = []
+  public imageInfo$!: Observable<ImageInfo[]> | undefined
+
+  public selectedImageInfo: ImageInfo | undefined
+  public selectedImageData: ImageDataResponse | undefined
 
   constructor(
     private readonly imageService: ImagesInternalAPIService,
@@ -31,23 +35,24 @@ export class WelcomeConfigureComponent implements OnInit {
   ) {
     this.workspace = this.appStateService.currentWorkspace$.getValue()
   }
-  ngOnInit(): void {
+
+  public ngOnInit(): void {
     this.fetchImageInfos()
   }
 
   public fetchImageInfos() {
     if (this.workspace)
-      this.imageData$ = this.imageService
+      this.imageInfo$ = this.imageService
         .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
         .pipe(
           map((images) => {
-            this.imageData = images
-            this.imageData.sort(this.sortImagesByPosition)
-            this.fetchImageData()
+            this.imageInfos = images
+            this.imageInfos.sort(this.sortImagesByPosition)
+            this.fetchImageData(images)
             return images.sort((a, b) => Number(a.position) - Number(b.position))
           }),
           catchError((err) => {
-            console.error('getAllImageInfosByWorkspaceName():', err)
+            console.error('getAllImageInfosByWorkspaceName', err)
             return of([] as ImageInfo[])
           })
         )
@@ -59,35 +64,34 @@ export class WelcomeConfigureComponent implements OnInit {
     else return (a.position ?? 0) > (b.position ?? 0) ? 1 : 0
   }
 
-  public fetchImageData() {
-    this.imageData.forEach((info) => {
+  public fetchImageData(ii: ImageInfo[]) {
+    ii.forEach((info) => {
       if (info.imageId) {
         this.imageService.getImageById({ id: info.imageId }).subscribe({
-          next: (imageData: ImageDataResponse) => {
-            this.images.push(imageData)
+          next: (idr: ImageDataResponse) => {
+            this.images.push(idr)
           },
-          error: () => this.msgService.error({ summaryKey: 'GENERAL.IMAGES.NOT_FOUND' })
+          error: () => this.msgService.error({ summaryKey: 'VALIDATION.ERRORS.IMAGES.NOT_FOUND' })
         })
       }
     })
   }
 
-  public buildImageSrc(imageInfo: ImageInfo) {
-    const currentImage = this.images.find((image) => {
-      return image.imageId === imageInfo.imageId
+  public buildImageSrc(ii: ImageInfo) {
+    const image = this.images.find((image) => {
+      return image.imageId === ii.imageId
     })
-    if (currentImage) {
-      return 'data:' + currentImage.mimeType + ';base64,' + currentImage.imageData
+    if (image) {
+      return 'data:' + image.mimeType + ';base64,' + image.imageData
     } else {
-      return imageInfo.url
+      return ii.url
     }
   }
 
-  private updatePositions() {
-    this.imageData.forEach((info, index) => {
-      info.position = (index + 1).toString()
-    })
-    this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: this.imageData } }).subscribe({
+  // reorder
+  private updatePositions(ii: ImageInfo[]) {
+    ii.forEach((info, index) => (info.position = (index + 1).toString()))
+    this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: ii } }).subscribe({
       next: () => {
         this.fetchImageInfos()
       }
@@ -97,14 +101,13 @@ export class WelcomeConfigureComponent implements OnInit {
   /*
    * UI ACTIONS
    */
-  public onDeleteImage(id: string | undefined) {
+  public onDeleteImage(id: string | undefined, idx: number, ii: ImageInfo[]) {
     if (id) {
-      const indexOfItem = this.imageData.findIndex((i) => i.id === id)
-      this.imageData.splice(indexOfItem, 1)
+      ii.splice(idx, 1) // remove locally
       this.imageService.deleteImageInfoById({ id: id }).subscribe({
         next: () => {
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.SUCCESS' })
-          this.updatePositions()
+          this.updatePositions(ii)
         },
         error: () => {
           this.msgService.error({ summaryKey: 'ACTIONS.DELETE.ERROR' })
@@ -144,7 +147,7 @@ export class WelcomeConfigureComponent implements OnInit {
     }
   }
 
-  public swapElement(array: any, indexA: number, indexB: number) {
+  public onSwapElement(array: any, indexA: number, indexB: number) {
     const tmp = array[indexA]
     array[indexA].position = indexB + 1
     array[indexB].position = indexA + 1
@@ -154,7 +157,7 @@ export class WelcomeConfigureComponent implements OnInit {
   }
 
   public onSaveOrder() {
-    const imagesToReorder = this.imageData
+    const imagesToReorder = this.imageInfos
     this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: imagesToReorder } }).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'ACTIONS.REORDER.SUCCESS' })
@@ -165,14 +168,13 @@ export class WelcomeConfigureComponent implements OnInit {
     })
   }
 
-  public onCloseCreateDialog(refresh: boolean): void {
-    this.displayCreateDialog = false
-    if (refresh) {
-      this.fetchImageInfos()
-    }
+  public onOpenDetailDialog(idx: number): void {
+    this.displayDetailDialog = true
+    this.detailImageIndex = idx
   }
-
-  public onCloseDetailDialog(): void {
+  public onCloseDetailDialog(refresh: boolean): void {
+    this.displayCreateDialog = false
     this.displayDetailDialog = false
+    if (refresh) this.fetchImageInfos()
   }
 }

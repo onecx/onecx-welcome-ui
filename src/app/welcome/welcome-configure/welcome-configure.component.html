@@ -1,13 +1,13 @@
 <ocx-portal-page helpArticleId="PAGE_WELCOME_EDIT" permission="IMAGE#EDIT">
-  <div *ngIf="imageData$ | async as imageInfos" class="flex flex-column row-gap-3">
+  <div *ngIf="imageInfo$ | async as imageInfos" class="flex flex-column row-gap-3">
     <div class="flex flex-row justify-content-end column-gap-2">
       <p-button
         id="wc_configure_card_list_action_back"
         icon="pi pi-arrow-left"
         [routerLink]="['../']"
-        [label]="'GENERAL.BACK' | translate"
-        [attr.aria-label]="'GENERAL.BACK' | translate"
-        [pTooltip]="'GENERAL.TOOLTIPS.BACK' | translate"
+        [label]="'ACTIONS.NAVIGATION.BACK' | translate"
+        [ariaLabel]="'ACTIONS.NAVIGATION.BACK' | translate"
+        [pTooltip]="'ACTIONS.NAVIGATION.BACK.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       ></p-button>
@@ -17,7 +17,7 @@
         (onClick)="onSaveOrder()"
         [disabled]="!isReordered"
         [label]="'ACTIONS.REORDER.SAVE' | translate"
-        [attr.aria-label]="'ACTIONS.REORDER.SAVE' | translate"
+        [ariaLabel]="'ACTIONS.REORDER.SAVE' | translate"
         [pTooltip]="'ACTIONS.REORDER.SAVE_TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
@@ -26,79 +26,81 @@
     <div class="flex flex-row flex-wrap gap-4">
       <div class="p-card" styleClass="h-full" *ngFor="let info of imageInfos; let i = index">
         <div class="p-card-body w-20rem h-18rem flex flex-column flex-nowrap justify-content-between">
-          <div class="my-auto text-center">
+          <div class="aw-18rem ah-14rem flex justify-content-center align-items-center">
             <img
               [id]="'wc_configure_card_item_' + i + '_image'"
-              class="max-w-18rem max-h-12rem"
-              style="cursor: pointer"
+              class="w-18rem h-13rem cursor-pointer"
+              [ngStyle]="{
+                'object-fit': info.objectFit ?? 'scale-down',
+                'object-position': info.objectPosition ?? 'center center',
+                'background-color': info.backgroundColor ?? 'unset'
+              }"
               [attr.tabindex]="0"
-              [alt]="('DETAIL.PIC' | translate) + '_' + i"
+              [alt]="('DIALOG.DETAIL.PIC' | translate) + '_' + i"
               [src]="buildImageSrc(info)"
-              (click)="displayDetailDialog = true; currentImage = i"
-              (keydown.enter)="displayDetailDialog = true; currentImage = i"
-              (keydown.space)="displayDetailDialog = true; currentImage = i"
-              [attr.aria-label]="'DETAIL.TOOLTIP' | translate"
-              [pTooltip]="'DETAIL.TOOLTIP' | translate"
+              (click)="onOpenDetailDialog(i)"
+              (keydown.enter)="onOpenDetailDialog(i)"
+              (keydown.space)="onOpenDetailDialog(i)"
+              [attr.aria-label]="'DIALOG.DETAIL.TOOLTIP' | translate"
+              [pTooltip]="'DIALOG.DETAIL.TOOLTIP' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
             />
           </div>
-          <div class="p-dialog-footer">
-            <div class="flex flex-row flex-nowrap justify-content-between">
-              <div class="flex flex-row flex-nowrap column-gap-2">
-                <p-button
-                  tabindex="0"
-                  [id]="'wc_configure_card_item_' + i + '_action_visibility'"
-                  [icon]="info.visible ? 'pi pi-eye' : 'pi pi-eye-slash'"
-                  (onClick)="onChangeVisibility(info)"
-                  [attr.aria-label]="'ACTIONS.VISIBILITY' | translate"
-                  [pTooltip]="'ACTIONS.VISIBILITY.TOOLTIP' | translate"
-                  tooltipPosition="bottom"
-                  tooltipEvent="hover"
-                ></p-button>
-                <p-button
-                  tabindex="0"
-                  ocxIfPermission="IMAGE#DELETE"
-                  [id]="'wc_configure_card_item_' + i + '_action_delete'"
-                  icon="pi pi-trash"
-                  (onClick)="onDeleteImage(info.id)"
-                  [attr.aria-label]="'ACTIONS.DELETE' | translate"
-                  [pTooltip]="'ACTIONS.DELETE.TOOLTIP' | translate"
-                  tooltipPosition="bottom"
-                  tooltipEvent="hover"
-                ></p-button>
-              </div>
-              <div class="flex flex-row flex-nowrap column-gap-2">
-                <p-button
-                  tabindex="0"
-                  [id]="'wc_configure_card_item_' + i + '_action_left'"
-                  icon="pi pi-arrow-left"
-                  [disabled]="!(i > 0)"
-                  (onClick)="swapElement(imageData, i, i - 1)"
-                  [attr.aria-label]="'ACTIONS.REORDER.MOVE_LEFT' | translate"
-                  [pTooltip]="'ACTIONS.REORDER.MOVE_LEFT' | translate"
-                  tooltipPosition="bottom"
-                  tooltipEvent="hover"
-                >
-                </p-button>
-                <p-button
-                  tabindex="0"
-                  [id]="'wc_configure_card_item_' + i + '_action_right'"
-                  icon="pi pi-arrow-right"
-                  [disabled]="!(i !== imageData.length - 1)"
-                  (onClick)="swapElement(imageData, i, i + 1)"
-                  [attr.aria-label]="'ACTIONS.REORDER.MOVE_RIGHT' | translate"
-                  [pTooltip]="'ACTIONS.REORDER.MOVE_RIGHT' | translate"
-                  tooltipPosition="bottom"
-                  tooltipEvent="hover"
-                ></p-button>
-              </div>
+          <div class="flex flex-row flex-nowrap justify-content-between">
+            <div class="flex flex-row flex-nowrap column-gap-2">
+              <p-button
+                tabindex="0"
+                [id]="'wc_configure_card_item_' + i + '_action_visibility'"
+                [icon]="info.visible ? 'pi pi-eye' : 'pi pi-eye-slash'"
+                (onClick)="onChangeVisibility(info)"
+                [ariaLabel]="'ACTIONS.VISIBILITY' | translate"
+                [pTooltip]="'ACTIONS.VISIBILITY.TOOLTIP' | translate"
+                tooltipPosition="bottom"
+                tooltipEvent="hover"
+              ></p-button>
+              <p-button
+                tabindex="0"
+                ocxIfPermission="IMAGE#DELETE"
+                [id]="'wc_configure_card_item_' + i + '_action_delete'"
+                icon="pi pi-trash"
+                (onClick)="onDeleteImage(info.id, i, imageInfos)"
+                [ariaLabel]="'ACTIONS.DELETE' | translate"
+                [pTooltip]="'ACTIONS.DELETE.TOOLTIP' | translate"
+                tooltipPosition="bottom"
+                tooltipEvent="hover"
+              ></p-button>
+            </div>
+            <div class="flex flex-row flex-nowrap column-gap-2">
+              <p-button
+                tabindex="0"
+                [id]="'wc_configure_card_item_' + i + '_action_left'"
+                icon="pi pi-arrow-left"
+                [disabled]="!(i > 0)"
+                (onClick)="onSwapElement(imageInfos, i, i - 1)"
+                [ariaLabel]="'ACTIONS.REORDER.MOVE_LEFT' | translate"
+                [pTooltip]="'ACTIONS.REORDER.MOVE_LEFT' | translate"
+                tooltipPosition="bottom"
+                tooltipEvent="hover"
+              >
+              </p-button>
+              <p-button
+                tabindex="0"
+                [id]="'wc_configure_card_item_' + i + '_action_right'"
+                icon="pi pi-arrow-right"
+                [disabled]="!(i !== imageInfos.length - 1)"
+                (onClick)="onSwapElement(imageInfos, i, i + 1)"
+                [ariaLabel]="'ACTIONS.REORDER.MOVE_RIGHT' | translate"
+                [pTooltip]="'ACTIONS.REORDER.MOVE_RIGHT' | translate"
+                tooltipPosition="bottom"
+                tooltipEvent="hover"
+              ></p-button>
             </div>
           </div>
         </div>
       </div>
       <a
-        *ngIf="imageData.length < 20"
+        *ngIf="imageInfos.length < 20"
         tabindex="0"
         id="wc_configure_card_action_add"
         class="w-20rem h-18rem new-image-card block flex justify-content-center align-items-center border-primary border-round-xl cursor-pointer"
@@ -113,19 +115,21 @@
         <span class="pi pi-plus font-bold text-3xl"> </span>
       </a>
     </div>
+
+    <!-- CREATE -->
+    <app-image-create
+      [displayCreateDialog]="displayCreateDialog"
+      (hideDialogAndChanged)="onCloseDetailDialog($event)"
+      [imageInfoCount]="imageInfos.length"
+    ></app-image-create>
+
+    <!-- DETAIL -->
+    <app-image-detail
+      [displayDetailDialog]="displayDetailDialog"
+      (closeDialog)="onCloseDetailDialog(false)"
+      [images]="images"
+      [imageInfos]="imageInfos"
+      [imageIndex]="detailImageIndex"
+    ></app-image-detail>
   </div>
 </ocx-portal-page>
-
-<app-image-create
-  [displayCreateDialog]="displayCreateDialog"
-  (hideDialogAndChanged)="onCloseCreateDialog($event)"
-  [imageInfoCount]="imageData.length"
-></app-image-create>
-
-<app-image-detail
-  [displayDetailDialog]="displayDetailDialog"
-  (hideDialogAndChanged)="onCloseDetailDialog()"
-  [images]="images"
-  [imageData]="imageData"
-  [imageIndex]="currentImage"
-></app-image-detail>

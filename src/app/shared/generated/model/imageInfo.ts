@@ -9,11 +9,15 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { ObjectFit } from './objectFit';
 
 
 export interface ImageInfo { 
     position?: string;
     visible?: boolean;
+    objectFit?: ObjectFit;
+    objectPosition?: string;
+    backgroundColor?: string;
     url?: string;
     imageId?: string;
     id?: string;
@@ -24,4 +28,6 @@ export interface ImageInfo {
     modificationUser?: string;
     workspaceName: string;
 }
+
+
 
