@@ -1,6 +1,6 @@
 <ocx-portal-page helpArticleId="PAGE_WELCOME_VIEW" permission="IMAGE#VIEW">
   <!-- BACKGROUND -->
-  <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
+  <div class="absolute top-0 left-0 w-full h-full">
     <ng-container *ngFor="let info of imageInfo$ | async; let i = index">
       <img
         #backgroundImage
@@ -19,7 +19,7 @@
     </ng-container>
   </div>
   <!-- INFO -->
-  <div class="absolute top-0 left-0 w-full h-full overflow-hidden wc-overview-info">
+  <div class="absolute top-0 left-0 w-full h-full wc-overview-info">
     <!-- INFO -->
     <div class="p-3 sm:py-4 sm:px-5 flex flex-row flex-wrap justify-content-between">
       <div class="flex flex-column gap-2 sm:gap-3 wc_overview_info text-white">
@@ -44,9 +44,9 @@
     </div>
   </div>
 
-  <!-- SLOTs -->
-  <div class="absolute top-slot sm:top-slot left-0 w-full h-full overflow-hidden wc-overview-slot">
-    <div class="px-3 sm:px-5 grid flex-column-reverse sm:flex-row justify-content-between row-gap-5">
+  <!-- SLOTs => this is a normal block -->
+  <div class="pt-slot px-0 sm:px-3 wc-overview-slot">
+    <div class="grid flex-column-reverse sm:flex-row justify-content-between row-gap-5">
       <!-- SLOT: Bookmarks -->
       <div class="col-12 sm:col-6 md:col-5 xl:col-4 py-0 sm:p-2">
         <div
