@@ -28,8 +28,8 @@
       "CLOSE_WITHOUT_SAVE": "Dialog ohne Änderungen schließen",
       "BACK": "Zurück",
       "NEXT": "Weiter",
-      "NEXT.TOOLTIP": "Nächste Seite",
-      "BACK.TOOLTIP": "Vorherige Seite",
+      "NEXT.TOOLTIP": "Nächstes Bild",
+      "BACK.TOOLTIP": "Vorheriges Bild",
       "DETAILS.TOOLTIP": "Details anzeigen",
       "NEW.TOOLTIP": "Erstelle neuen Eintrag"
     },
@@ -78,7 +78,9 @@
     "DETAIL": {
       "PIC": "Bild",
       "HEADER": "Bild konfigurieren",
-      "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bildes zu sehen"
+      "TOOLTIP": "Klicken, um vergrößerte Ansicht des Bildes zu sehen",
+      "AREA.CSS": "CSS Eigenschaften",
+      "AREA.IMAGE": "Vorschau"
     }
   },
   "IMAGE": {

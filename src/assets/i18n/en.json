@@ -28,8 +28,8 @@
       "CLOSE_WITHOUT_SAVE": "Close dialog without changes",
       "BACK": "Back",
       "NEXT": "Next",
-      "NEXT.TOOLTIP": "Next page",
-      "BACK.TOOLTIP": "Previous page",
+      "NEXT.TOOLTIP": "Next Image",
+      "BACK.TOOLTIP": "Previous Image",
       "DETAILS.TOOLTIP": "Display details",
       "NEW.TOOLTIP": "Create new entry"
     },
@@ -78,7 +78,9 @@
     "DETAIL": {
       "PIC": "Picture",
       "HEADER": "Image configuration",
-      "TOOLTIP": "Click for an enlarged view of the image"
+      "TOOLTIP": "Click for an enlarged view of the image",
+      "AREA.CSS": "CSS Properties",
+      "AREA.IMAGE": "Preview"
     }
   },
   "IMAGE": {

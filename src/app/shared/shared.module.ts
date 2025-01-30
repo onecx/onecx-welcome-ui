@@ -12,6 +12,7 @@ import { DataViewModule } from 'primeng/dataview'
 import { DialogModule } from 'primeng/dialog'
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
 import { DropdownModule } from 'primeng/dropdown'
+import { FieldsetModule } from 'primeng/fieldset'
 import { FileUploadModule } from 'primeng/fileupload'
 import { InputTextModule } from 'primeng/inputtext'
 import { ToastModule } from 'primeng/toast'
@@ -35,6 +36,7 @@ import { LabelResolver } from './label.resolver'
     DialogModule,
     DropdownModule,
     DynamicDialogModule,
+    FieldsetModule,
     FileUploadModule,
     FormsModule,
     InputTextModule,
@@ -54,6 +56,7 @@ import { LabelResolver } from './label.resolver'
     DialogModule,
     DropdownModule,
     DynamicDialogModule,
+    FieldsetModule,
     FileUploadModule,
     FormsModule,
     InputTextModule,

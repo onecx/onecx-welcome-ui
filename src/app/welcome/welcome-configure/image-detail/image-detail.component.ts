@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, OnChanges, ViewChild } from '@angular/core'
+import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 
@@ -19,8 +19,6 @@ export class ImageDetailComponent implements OnChanges {
   @Input() public imageIndex = 0
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
 
-  @ViewChild('detailImage') detailImage: ElementRef<HTMLImageElement> = {} as ElementRef
-
   public isLoading = false
   public formGroup: FormGroup
   public objectFitOptions = [ObjectFit.None, ObjectFit.Contain, ObjectFit.Cover, ObjectFit.Fill, ObjectFit.ScaleDown]
@@ -38,11 +36,15 @@ export class ImageDetailComponent implements OnChanges {
   }
 
   public ngOnChanges(): void {
-    // fill form - use default values if values are not yet set
+    this.fillForm(this.imageIndex)
+  }
+
+  // fill form - use default values if values are not yet set
+  private fillForm(idx: number): void {
     this.formGroup.patchValue({
-      objectFit: this.imageInfos[this.imageIndex].objectFit ?? 'scale-down',
-      objectPosition: this.imageInfos[this.imageIndex].objectPosition ?? 'center center',
-      backgroundColor: this.imageInfos[this.imageIndex].backgroundColor ?? 'unset'
+      objectFit: this.imageInfos[idx].objectFit ?? 'scale-down',
+      objectPosition: this.imageInfos[idx].objectPosition ?? 'center center',
+      backgroundColor: this.imageInfos[idx].backgroundColor ?? 'unset'
     })
   }
 
@@ -73,5 +75,10 @@ export class ImageDetailComponent implements OnChanges {
         console.error('updateImageById', err)
       }
     })
+  }
+
+  public onGoToImage(newIdx: number) {
+    this.imageIndex = newIdx
+    this.fillForm(newIdx)
   }
 }
