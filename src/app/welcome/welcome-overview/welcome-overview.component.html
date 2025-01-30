@@ -4,7 +4,7 @@
     <ng-container *ngFor="let info of imageInfo$ | async; let i = index">
       <img
         #backgroundImage
-        *ngIf="!loading && i === currentSlide"
+        *ngIf="!loading && i + 1 === currentSlide"
         @carouselAnimation
         class="w-full h-full"
         [ngStyle]="{

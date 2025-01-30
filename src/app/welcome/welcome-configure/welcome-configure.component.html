@@ -71,12 +71,15 @@
                 tooltipEvent="hover"
               ></p-button>
             </div>
+            <!--
+                [disabled]="!(i > 0)"
+                [disabled]="!(i !== imageInfos.length - 1)"
+            -->
             <div class="flex flex-row flex-nowrap column-gap-2">
               <p-button
                 tabindex="0"
                 [id]="'wc_configure_card_item_' + i + '_action_left'"
                 icon="pi pi-arrow-left"
-                [disabled]="!(i > 0)"
                 (onClick)="onSwapElement(imageInfos, i, i - 1)"
                 [ariaLabel]="'ACTIONS.REORDER.MOVE_LEFT' | translate"
                 [pTooltip]="'ACTIONS.REORDER.MOVE_LEFT' | translate"
@@ -88,7 +91,6 @@
                 tabindex="0"
                 [id]="'wc_configure_card_item_' + i + '_action_right'"
                 icon="pi pi-arrow-right"
-                [disabled]="!(i !== imageInfos.length - 1)"
                 (onClick)="onSwapElement(imageInfos, i, i + 1)"
                 [ariaLabel]="'ACTIONS.REORDER.MOVE_RIGHT' | translate"
                 [pTooltip]="'ACTIONS.REORDER.MOVE_RIGHT' | translate"

@@ -93,9 +93,8 @@
       <div class="flex flex-wrap justify-content-start gap-2 mb-1">
         <p-button
           id="wc_image_detail_action_prev"
-          icon="pi pi-times"
+          icon="pi pi-caret-left"
           (onClick)="onGoToImage(imageIndex - 1)"
-          [disabled]="imageIndex === 0"
           [label]="'ACTIONS.NAVIGATION.BACK' | translate"
           [attr.aria-label]="'ACTIONS.NAVIGATION.BACK' | translate"
           [pTooltip]="'ACTIONS.NAVIGATION.BACK.TOOLTIP' | translate"
@@ -104,9 +103,8 @@
         ></p-button>
         <p-button
           id="wc_image_detail_action_next"
-          icon="pi pi-save"
+          icon="pi pi-caret-right"
           (onClick)="onGoToImage(imageIndex + 1)"
-          [disabled]="imageIndex === imageInfos.length - 1"
           [label]="'ACTIONS.NAVIGATION.NEXT' | translate"
           [attr.aria-label]="'ACTIONS.NAVIGATION.NEXT' | translate"
           [pTooltip]="'ACTIONS.NAVIGATION.NEXT.TOOLTIP' | translate"
