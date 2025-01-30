@@ -23,7 +23,7 @@
       />
     </div>
 
-    <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="pt-0 p-3">
+    <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="pt-2 p-3">
       <ng-template pTemplate="header">
         <span>{{ 'DIALOG.DETAIL.AREA.CSS' | translate }}</span>
       </ng-template>
@@ -93,9 +93,8 @@
       <div class="flex flex-wrap justify-content-start gap-2 mb-1">
         <p-button
           id="wc_image_detail_action_prev"
-          icon="pi pi-times"
+          icon="pi pi-caret-left"
           (onClick)="onGoToImage(imageIndex - 1)"
-          [disabled]="imageIndex === 0"
           [label]="'ACTIONS.NAVIGATION.BACK' | translate"
           [attr.aria-label]="'ACTIONS.NAVIGATION.BACK' | translate"
           [pTooltip]="'ACTIONS.NAVIGATION.BACK.TOOLTIP' | translate"
@@ -104,9 +103,8 @@
         ></p-button>
         <p-button
           id="wc_image_detail_action_next"
-          icon="pi pi-save"
+          icon="pi pi-caret-right"
           (onClick)="onGoToImage(imageIndex + 1)"
-          [disabled]="imageIndex === imageInfos.length - 1"
           [label]="'ACTIONS.NAVIGATION.NEXT' | translate"
           [attr.aria-label]="'ACTIONS.NAVIGATION.NEXT' | translate"
           [pTooltip]="'ACTIONS.NAVIGATION.NEXT.TOOLTIP' | translate"
@@ -120,7 +118,7 @@
           id="wc_image_detail_action_close"
           icon="pi pi-times"
           (onClick)="onDialogHide()"
-          [label]="'ACTIONS.CANCEL' | translate"
+          [label]="'ACTIONS.CLOSE' | translate"
           [attr.aria-label]="'ACTIONS.CLOSE' | translate"
           [pTooltip]="'ACTIONS.TOOLTIPS.CLOSE' | translate"
           tooltipPosition="top"

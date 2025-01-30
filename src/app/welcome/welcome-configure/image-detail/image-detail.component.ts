@@ -79,7 +79,9 @@ export class ImageDetailComponent implements OnChanges {
   }
 
   public onGoToImage(newIdx: number) {
-    this.imageIndex = newIdx
-    this.fillForm(newIdx)
+    if (newIdx === this.imageInfos.length) this.imageIndex = 0
+    else if (newIdx === -1) this.imageIndex = this.imageInfos.length - 1
+    else this.imageIndex = newIdx
+    this.fillForm(this.imageIndex)
   }
 }

@@ -147,12 +147,26 @@ export class WelcomeConfigureComponent implements OnInit {
     }
   }
 
-  public onSwapElement(array: any, indexA: number, indexB: number) {
-    const tmp = array[indexA]
-    array[indexA].position = indexB + 1
-    array[indexB].position = indexA + 1
-    array[indexA] = array[indexB]
-    array[indexB] = tmp
+  public onSwapElement(ii: ImageInfo[], indexA: number, indexB: number) {
+    const tmp = ii[indexA]
+    // switch start => end
+    if (indexA === 0 && indexB === -1) {
+      ii[0].position = (ii.length - 1).toString()
+      ii[ii.length - 1].position = '0'
+      ii[0] = ii[ii.length - 1]
+      ii[ii.length - 1] = tmp
+      // switch end => start
+    } else if (indexA === ii.length - 1 && indexB === ii.length) {
+      ii[indexA].position = '0'
+      ii[0].position = (ii.length - 1).toString()
+      ii[ii.length - 1] = ii[0]
+      ii[0] = tmp
+    } else {
+      ii[indexA].position = (indexB + 1).toString()
+      ii[indexB].position = (indexA + 1).toString()
+      ii[indexA] = ii[indexB]
+      ii[indexB] = tmp
+    }
     this.isReordered = true
   }
 
