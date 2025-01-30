@@ -18,11 +18,13 @@
       padding-top: 70px;
     }
   }
+  // sm
   @media screen and (min-width: 576px) {
     .pt-slot {
       padding-top: 90px;
     }
   }
+  // md
   @media screen and (min-width: 768px) {
     .pt-slot {
       padding-top: 110px;
