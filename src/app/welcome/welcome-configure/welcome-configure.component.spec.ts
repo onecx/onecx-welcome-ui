@@ -209,7 +209,7 @@ describe('WelcomeConfigureComponent', () => {
         { position: 3, value: 'c' }
       ]
 
-      component.swapElement(array, 0, 2)
+      component.onSwapElement(array, 0, 2)
 
       expect(array[0].value).toBe('c')
       expect(array[0].position).toBe(1)
@@ -236,33 +236,25 @@ describe('WelcomeConfigureComponent', () => {
   })
 
   describe('onCloseCreateDialog', () => {
-    it('should close create dialog', () => {
-      component.onCloseCreateDialog(false)
-
-      expect(component.displayCreateDialog).toBeFalse()
-    })
-
     it('should refresh images after closing', () => {
       spyOn(component, 'fetchImageInfos')
 
-      component.onCloseCreateDialog(true)
+      component.onCloseDetailDialog(true)
 
       expect(component.fetchImageInfos).toHaveBeenCalled()
     })
 
     it('should not refresh after closing', () => {
+      component.displayCreateDialog = true
+      component.displayDetailDialog = true
       spyOn(component, 'fetchImageInfos')
 
-      component.onCloseCreateDialog(false)
+      component.onCloseDetailDialog(false)
 
+      expect(component.displayCreateDialog).toBeFalse()
+      expect(component.displayDetailDialog).toBeFalse()
       expect(component.fetchImageInfos).not.toHaveBeenCalled()
     })
-  })
-
-  it('should close detail dialog', () => {
-    component.onCloseDetailDialog()
-
-    expect(component.displayDetailDialog).toBeFalse()
   })
 
   describe('sortImagesByPosition', () => {

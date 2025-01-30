@@ -147,7 +147,7 @@ export class WelcomeConfigureComponent implements OnInit {
     }
   }
 
-  public swapElement(array: any, indexA: number, indexB: number) {
+  public onSwapElement(array: any, indexA: number, indexB: number) {
     const tmp = array[indexA]
     array[indexA].position = indexB + 1
     array[indexB].position = indexA + 1

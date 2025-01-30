@@ -78,19 +78,21 @@ describe('ImageDetailComponent', () => {
 
   describe('onDialogHide', () => {
     it('should emit false when onCloseDetailDialog is called', () => {
-      spyOn(component.hideDialogAndChanged, 'emit')
+      spyOn(component.closeDialog, 'emit')
+      component.isChanged = false
 
       component.onDialogHide()
 
-      expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
+      expect(component.closeDialog.emit).toHaveBeenCalledWith(component.isChanged)
     })
 
     it('should emit false when onDialogHide is called', () => {
-      spyOn(component.hideDialogAndChanged, 'emit')
+      spyOn(component.closeDialog, 'emit')
+      component.isChanged = true
 
       component.onDialogHide()
 
-      expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
+      expect(component.closeDialog.emit).toHaveBeenCalledWith(component.isChanged)
     })
   })
 
