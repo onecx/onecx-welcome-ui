@@ -1,5 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core'
-import { DOCUMENT } from '@angular/common'
+import { Component, OnInit } from '@angular/core'
 import { animate, style, transition, trigger } from '@angular/animations'
 import { catchError, map, Observable, of, Subject, Subscription, takeUntil, timer } from 'rxjs'
 
@@ -41,7 +40,6 @@ export class WelcomeOverviewComponent implements OnInit {
   public listActiveSlotName = 'onecx-welcome-list-active'
 
   constructor(
-    @Inject(DOCUMENT) private _document: Document,
     private readonly userService: UserService,
     private readonly slotService: SlotService,
     private readonly appStateService: AppStateService,
