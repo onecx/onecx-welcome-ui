@@ -11,7 +11,7 @@ import { ImageInfo, ImagesInternalAPIService, ImageDataResponse } from 'src/app/
 
 import { ImageDetailComponent } from './image-detail.component'
 
-xdescribe('ImageDetailComponent', () => {
+describe('ImageDetailComponent', () => {
   let component: ImageDetailComponent
   let fixture: ComponentFixture<ImageDetailComponent>
 
@@ -47,15 +47,15 @@ xdescribe('ImageDetailComponent', () => {
     fixture.detectChanges()
   })
 
-  fit('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy()
   })
 
-  xdescribe('buildImageSrc', () => {
+  describe('buildImageSrc', () => {
     const imageData: ImageDataResponse[] = [{ imageId: '1', mimeType: 'mimeType', imageData: new Blob() }]
 
     it('should return the base64 image source if image data are available', () => {
-      const imageInfo: ImageInfo = { imageId: '1', url: 'http://example.com/image1.png', workspaceName: 'ws' }
+      const imageInfo: ImageInfo = { imageId: '1', workspaceName: 'ws' }
 
       const result = component.buildImageSrc(imageInfo, imageData)
 
@@ -78,7 +78,7 @@ xdescribe('ImageDetailComponent', () => {
     })
   })
 
-  fdescribe('onDialogHide', () => {
+  describe('onDialogHide', () => {
     it('should emit false when onCloseDetailDialog is called', () => {
       spyOn(component.closeDialog, 'emit')
       component.isChanged = false
