@@ -83,7 +83,7 @@ describe('WelcomeOverviewComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  describe('getImageData', () => {
+  describe('getImages', () => {
     beforeEach(() => {
       component.workspace = ws
     })
@@ -91,7 +91,7 @@ describe('WelcomeOverviewComponent', () => {
     it('should get infos for all images', (done) => {
       apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
 
-      component['getImageData']()
+      component['getImages']()
 
       component.imageInfo$?.subscribe({
         next: (images) => {
@@ -103,15 +103,15 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should handle error when fetching imageinfos', (done) => {
-      const err = { status: 404 }
-      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => err))
+      const errorResponse = { status: 404, statusText: 'Not Found' }
+      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
-      component['getImageData']()
+      component['getImages']()
 
       component.imageInfo$?.subscribe({
         next: () => {
-          expect(console.error).toHaveBeenCalledWith('getAllImageInfosByWorkspaceName():', err)
+          expect(console.error).toHaveBeenCalledWith('getAllImageInfosByWorkspaceName', errorResponse)
           done()
         },
         error: done.fail

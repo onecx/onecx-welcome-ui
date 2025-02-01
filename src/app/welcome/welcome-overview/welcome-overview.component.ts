@@ -52,10 +52,10 @@ export class WelcomeOverviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.workspace = this.appStateService.currentWorkspace$.getValue()
-    this.getImageData()
+    this.getImages()
   }
 
-  private getImageData(): void {
+  private getImages(): void {
     this.loading = true
     if (this.workspace)
       this.imageInfo$ = this.imageService
@@ -66,31 +66,51 @@ export class WelcomeOverviewComponent implements OnInit {
             return images.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
           }),
           catchError((err) => {
-            console.error('getAllImageInfosByWorkspaceName():', err)
+            console.error('getAllImageInfosByWorkspaceName', err)
             return of([] as ImageInfo[])
           })
         )
         .pipe(takeUntil(this.destroy$))
   }
 
+  // load all stored image data, exclude invisible and images with URLs
   public fetchImages(infos: ImageInfo[]): void {
+    // do not twice
     if (this.images.length > 0) return
-    infos.forEach((info) => {
-      if (info.imageId) {
-        this.imageService.getImageById({ id: info.imageId }).subscribe({
-          next: (img) => {
-            this.images.push(img)
-            if (this.images.length === infos.length) {
-              this.subscription = timer(0, this.CAROUSEL_SPEED).subscribe(() => {
-                // initial case is different
-                if (this.currentImage === -1) this.currentImage = 0
-                else this.currentImage = ++this.currentImage % this.images.length
-              })
-              this.loading = false
-            }
+    const visibleInfoLength = infos.filter((i) => i.visible).length
+    // nothing to do
+    if (infos.length === 0 || visibleInfoLength === 0) return
+
+    // images with URL
+    const urlImageLength = infos.filter((i) => i.visible && i.url).length
+    // images uploaded
+    const toBoLoadLength = infos.filter((i) => i.visible && !i.url).length
+
+    if (toBoLoadLength === 0) this.setCarousel(urlImageLength)
+    else
+      infos
+        .filter((i) => i.visible && !i.url)
+        .forEach((info) => {
+          if (info.imageId) {
+            this.imageService.getImageById({ id: info.imageId }).subscribe({
+              next: (img) => {
+                this.images.push(img)
+                // if all images loaded then start carousel
+                if (this.images.length === toBoLoadLength) {
+                  this.setCarousel(toBoLoadLength + urlImageLength)
+                  this.loading = false
+                }
+              }
+            })
           }
         })
-      }
+  }
+
+  // max => number of visible images
+  private setCarousel(max: number) {
+    this.subscription = timer(0, this.CAROUSEL_SPEED).subscribe(() => {
+      if (this.currentImage === -1) this.currentImage = 0
+      else this.currentImage = ++this.currentImage % max
     })
   }
 
