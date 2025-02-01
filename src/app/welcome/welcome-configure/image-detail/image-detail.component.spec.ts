@@ -42,6 +42,8 @@ describe('ImageDetailComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ImageDetailComponent)
     component = fixture.componentInstance
+    // satisfy the displaying of the url in HTML
+    component.imageInfos = [{ imageId: '1', url: 'http://example.com/image1.png', workspaceName: 'ws' }]
     fixture.detectChanges()
   })
 
@@ -53,7 +55,7 @@ describe('ImageDetailComponent', () => {
     const imageData: ImageDataResponse[] = [{ imageId: '1', mimeType: 'mimeType', imageData: new Blob() }]
 
     it('should return the base64 image source if image data are available', () => {
-      const imageInfo: ImageInfo = { imageId: '1', url: 'http://example.com/image1.png', workspaceName: 'ws' }
+      const imageInfo: ImageInfo = { imageId: '1', workspaceName: 'ws' }
 
       const result = component.buildImageSrc(imageInfo, imageData)
 

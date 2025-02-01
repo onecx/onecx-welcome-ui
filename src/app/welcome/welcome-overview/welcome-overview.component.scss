@@ -6,11 +6,19 @@
   }
   .wc-overview-info {
     mix-blend-mode: difference;
+    color: var(--primary-color);
+    filter: invert(1);
   }
   /* SLOT area */
   .wc-overview-slot {
     isolation: isolate;
     padding-top: 110px;
+  }
+
+  @media (forced-colors: active) {
+    .forced {
+      forced-color-adjust: none;
+    }
   }
 
   @media screen and (max-width: 575px) {

@@ -15,17 +15,17 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
   styleUrls: ['./welcome-overview.component.scss'],
   animations: [
     trigger('carouselAnimation', [
-      transition('void => *', [style({ opacity: 0 }), animate('300ms', style({ opacity: 1 }))]),
-      transition('* => void', [animate('300ms', style({ opacity: 0 }))])
+      transition('void => *', [style({ opacity: 0 }), animate('500ms', style({ opacity: 1 }))]),
+      transition('* => void', [animate('500ms', style({ opacity: 0 }))])
     ])
   ]
 })
 export class WelcomeOverviewComponent implements OnInit {
   private readonly destroy$ = new Subject()
   // dialog
-  public readonly CAROUSEL_SPEED: number = 15000 // ms
+  public readonly CAROUSEL_SPEED: number = 5000 // ms
   public loading = true
-  public currentSlide = 0
+  public currentImage = -1
   public currentDate = new Date()
   // data
   public user$: Observable<UserProfile>
@@ -34,7 +34,7 @@ export class WelcomeOverviewComponent implements OnInit {
   public images: ImageDataResponse[] = []
   public imageInfo$!: Observable<ImageInfo[]>
   // slot
-  public isAnnouncementListActiveComponentAvailable$: Observable<boolean>
+  public isAnnouncementListComponentAvailable$: Observable<boolean>
   public isBookmarkListComponentAvailable$: Observable<boolean>
   public bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public listActiveSlotName = 'onecx-welcome-list-active'
@@ -46,18 +46,16 @@ export class WelcomeOverviewComponent implements OnInit {
     private readonly imageService: ImagesInternalAPIService
   ) {
     this.user$ = this.userService.profile$.asObservable()
-    this.isAnnouncementListActiveComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(
-      this.listActiveSlotName
-    )
+    this.isAnnouncementListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.listActiveSlotName)
     this.isBookmarkListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.bookmarkListSlotName)
   }
 
   ngOnInit(): void {
     this.workspace = this.appStateService.currentWorkspace$.getValue()
-    this.getImageData()
+    this.getImages()
   }
 
-  private getImageData(): void {
+  private getImages(): void {
     this.loading = true
     if (this.workspace)
       this.imageInfo$ = this.imageService
@@ -68,37 +66,58 @@ export class WelcomeOverviewComponent implements OnInit {
             return images.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
           }),
           catchError((err) => {
-            console.error('getAllImageInfosByWorkspaceName():', err)
+            console.error('getAllImageInfosByWorkspaceName', err)
             return of([] as ImageInfo[])
           })
         )
         .pipe(takeUntil(this.destroy$))
   }
 
-  public fetchImages(imageData: ImageInfo[]): void {
+  // load all stored image data, exclude invisible and images with URLs
+  public fetchImages(infos: ImageInfo[]): void {
+    // do not twice
     if (this.images.length > 0) return
-    imageData.forEach((info) => {
-      if (info.imageId) {
-        this.imageService.getImageById({ id: info.imageId }).subscribe({
-          next: (img) => {
-            this.images.push(img)
-            if (this.images.length === imageData.length) {
-              this.subscription = timer(0, this.CAROUSEL_SPEED).subscribe(() => {
-                this.currentSlide = ++this.currentSlide % this.images.length
-              })
-              this.loading = false
-            }
+    const visibleInfoLength = infos.filter((i) => i.visible).length
+    // nothing to do
+    if (infos.length === 0 || visibleInfoLength === 0) return
+
+    // images with URL
+    const urlImageLength = infos.filter((i) => i.visible && i.url).length
+    // images uploaded
+    const toBoLoadLength = infos.filter((i) => i.visible && !i.url).length
+
+    if (toBoLoadLength === 0) this.setCarousel(urlImageLength)
+    else
+      infos
+        .filter((i) => i.visible && !i.url)
+        .forEach((info) => {
+          if (info.imageId) {
+            this.imageService.getImageById({ id: info.imageId }).subscribe({
+              next: (img) => {
+                this.images.push(img)
+                // if all images loaded then start carousel
+                if (this.images.length === toBoLoadLength) {
+                  this.setCarousel(toBoLoadLength + urlImageLength)
+                  this.loading = false
+                }
+              }
+            })
           }
         })
-      }
+  }
+
+  // max => number of visible images
+  private setCarousel(max: number) {
+    this.subscription = timer(0, this.CAROUSEL_SPEED).subscribe(() => {
+      if (this.currentImage === -1) this.currentImage = 0
+      else this.currentImage = ++this.currentImage % max
     })
   }
 
   public buildImageSrc(imageInfo: ImageInfo): string | undefined {
     if (this.loading || this.images.length === 0) return undefined
-    const existingImage = this.images.find((image) => {
-      return image.imageId === imageInfo.imageId
-    })
-    return existingImage ? 'data:' + existingImage.mimeType + ';base64,' + existingImage.imageData : imageInfo.url
+    if (imageInfo.url) return imageInfo.url
+    const existingImage = this.images.find((image) => image.imageId === imageInfo.imageId)
+    return 'data:' + existingImage?.mimeType + ';base64,' + existingImage?.imageData
   }
 }

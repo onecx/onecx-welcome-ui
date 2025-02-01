@@ -53,10 +53,11 @@ export class ImageDetailComponent implements OnChanges {
   // otherwise use the image url
   public buildImageSrc(imageInfo: ImageInfo, images: ImageDataResponse[]): string | undefined {
     if (!imageInfo) return undefined
+    if (imageInfo.url) return imageInfo.url
     const currentImage = images.find((image) => {
       return image.imageId === imageInfo.imageId
     })
-    return currentImage ? 'data:' + currentImage.mimeType + ';base64,' + currentImage.imageData : imageInfo.url
+    return 'data:' + currentImage?.mimeType + ';base64,' + currentImage?.imageData
   }
 
   public onDialogHide() {
