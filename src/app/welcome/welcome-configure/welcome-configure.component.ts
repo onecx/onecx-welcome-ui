@@ -28,6 +28,8 @@ export class WelcomeConfigureComponent implements OnInit {
   public selectedImageInfo: ImageInfo | undefined
   public selectedImageData: ImageDataResponse | undefined
 
+  public console = console
+
   constructor(
     private readonly imageService: ImagesInternalAPIService,
     private readonly msgService: PortalMessageService,

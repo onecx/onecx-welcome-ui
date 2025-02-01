@@ -1,10 +1,10 @@
 <ocx-portal-page helpArticleId="PAGE_WELCOME_VIEW" permission="IMAGE#VIEW">
   <!-- BACKGROUND -->
-  <div class="absolute top-0 left-0 w-full h-full">
+  <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
     <ng-container *ngFor="let info of imageInfo$ | async; let i = index">
       <img
         #backgroundImage
-        *ngIf="!loading && i + 1 === currentSlide"
+        *ngIf="!loading && i === currentImage"
         @carouselAnimation
         class="w-full h-full"
         [ngStyle]="{
@@ -22,7 +22,7 @@
   <div class="absolute top-0 left-0 w-full z-1 wc-overview-info">
     <!-- INFO -->
     <div class="py-3 sm:py-4 px-3 sm:px-4 md:px-5 flex flex-row flex-wrap justify-content-between">
-      <div class="flex flex-column gap-2 sm:gap-3 wc_overview_info text-white">
+      <div class="flex flex-column gap-2 sm:gap-3 forced">
         <div id="wc_overview_info_title" class="text-xl sm:text-2xl md:text-4xl">
           {{ 'DIALOG.OVERVIEW.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
         </div>
@@ -31,7 +31,7 @@
       <p-button
         *ocxIfPermission="'IMAGE#EDIT'"
         id="wc_overview_info_configure"
-        styleClass="p-button-text text-white text-xs sm:text-base"
+        styleClass="p-button-text text-xs sm:text-base"
         icon="pi pi-pencil"
         [text]="true"
         [routerLink]="['./configure']"
@@ -57,7 +57,7 @@
         </div>
       </div>
       <!-- SLOT: Announcements -->
-      <div *ngIf="isAnnouncementListActiveComponentAvailable$ | async" class="col-12 sm:col-6 xl:col-5 py-0 sm:p-2">
+      <div *ngIf="isAnnouncementListComponentAvailable$ | async" class="col-12 sm:col-6 xl:col-5 py-0 sm:p-2">
         <div class="w-full max-h-25rem overflow-hidden border-round-lg border-solid border-1 border-transparent">
           <ocx-slot [name]="listActiveSlotName"> </ocx-slot>
         </div>

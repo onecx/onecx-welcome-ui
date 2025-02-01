@@ -15,17 +15,17 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
   styleUrls: ['./welcome-overview.component.scss'],
   animations: [
     trigger('carouselAnimation', [
-      transition('void => *', [style({ opacity: 0 }), animate('300ms', style({ opacity: 1 }))]),
-      transition('* => void', [animate('300ms', style({ opacity: 0 }))])
+      transition('void => *', [style({ opacity: 0 }), animate('500ms', style({ opacity: 1 }))]),
+      transition('* => void', [animate('500ms', style({ opacity: 0 }))])
     ])
   ]
 })
 export class WelcomeOverviewComponent implements OnInit {
   private readonly destroy$ = new Subject()
   // dialog
-  public readonly CAROUSEL_SPEED: number = 15000 // ms
+  public readonly CAROUSEL_SPEED: number = 5000 // ms
   public loading = true
-  public currentSlide = 0
+  public currentImage = -1
   public currentDate = new Date()
   // data
   public user$: Observable<UserProfile>
@@ -34,7 +34,7 @@ export class WelcomeOverviewComponent implements OnInit {
   public images: ImageDataResponse[] = []
   public imageInfo$!: Observable<ImageInfo[]>
   // slot
-  public isAnnouncementListActiveComponentAvailable$: Observable<boolean>
+  public isAnnouncementListComponentAvailable$: Observable<boolean>
   public isBookmarkListComponentAvailable$: Observable<boolean>
   public bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public listActiveSlotName = 'onecx-welcome-list-active'
@@ -46,9 +46,7 @@ export class WelcomeOverviewComponent implements OnInit {
     private readonly imageService: ImagesInternalAPIService
   ) {
     this.user$ = this.userService.profile$.asObservable()
-    this.isAnnouncementListActiveComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(
-      this.listActiveSlotName
-    )
+    this.isAnnouncementListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.listActiveSlotName)
     this.isBookmarkListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.bookmarkListSlotName)
   }
 
@@ -75,16 +73,18 @@ export class WelcomeOverviewComponent implements OnInit {
         .pipe(takeUntil(this.destroy$))
   }
 
-  public fetchImages(imageData: ImageInfo[]): void {
+  public fetchImages(infos: ImageInfo[]): void {
     if (this.images.length > 0) return
-    imageData.forEach((info) => {
+    infos.forEach((info) => {
       if (info.imageId) {
         this.imageService.getImageById({ id: info.imageId }).subscribe({
           next: (img) => {
             this.images.push(img)
-            if (this.images.length === imageData.length) {
+            if (this.images.length === infos.length) {
               this.subscription = timer(0, this.CAROUSEL_SPEED).subscribe(() => {
-                this.currentSlide = ++this.currentSlide % this.images.length
+                // initial case is different
+                if (this.currentImage === -1) this.currentImage = 0
+                else this.currentImage = ++this.currentImage % this.images.length
               })
               this.loading = false
             }
@@ -96,9 +96,8 @@ export class WelcomeOverviewComponent implements OnInit {
 
   public buildImageSrc(imageInfo: ImageInfo): string | undefined {
     if (this.loading || this.images.length === 0) return undefined
-    const existingImage = this.images.find((image) => {
-      return image.imageId === imageInfo.imageId
-    })
-    return existingImage ? 'data:' + existingImage.mimeType + ';base64,' + existingImage.imageData : imageInfo.url
+    if (imageInfo.url) return imageInfo.url
+    const existingImage = this.images.find((image) => image.imageId === imageInfo.imageId)
+    return 'data:' + existingImage?.mimeType + ';base64,' + existingImage?.imageData
   }
 }
