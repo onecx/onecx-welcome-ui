@@ -23,7 +23,7 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
 export class WelcomeOverviewComponent implements OnInit {
   private readonly destroy$ = new Subject()
   // dialog
-  public readonly CAROUSEL_SPEED: number = 5000 // ms
+  public readonly CAROUSEL_SPEED: number = 15000 // ms
   public loading = true
   public currentImage = -1
   public currentDate = new Date()
