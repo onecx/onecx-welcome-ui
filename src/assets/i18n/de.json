@@ -85,6 +85,7 @@
   },
   "IMAGE": {
     "URL": "Bild URL",
+    "OBJECT_FIT": "Anpassung",
     "OBJECT_POSITION": "Position",
     "BACKGROUND_COLOR": "Hintergrundfarbe",
     "FORMAT": {
