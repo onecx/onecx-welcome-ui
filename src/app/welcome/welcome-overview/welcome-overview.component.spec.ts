@@ -9,7 +9,7 @@ import { PortalMessageService, UserService } from '@onecx/angular-integration-in
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 import { WelcomeOverviewComponent } from './welcome-overview.component'
 
-const imageData: ImageInfo[] = [
+const imageInfos: ImageInfo[] = [
   {
     id: '123',
     imageId: '123',
@@ -26,8 +26,9 @@ const imageData: ImageInfo[] = [
 
 const ws: Workspace = {
   workspaceName: 'wsName',
-  portalName: 'wsName',
-  baseUrl: 'url',
+  displayName: 'Workspace',
+  portalName: 'unused',
+  baseUrl: '/base',
   microfrontendRegistrations: []
 }
 
@@ -88,7 +89,7 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should get infos for all images', (done) => {
-      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageData))
+      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
 
       component['getImageData']()
 
@@ -122,7 +123,7 @@ describe('WelcomeOverviewComponent', () => {
     it('should not fetch images if they are already loaded', () => {
       component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
 
-      component['fetchImages'](imageData)
+      component['fetchImages'](imageInfos)
 
       expect(apiServiceSpy.getImageById).not.toHaveBeenCalled()
     })
@@ -131,7 +132,7 @@ describe('WelcomeOverviewComponent', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
       apiServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
 
-      component['fetchImages'](imageData)
+      component['fetchImages'](imageInfos)
 
       expect(component.images).toContain(imgDataResponse)
     })
@@ -140,37 +141,29 @@ describe('WelcomeOverviewComponent', () => {
   describe('buildImageSrc', () => {
     it('should not build source if page is loading', () => {
       component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
-      component.loading = true
 
-      const result = component.buildImageSrc(imageData[0])
+      const result = component.buildImageSrc(imageInfos[0])
 
       expect(result).toBeUndefined()
     })
 
-    it('should return base64 string if image is found', () => {
-      component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
+    it('should return the URL if image is based on', () => {
+      component.images = [{ imageId: '123' }]
+      const info = imageInfos.find((i) => i.imageId === '123')!
       component.loading = false
 
-      const result = component.buildImageSrc(imageData[0])
+      const result = component.buildImageSrc(info)
 
-      expect(result).toBe('data:image/png;base64,[object Blob]')
+      expect(result).toBe(info.url)
     })
 
-    it('should return the URL if image is not found', () => {
-      const imageInfo = {
-        id: 'id',
-        imageId: 'id',
-        visible: true,
-        position: '1',
-        workspaceName: 'w1',
-        url: 'http://example.com/image3.png'
-      }
-      component.images = imageData
+    it('should return data string if image is found', () => {
+      component.images = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
       component.loading = false
 
-      const result = component.buildImageSrc(imageInfo)
+      const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
-      expect(result).toBe(imageInfo.url)
+      expect(result).toBe('data:image/png;base64,[object Blob]')
     })
   })
 })
