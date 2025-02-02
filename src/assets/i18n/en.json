@@ -79,7 +79,7 @@
     "DETAIL": {
       "PIC": "Picture",
       "HEADER": "Image configuration",
-      "TOOLTIP": "Click for an enlarged view of the image",
+      "TOOLTIP": "Click to configure the appearance of the image",
       "AREA.CSS": "CSS Properties",
       "AREA.IMAGE": "Preview"
     }
