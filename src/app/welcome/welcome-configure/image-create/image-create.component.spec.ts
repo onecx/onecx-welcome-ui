@@ -96,7 +96,7 @@ describe('ImageCreateComponent', () => {
   })
   it('should save image with fileUpload', () => {
     component.ngOnInit()
-    component.handleFileSelected(new Blob())
+    component.onFileSelected(new Blob())
 
     fixture.detectChanges()
     const dElement = fixture.debugElement
@@ -114,9 +114,9 @@ describe('ImageCreateComponent', () => {
 
   it('should handle file removal', () => {
     component.ngOnInit()
-    component.handleFileSelected(new Blob())
+    component.onFileSelected(new Blob())
     expect(component.selectedFile).toBeDefined()
-    component.handleFileRemoval()
+    component.onFileRemoval()
     expect(component.selectedFile).toBeUndefined()
   })
 
@@ -131,7 +131,7 @@ describe('ImageCreateComponent', () => {
   it('should handle error when creating image data', () => {
     component.ngOnInit()
 
-    component.handleFileSelected(new Blob())
+    component.onFileSelected(new Blob())
 
     apiServiceSpy.createImageInfo.and.returnValue(of({ id: '123', position: '1', modificationCount: 0 } as ImageInfo))
 
@@ -145,7 +145,7 @@ describe('ImageCreateComponent', () => {
   it('should handle error when updating image info', () => {
     component.ngOnInit()
 
-    component.handleFileSelected(new Blob())
+    component.onFileSelected(new Blob())
 
     apiServiceSpy.createImageInfo.and.returnValue(of({ id: '123', position: '1', modificationCount: 0 } as ImageInfo))
     apiServiceSpy.createImage.and.returnValue(of({ imageId: '1234' } as ImageDataResponse))

@@ -26,10 +26,16 @@
     <div class="flex flex-row flex-wrap gap-4">
       <div class="p-card" styleClass="h-full" *ngFor="let info of imageInfos; let i = index">
         <div class="p-card-body w-20rem h-18rem flex flex-column flex-nowrap justify-content-between">
-          <div class="aw-18rem ah-14rem flex justify-content-center align-items-center">
+          <div
+            class="flex justify-content-center align-items-center border-round border-3 border-solid hover:border-400 cursor-pointer"
+            style="border-color: transparent"
+            (click)="onOpenDetailDialog(i)"
+            (keydown.enter)="onOpenDetailDialog(i)"
+            (keydown.space)="onOpenDetailDialog(i)"
+          >
             <img
               [id]="'wc_configure_card_item_' + i + '_image'"
-              class="w-18rem h-13rem cursor-pointer"
+              class="w-18rem h-13rem"
               [ngStyle]="{
                 'object-fit': info.objectFit ?? 'scale-down',
                 'object-position': info.objectPosition ?? 'center center',
@@ -38,9 +44,6 @@
               [attr.tabindex]="0"
               [alt]="('DIALOG.DETAIL.PIC' | translate) + '_' + i"
               [src]="buildImageSrc(info)"
-              (click)="onOpenDetailDialog(i)"
-              (keydown.enter)="onOpenDetailDialog(i)"
-              (keydown.space)="onOpenDetailDialog(i)"
               [attr.aria-label]="'DIALOG.DETAIL.TOOLTIP' | translate"
               [pTooltip]="'DIALOG.DETAIL.TOOLTIP' | translate"
               tooltipPosition="top"

@@ -1,14 +1,12 @@
 <p-dialog
-  header="{{ 'ACTIONS.CREATE.TITLE' | translate }}"
+  [header]="'ACTIONS.CREATE.TITLE' | translate"
   [(visible)]="displayCreateDialog"
   (onHide)="onDialogHide()"
-  [baseZIndex]="10000"
+  [modal]="true"
+  [closable]="true"
   [draggable]="true"
   [resizable]="true"
-  [closable]="true"
-  [modal]="true"
   [style]="{ 'min-width': '600px' }"
-  [showHeader]="true"
   [breakpoints]="{
     '992px': '65vw',
     '700px': '80vw',
@@ -22,8 +20,8 @@
         #fileUpload
         id="wc_image_create_action_upload"
         class="w-full"
-        (onRemove)="this.handleFileRemoval()"
-        (onSelect)="this.handleFileSelected($event.files[0])"
+        (onRemove)="onFileRemoval()"
+        (onSelect)="onFileSelected($event.files[0])"
         [maxFileSize]="1000000"
         previewWidth="300"
         [showUploadButton]="false"
@@ -42,11 +40,22 @@
         tooltipEvent="hover"
       ></p-fileUpload>
       <div class="w-12">
-        <span class="p-float-label" controlErrorAnchor>
+        <span class="p-float-label w-full p-input-icon-right" controlErrorAnchor>
+          <a
+            *ngIf="createUrl.value !== ''"
+            [id]="'wc_image_create_form_url_action_remove'"
+            class="pi pi-times cursor-pointer"
+            (click)="formGroup.controls['url'].reset()"
+            [attr.aria-label]="'ACTIONS.CREATE.URL.REMOVE' | translate"
+            [pTooltip]="'ACTIONS.CREATE.URL.REMOVE' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          ></a>
           <input
+            #createUrl
             pInputText
             id="wc_image_create_form_url"
-            class="w-full"
+            class="w-full text-responsive"
             formControlName="url"
             [attr.aria-label]="'ACTIONS.CREATE.URL' | translate"
             [pTooltip]="'ACTIONS.CREATE.URL.TOOLTIP' | translate"

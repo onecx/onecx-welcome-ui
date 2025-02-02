@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core'
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn } from '@angular/forms'
 
-import { Action, AppStateService, PortalMessageService } from '@onecx/portal-integration-angular'
+import { AppStateService, PortalMessageService } from '@onecx/portal-integration-angular'
 import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
@@ -9,16 +9,14 @@ import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
   templateUrl: './image-create.component.html',
   styleUrls: ['./image-create.component.scss']
 })
-export class ImageCreateComponent implements OnInit {
+export class ImageCreateComponent implements OnInit, OnChanges {
   @Input() public displayCreateDialog = false
   @Input() public imageInfoCount: number = 0
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
   @ViewChild('fileUpload', { static: true }) fileUpload: any
 
-  actions: Action[] = []
   public isLoading = false
   formGroup: FormGroup
-  autoResize!: boolean
   selectedFile: any
   uploadDisabled: boolean = false
   currentWorkspaceName: string = ''
@@ -33,25 +31,27 @@ export class ImageCreateComponent implements OnInit {
       url: new FormControl(null, this.imageSrcValidator()),
       image: new FormControl(null)
     })
-    this.autoResize = true
     this.currentWorkspaceName = this.appstateService.currentWorkspace$.getValue()?.workspaceName || ''
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.formGroup.get('url')?.valueChanges.subscribe((v) => {
-      v !== null && v !== '' ? this.disableUpload(true) : this.disableUpload(false)
+      this.uploadDisabled = v !== null && v !== ''
     })
   }
-  disableUpload(disable: boolean) {
-    this.uploadDisabled = disable
+
+  ngOnChanges(): void {
+    this.formGroup.get('url')?.reset()
   }
-  public onDialogHide() {
-    this.displayCreateDialog = false
-    this.hideDialogAndChanged.emit(false)
-  }
-  imageSrcValidator(): ValidatorFn {
+
+  private imageSrcValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null =>
       control.value !== null && control.value != '' ? null : { srcMissing: 'image src missing' }
+  }
+
+  public onDialogHide(): void {
+    this.displayCreateDialog = false
+    this.hideDialogAndChanged.emit(false)
   }
 
   public onSave(): void {
@@ -88,7 +88,7 @@ export class ImageCreateComponent implements OnInit {
                         next: () => {
                           this.msgService.success({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
                           this.hideDialogAndChanged.emit(true)
-                          this.handleFileRemoval()
+                          this.onFileRemoval()
                           this.fileUpload.clear()
                         },
                         error: () => {
@@ -111,14 +111,14 @@ export class ImageCreateComponent implements OnInit {
     }
   }
 
-  public handleFileSelected(selectedFile: Blob) {
+  public onFileSelected(selectedFile: Blob) {
     if (selectedFile.size < 1000000) {
       this.selectedFile = selectedFile
       this.formGroup.controls['url'].disable()
     }
   }
 
-  public handleFileRemoval() {
+  public onFileRemoval() {
     this.formGroup.controls['url'].enable()
     this.selectedFile = undefined
   }
