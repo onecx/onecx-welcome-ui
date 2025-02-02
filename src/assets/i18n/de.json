@@ -47,6 +47,7 @@
         "INVALID_TYPE_SUMMARY": "Unzulässiges Dateiformat."
       },
       "URL": "Externe URL",
+      "URL.REMOVE": "Inhalt löschen",
       "URL.TOOLTIP": "Eine externe URL als Alternative zum Hochladen",
       "SELECT": "Bild auswählen",
       "SELECT.TOOLTIP": "Ein Bild auswählen und hochladen",

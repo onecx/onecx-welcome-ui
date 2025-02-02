@@ -47,6 +47,7 @@
         "INVALID_TYPE_SUMMARY": "Invalid file type."
       },
       "URL": "External URL",
+      "URL.REMOVE": "Remove content",
       "URL.TOOLTIP": "An external URL as an alternative to upload",
       "SELECT": "Select Image",
       "SELECT.TOOLTIP": "Select and Upload an Image",
