@@ -9,12 +9,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { ImageInfo } from './imageInfo';
-import { ImageDataResponse } from './imageDataResponse';
+import { EximImageData } from './eximImageData';
+import { EximImageInfo } from './eximImageInfo';
 
 
 export interface EximImage { 
-    image?: ImageInfo;
-    imageData?: ImageDataResponse;
+    image?: EximImageInfo;
+    imageData?: EximImageData;
 }
 

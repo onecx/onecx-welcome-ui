@@ -308,6 +308,11 @@ components:
           description: ID of the request
         created:
           $ref: '#/components/schemas/OffsetDateTime'
+        config:
+          $ref: '#/components/schemas/WelcomeConfig'
+    WelcomeConfig:
+      type: object
+      properties:
         images:
           type: array
           items:
@@ -317,13 +322,40 @@ components:
       nullable: false
       properties:
         image:
-          $ref: '#/components/schemas/ImageInfo'
+          $ref: '#/components/schemas/EximImageInfo'
         imageData:
-          $ref: '#/components/schemas/ImageDataResponse'
+          $ref: '#/components/schemas/EximImageData'
     ExportWelcomeRequest:
       type: object
       properties:
         workspaceName:
+          type: string
+    EximImageData:
+      type: object
+      properties:
+        imageData:
+          type: string
+          format: binary
+        dataLength:
+          type: integer
+        mimeType:
+          type: string
+    EximImageInfo:
+      required:
+        - workspaceName
+      type: object
+      properties:
+        position:
+          type: string
+        visible:
+          type: boolean
+        objectFit:
+          $ref: '#/components/schemas/ObjectFit'
+        objectPosition:
+          type: string
+        backgroundColor:
+          type: string
+        url:
           type: string
     ImageDataResponse:
       type: object

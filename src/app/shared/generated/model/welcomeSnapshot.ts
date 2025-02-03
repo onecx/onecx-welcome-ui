@@ -9,7 +9,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { EximImage } from './eximImage';
+import { WelcomeConfig } from './welcomeConfig';
 
 
 export interface WelcomeSnapshot { 
@@ -18,6 +18,6 @@ export interface WelcomeSnapshot {
      */
     id?: string;
     created?: string;
-    images?: Array<EximImage>;
+    config?: WelcomeConfig;
 }
 

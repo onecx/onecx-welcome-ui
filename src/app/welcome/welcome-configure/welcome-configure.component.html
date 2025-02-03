@@ -2,7 +2,7 @@
   <div *ngIf="imageInfo$ | async as imageInfos" class="flex flex-column row-gap-3">
     <div class="flex flex-row justify-content-end column-gap-2">
       <p-button
-        id="wc_configure_card_list_action_back"
+        id="wc_configure_action_back"
         icon="pi pi-arrow-left"
         [routerLink]="['../']"
         [label]="'ACTIONS.NAVIGATION.BACK' | translate"
@@ -12,7 +12,7 @@
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        id="wc_configure_card_list_action_export"
+        id="wc_configure_action_export"
         icon="pi pi-download"
         (onClick)="onExport()"
         [disabled]="imageInfos.length === 0"
@@ -23,7 +23,7 @@
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        id="wc_configure_card_list_action_create"
+        id="wc_configure_action_create"
         icon="pi pi-plus"
         (onClick)="onOpenCreateDialog()"
         [disabled]="imageInfos.length === 0 || imageInfos.length >= maxImages"
@@ -34,7 +34,7 @@
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        id="wc_configure_card_list_action_save"
+        id="wc_configure_action_save"
         icon="pi pi-save"
         (onClick)="onSaveOrder()"
         [disabled]="!isReordered"
@@ -49,6 +49,7 @@
       <div class="p-card" styleClass="h-full" *ngFor="let info of imageInfos; let i = index">
         <div class="p-card-body w-20rem h-18rem flex flex-column flex-nowrap justify-content-between">
           <div
+            [id]="'wc_configure_card_item_' + i"
             class="flex justify-content-center align-items-center border-round border-3 border-solid hover:border-400 cursor-pointer"
             style="border-color: transparent"
             (click)="onOpenDetailDialog(i)"

@@ -10,6 +10,8 @@ encoder.ts
 git_push.sh
 index.ts
 model/eximImage.ts
+model/eximImageData.ts
+model/eximImageInfo.ts
 model/exportWelcomeRequest.ts
 model/imageDataResponse.ts
 model/imageInfo.ts
@@ -19,6 +21,7 @@ model/objectFit.ts
 model/problemDetailInvalidParam.ts
 model/problemDetailParam.ts
 model/problemDetailResponse.ts
+model/welcomeConfig.ts
 model/welcomeSnapshot.ts
 param.ts
 variables.ts
