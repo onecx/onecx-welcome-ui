@@ -240,8 +240,91 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /images/{workspaceName}/import:
+    post:
+      x-onecx:
+        permissions:
+          image:
+            - write
+      tags:
+        - imagesExportImport
+      description: import images
+      operationId: importImages
+      parameters:
+        - in: path
+          name: workspaceName
+          schema:
+            type: string
+          required: true
+          description: target workspace for import
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WelcomeSnapshot'
+      responses:
+        "200":
+          description: Import successful
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /images/export:
+    post:
+      x-onecx:
+        permissions:
+          image:
+            - read
+      tags:
+        - imagesExportImport
+      description: export images
+      operationId: exportImages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportWelcomeRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WelcomeSnapshot'
+        "404":
+          description: No images found
 components:
   schemas:
+    WelcomeSnapshot:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 10
+          description: ID of the request
+        created:
+          $ref: '#/components/schemas/OffsetDateTime'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/EximImage'
+    EximImage:
+      type: object
+      nullable: false
+      properties:
+        image:
+          $ref: '#/components/schemas/ImageInfo'
+        imageData:
+          $ref: '#/components/schemas/ImageDataResponse'
+    ExportWelcomeRequest:
+      type: object
+      properties:
+        workspaceName:
+          type: string
     ImageDataResponse:
       type: object
       properties:

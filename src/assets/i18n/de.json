@@ -1,45 +1,9 @@
 {
   "ACTIONS": {
-    "VISIBILITY": {
-      "TOOLTIP": "Sichtbarkeit auf dem Startbildschirm ändern",
-      "SUCCESS": "Sichtbarkeit erfolgreich geändert",
-      "ERROR": "Sichtbarkeit konnte nicht geändert werden"
-    },
-    "DELETE": {
-      "TOOLTIP": "Bild löschen",
-      "SUCCESS": "Bild erfolgreich gelöscht",
-      "ERROR": "Bild konnte nicht gelöscht werden"
-    },
-    "REORDER": {
-      "SAVE": "Speichern",
-      "SAVE_TOOLTIP": "Anordnung speichern",
-      "SUCCESS": "Anordnung erfolgreich geändert",
-      "ERROR": "Anordnung konnte nicht geändert werden",
-      "MOVE_LEFT": "Nach links verschieben",
-      "MOVE_RIGHT": "Nach rechts verschieben"
-    },
-    "ADD": {
-      "LABEL": "Dialog öffnen und neues Bild hinzufügen",
-      "TOOLTIP": "Neues Bild hinzufügen"
-    },
-    "NAVIGATION": {
-      "CLOSE": "Schließen",
-      "CLOSE.TOOLTIP": "Dialog schließen",
-      "CLOSE_WITHOUT_SAVE": "Dialog ohne Änderungen schließen",
-      "BACK": "Zurück",
-      "NEXT": "Weiter",
-      "NEXT.TOOLTIP": "Nächstes Bild",
-      "BACK.TOOLTIP": "Vorheriges Bild",
-      "DETAILS.TOOLTIP": "Details anzeigen",
-      "NEW.TOOLTIP": "Erstelle neuen Eintrag"
-    },
     "CREATE": {
-      "TITLE": "Bild hinzufügen",
-      "UPLOAD": "Hochladen",
-      "VISIBILITY": {
-        "TRUE": "Sichtbar",
-        "FALSE": "Unsichtbar"
-      },
+      "LABEL": "Bild hinzufügen",
+      "TOOLTIP": "Neues Bild hinzufügen",
+      "HEADER": "Bild hinzufügen",
       "FILE_ERRORS": {
         "INVALID_SIZE_DETAIL": "Die maximale Größe beträgt 1MB.",
         "INVALID_SIZE_SUMMARY": "Maximale Dateigröße überschritten.",
@@ -54,11 +18,50 @@
       "SUCCESS": "Bild erfolgreich hinzugefügt",
       "ERROR": "Bild konnte nicht hinzugefügt werden"
     },
+    "DELETE": {
+      "TOOLTIP": "Bild löschen",
+      "SUCCESS": "Bild erfolgreich gelöscht",
+      "ERROR": "Bild konnte nicht gelöscht werden"
+    },
+    "EXPORT": {
+      "LABEL": "Export",
+      "TOOLTIP": "Konfiguration einschließlich Bilder als JSON herunterladen",
+      "MESSAGE_NOK": "Ein Fehler ist aufgetreten. Die Konfiguration wurde nicht exportiert."
+    },
+    "IMPORT": {
+      "LABEL": "Import",
+      "TOOLTIP": "Konfiguration als JSON hochladen. Das ersetzt die existierende Konfiguration und alle Bilder.",
+      "HEADER": "Konfiguration importieren"
+    },
+    "NAVIGATION": {
+      "CLOSE": "Schließen",
+      "CLOSE.TOOLTIP": "Dialog schließen",
+      "CLOSE_WITHOUT_SAVE": "Dialog ohne Änderungen schließen",
+      "BACK": "Zurück",
+      "NEXT": "Weiter",
+      "NEXT.TOOLTIP": "Nächstes Bild",
+      "BACK.TOOLTIP": "Vorheriges Bild",
+      "DETAILS.TOOLTIP": "Details anzeigen",
+      "NEW.TOOLTIP": "Erstelle neuen Eintrag"
+    },
+    "REORDER": {
+      "SAVE": "Speichern",
+      "SAVE_TOOLTIP": "Anordnung speichern",
+      "SUCCESS": "Anordnung erfolgreich geändert",
+      "ERROR": "Anordnung konnte nicht geändert werden",
+      "MOVE_LEFT": "Nach links verschieben",
+      "MOVE_RIGHT": "Nach rechts verschieben"
+    },
     "SAVE": {
       "LABEL": "Speichern",
       "TOOLTIP": "Änderungen speichern",
       "MESSAGE_OK": "Bild erfolgreich gespeichert",
       "MESSAGE_NOK": "Bild konnte nicht gespeichert werden"
+    },
+    "VISIBILITY": {
+      "TOOLTIP": "Sichtbarkeit auf dem Startbildschirm ändern",
+      "SUCCESS": "Sichtbarkeit erfolgreich geändert",
+      "ERROR": "Sichtbarkeit konnte nicht geändert werden"
     },
     "CLOSE": "Schließen",
     "CANCEL": "Abbrechen",
@@ -89,10 +92,7 @@
     "OBJECT_FIT": "Anpassung",
     "OBJECT_POSITION": "Position",
     "BACKGROUND_COLOR": "Hintergrundfarbe",
-    "FORMAT": {
-      "OBJECT_POSITION": "[left | center | right] [ top | center | bottom ] [percentage percentage]",
-      "BACKGROUND_COLOR": "[unset | <color-name> | <color-value>]"
-    },
+    "FORMAT": "Format",
     "TOOLTIPS": {
       "URL": "Bild URL",
       "OBJECT_FIT": "Bestimmt wie das Bild an den Platz im Browserfenster angepasst werden soll. CSS: object-fit",

@@ -1,10 +1,18 @@
 import { Component, OnInit } from '@angular/core'
 import { catchError, map, Observable, of, Subject, Subscription, takeUntil } from 'rxjs'
+import FileSaver from 'file-saver'
 
 import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, PortalMessageService } from '@onecx/angular-integration-interface'
 
-import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
+import { getCurrentDateTime } from 'src/app/shared/utils'
+
+import {
+  ImageDataResponse,
+  ImageInfo,
+  ImagesInternalAPIService,
+  ImagesExportImportAPIService
+} from 'src/app/shared/generated'
 
 @Component({
   selector: 'app-welcome-configure',
@@ -18,6 +26,7 @@ export class WelcomeConfigureComponent implements OnInit {
   public displayDetailDialog = false
   public isReordered = false
   public detailImageIndex = 0
+  public maxImages = 20
   // data
   public workspace: Workspace | undefined
   public subscription: Subscription | undefined
@@ -25,13 +34,9 @@ export class WelcomeConfigureComponent implements OnInit {
   public imageInfos: ImageInfo[] = []
   public imageInfo$!: Observable<ImageInfo[]> | undefined
 
-  public selectedImageInfo: ImageInfo | undefined
-  public selectedImageData: ImageDataResponse | undefined
-
-  public console = console
-
   constructor(
     private readonly imageService: ImagesInternalAPIService,
+    private readonly eximService: ImagesExportImportAPIService,
     private readonly msgService: PortalMessageService,
     private readonly appStateService: AppStateService
   ) {
@@ -103,6 +108,10 @@ export class WelcomeConfigureComponent implements OnInit {
   /*
    * UI ACTIONS
    */
+  public onOpenCreateDialog() {
+    this.displayCreateDialog = true
+  }
+
   public onDeleteImage(id: string | undefined, idx: number, ii: ImageInfo[]) {
     if (id) {
       ii.splice(idx, 1) // remove locally
@@ -116,6 +125,23 @@ export class WelcomeConfigureComponent implements OnInit {
         }
       })
     }
+  }
+
+  public onExport() {
+    if (!this.workspace?.workspaceName) return
+    this.eximService.exportImages({ exportWelcomeRequest: { workspaceName: this.workspace.workspaceName } }).subscribe({
+      next: (snapshot) => {
+        const workspaceJson = JSON.stringify(snapshot, null, 2)
+        FileSaver.saveAs(
+          new Blob([workspaceJson], { type: 'text/json' }),
+          `onecx-welcome_${this.workspace?.workspaceName}_${getCurrentDateTime()}.json`
+        )
+      },
+      error: (err) => {
+        this.msgService.error({ summaryKey: 'ACTIONS.EXPORT.MESSAGE_NOK' })
+        console.error('exportImages', err)
+      }
+    })
   }
 
   public onChangeVisibility(info: ImageInfo) {

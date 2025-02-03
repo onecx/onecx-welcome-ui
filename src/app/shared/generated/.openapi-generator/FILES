@@ -3,11 +3,14 @@
 README.md
 api.module.ts
 api/api.ts
+api/imagesExportImport.service.ts
 api/imagesInternal.service.ts
 configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/eximImage.ts
+model/exportWelcomeRequest.ts
 model/imageDataResponse.ts
 model/imageInfo.ts
 model/imageInfoReorderRequest.ts
@@ -16,5 +19,6 @@ model/objectFit.ts
 model/problemDetailInvalidParam.ts
 model/problemDetailParam.ts
 model/problemDetailResponse.ts
+model/welcomeSnapshot.ts
 param.ts
 variables.ts
