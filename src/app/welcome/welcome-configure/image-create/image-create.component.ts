@@ -91,13 +91,15 @@ export class ImageCreateComponent implements OnInit, OnChanges {
                           this.onFileRemoval()
                           this.fileUpload.clear()
                         },
-                        error: () => {
+                        error: (err) => {
                           this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+                          console.error('updateImageInfo', err)
                         }
                       })
                   },
-                  error: () => {
+                  error: (err) => {
                     this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+                    console.error('createImage', err)
                   }
                 })
             } else {
