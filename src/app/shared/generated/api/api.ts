@@ -1,5 +1,5 @@
-export * from './imagesExportImport.service';
-import { ImagesExportImportAPIService } from './imagesExportImport.service';
+export * from './configExportImport.service';
+import { ConfigExportImportAPIService } from './configExportImport.service';
 export * from './imagesInternal.service';
 import { ImagesInternalAPIService } from './imagesInternal.service';
-export const APIS = [ImagesExportImportAPIService, ImagesInternalAPIService];
+export const APIS = [ConfigExportImportAPIService, ImagesInternalAPIService];

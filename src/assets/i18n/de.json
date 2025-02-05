@@ -31,7 +31,9 @@
     "IMPORT": {
       "LABEL": "Import",
       "TOOLTIP": "Konfiguration als JSON hochladen. Das ersetzt die existierende Konfiguration und alle Bilder.",
-      "HEADER": "Konfiguration importieren"
+      "HEADER": "Konfiguration importieren",
+      "MESSAGE_OK": "Die Konfiguration wurde erfolgreich importiert.",
+      "MESSAGE_NOK": "Ein Fehler ist aufgetreten. Die Konfiguration wurde nicht importiert."
     },
     "NAVIGATION": {
       "CLOSE": "Schließen",
@@ -65,8 +67,10 @@
     },
     "CLOSE": "Schließen",
     "CANCEL": "Abbrechen",
+    "CHOOSE": "Auswählen",
     "VIEW": "Ansehen",
     "CONFIGURE": "Konfigurieren",
+    "UPLOAD": "Hochladen",
     "TOOLTIPS": {
       "CLOSE": "Dialog verlassen",
       "CANCEL": "Aktion abbrechen",
@@ -103,7 +107,8 @@
   "VALIDATION": {
     "ERRORS": {
       "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
-      "MISSING_IMG_SRC": "Laden Sie ein Bild hoch oder geben sie eine externe Bild-URL an"
+      "MISSING_IMG_SRC": "Laden Sie ein Bild hoch oder geben sie eine externe Bild-URL an",
+      "PARSE_ERROR": "Parserfehler: Die enthaltene Struktur entspricht nicht dem erwarteten Format."
     }
   }
 }

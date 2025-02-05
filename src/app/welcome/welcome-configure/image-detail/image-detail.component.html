@@ -1,6 +1,6 @@
 <p-dialog
   [header]="'DIALOG.DETAIL.HEADER' | translate"
-  [(visible)]="displayDetailDialog"
+  [(visible)]="displayDialog"
   (onHide)="onDialogHide()"
   [modal]="true"
   [closable]="true"
@@ -88,7 +88,7 @@
         </div>
       </p-fieldset>
     </div>
-    <span *ngIf="imageInfos[imageIndex].url" class="p-float-label">
+    <span *ngIf="imageIndex > -1 && imageInfos[imageIndex].url" class="p-float-label">
       <input
         pInputText
         type="text"

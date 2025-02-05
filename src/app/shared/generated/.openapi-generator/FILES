@@ -3,7 +3,7 @@
 README.md
 api.module.ts
 api/api.ts
-api/imagesExportImport.service.ts
+api/configExportImport.service.ts
 api/imagesInternal.service.ts
 configuration.ts
 encoder.ts

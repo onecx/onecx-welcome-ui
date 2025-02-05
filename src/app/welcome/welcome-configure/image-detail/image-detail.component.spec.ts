@@ -18,8 +18,8 @@ const imageCssForm = new FormGroup<ImageCssForm>({
 
 const imageInfos: ImageInfo[] = [
   {
-    id: '123',
-    imageId: '123',
+    id: '01',
+    imageId: '01',
     modificationCount: 0,
     visible: true,
     position: '0',
@@ -29,10 +29,10 @@ const imageInfos: ImageInfo[] = [
     objectPosition: 'center center',
     backgroundColor: 'unset'
   },
-  { id: '1234', imageId: '1234', visible: true, position: '1', workspaceName: 'ws' },
-  { id: '12345', imageId: '12345', visible: true, position: '2', workspaceName: 'ws' },
-  { id: '123456', imageId: '123456', visible: true, position: '3', workspaceName: 'ws' },
-  { id: '1234567', imageId: '1234567', visible: true, position: '4', workspaceName: 'ws' }
+  { id: '02', imageId: '02', visible: true, position: '1', workspaceName: 'ws' },
+  { id: '03', imageId: '03', visible: true, position: '2', workspaceName: 'ws' },
+  { id: '04', imageId: '04', visible: true, position: '3', workspaceName: 'ws' },
+  { id: '05', imageId: '05', visible: true, position: '4', workspaceName: 'ws' }
 ]
 
 describe('ImageDetailComponent', () => {
@@ -68,6 +68,7 @@ describe('ImageDetailComponent', () => {
     component = fixture.componentInstance
     // satisfy the displaying of the url in HTML
     component.imageInfos = [{ imageId: '1', url: 'http://example.com/image1.png', workspaceName: 'ws' }]
+    component.displayDialog = true
     fixture.detectChanges()
   })
 
@@ -78,6 +79,15 @@ describe('ImageDetailComponent', () => {
   describe('on changes', () => {
     beforeEach(() => {
       fixture.componentRef.setInput('imageInfos', imageInfos)
+    })
+
+    it('should fill the form with image values', () => {
+      spyOn(component, 'ngOnChanges').and.callThrough()
+      fixture.componentRef.setInput('imageIndex', -1)
+
+      fixture.detectChanges() // trigger lifecycle hook: ngOnChanges()
+
+      expect(component.ngOnChanges).toHaveBeenCalled()
     })
 
     it('should fill the form with image values', () => {
@@ -104,26 +114,26 @@ describe('ImageDetailComponent', () => {
   })
 
   describe('build image src', () => {
-    const imageData: ImageDataResponse[] = [{ imageId: '1', mimeType: 'mimeType', imageData: new Blob() }]
+    const imageData: ImageDataResponse[] = [{ imageId: '02', mimeType: 'mimeType', imageData: new Blob() }]
+    beforeEach(() => {
+      fixture.componentRef.setInput('imageIndex', 0)
+      fixture.detectChanges() // trigger lifecycle hook: ngOnChanges()
+    })
 
     it('should return the base64 image source if image data are available', () => {
-      const imageInfo: ImageInfo = { imageId: '1', workspaceName: 'ws' }
+      const result = component.buildImageSrc(imageInfos[0], imageData)
 
-      const result = component.buildImageSrc(imageInfo, imageData)
+      expect(result).toBe('http://example.com/image1.png')
+    })
+
+    it('should return the image URL if the image data are not found', () => {
+      const result = component.buildImageSrc(imageInfos[1], imageData)
 
       expect(result).toBe('data:mimeType;base64,[object Blob]')
     })
 
-    it('should return the image URL if the image data are not found', () => {
-      const imageInfo: ImageInfo = { imageId: '2', url: 'http://example.com/image2.png', workspaceName: 'ws' }
-
-      const result = component.buildImageSrc(imageInfo, imageData)
-
-      expect(result).toBe('http://example.com/image2.png')
-    })
-
     it('should return the correct URL if imageData is empty', () => {
-      const imageInfo: ImageInfo = { imageId: '1', url: 'http://example.com/image1.png', workspaceName: 'ws' }
+      const imageInfo: ImageInfo = { imageId: '01', url: 'http://example.com/image1.png', workspaceName: 'ws' }
       const result = component.buildImageSrc(imageInfo, [])
 
       expect(result).toBe('http://example.com/image1.png')
@@ -186,6 +196,7 @@ describe('ImageDetailComponent', () => {
   describe('Saving', () => {
     beforeEach(() => {
       fixture.componentRef.setInput('imageInfos', imageInfos)
+      fixture.componentRef.setInput('imageIndex', 0)
       fixture.detectChanges() // trigger lifecycle hook: ngOnChanges()
     })
 

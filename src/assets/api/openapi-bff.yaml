@@ -13,6 +13,7 @@ servers:
   - url: "http://onecx-welcome-bff:8080"
 tags:
   - name: imagesInternal
+  - name: configExportImport
 paths:
   /images/info/{id}:
     get:
@@ -247,9 +248,9 @@ paths:
           image:
             - write
       tags:
-        - imagesExportImport
-      description: import images
-      operationId: importImages
+        - configExportImport
+      description: import configuration
+      operationId: importConfiguration
       parameters:
         - in: path
           name: workspaceName
@@ -279,9 +280,9 @@ paths:
           image:
             - read
       tags:
-        - imagesExportImport
-      description: export images
-      operationId: exportImages
+        - configExportImport
+      description: export configuration
+      operationId: exportConfiguration
       requestBody:
         required: true
         content:

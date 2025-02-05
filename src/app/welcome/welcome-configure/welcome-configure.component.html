@@ -23,10 +23,20 @@
         tooltipEvent="hover"
       ></p-button>
       <p-button
+        id="wc_configure_action_import"
+        icon="pi pi-upload"
+        (onClick)="onImport()"
+        [label]="'ACTIONS.IMPORT.LABEL' | translate"
+        [ariaLabel]="'ACTIONS.IMPORT.LABEL' | translate"
+        [pTooltip]="'ACTIONS.IMPORT.TOOLTIP' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></p-button>
+      <p-button
         id="wc_configure_action_create"
         icon="pi pi-plus"
         (onClick)="onOpenCreateDialog()"
-        [disabled]="imageInfos.length === 0 || imageInfos.length >= maxImages"
+        [disabled]="imageInfos.length >= maxImages"
         [label]="'ACTIONS.CREATE.LABEL' | translate"
         [ariaLabel]="'ACTIONS.CREATE.LABEL' | translate"
         [pTooltip]="'ACTIONS.CREATE.TOOLTIP' | translate"
@@ -146,11 +156,18 @@
 
     <!-- DETAIL -->
     <app-image-detail
-      [displayDetailDialog]="displayDetailDialog"
+      [displayDialog]="displayDetailDialog"
       (closeDialog)="onCloseDetailDialog(false)"
       [images]="images"
       [imageInfos]="imageInfos"
       [imageIndex]="detailImageIndex"
     ></app-image-detail>
+
+    <!-- IMPORT -->
+    <app-welcome-import
+      [displayDialog]="displayImportDialog"
+      (importEmitter)="onCloseDetailDialog(false)"
+      [workspaceName]="workspace?.workspaceName"
+    ></app-welcome-import>
   </div>
 </ocx-portal-page>

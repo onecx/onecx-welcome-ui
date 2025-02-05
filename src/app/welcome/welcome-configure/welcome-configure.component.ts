@@ -11,7 +11,7 @@ import {
   ImageDataResponse,
   ImageInfo,
   ImagesInternalAPIService,
-  ImagesExportImportAPIService
+  ConfigExportImportAPIService
 } from 'src/app/shared/generated'
 
 @Component({
@@ -24,8 +24,9 @@ export class WelcomeConfigureComponent implements OnInit {
   // dialog
   public displayCreateDialog = false
   public displayDetailDialog = false
+  public displayImportDialog = false
   public isReordered = false
-  public detailImageIndex = 0
+  public detailImageIndex = -1
   public maxImages = 20
   // data
   public workspace: Workspace | undefined
@@ -36,7 +37,7 @@ export class WelcomeConfigureComponent implements OnInit {
 
   constructor(
     private readonly imageService: ImagesInternalAPIService,
-    private readonly eximService: ImagesExportImportAPIService,
+    private readonly eximService: ConfigExportImportAPIService,
     private readonly msgService: PortalMessageService,
     private readonly appStateService: AppStateService
   ) {
@@ -118,6 +119,8 @@ export class WelcomeConfigureComponent implements OnInit {
   public onCloseDetailDialog(refresh: boolean): void {
     this.displayCreateDialog = false
     this.displayDetailDialog = false
+    this.displayImportDialog = false
+    this.detailImageIndex = -1
     if (refresh) this.fetchImageInfos()
   }
 
@@ -140,7 +143,7 @@ export class WelcomeConfigureComponent implements OnInit {
   public onExport() {
     if (this.workspace?.workspaceName)
       this.eximService
-        .exportImages({ exportWelcomeRequest: { workspaceName: this.workspace.workspaceName } })
+        .exportConfiguration({ exportWelcomeRequest: { workspaceName: this.workspace.workspaceName } })
         .subscribe({
           next: (snapshot) => {
             const workspaceJson = JSON.stringify(snapshot, null, 2)
@@ -151,9 +154,15 @@ export class WelcomeConfigureComponent implements OnInit {
           },
           error: (err) => {
             this.msgService.error({ summaryKey: 'ACTIONS.EXPORT.MESSAGE_NOK' })
-            console.error('exportImages', err)
+            console.error('exportConfiguration', err)
           }
         })
+  }
+
+  public onImport() {
+    if (this.workspace?.workspaceName) {
+      this.displayImportDialog = true
+    }
   }
 
   public onChangeVisibility(info: ImageInfo) {

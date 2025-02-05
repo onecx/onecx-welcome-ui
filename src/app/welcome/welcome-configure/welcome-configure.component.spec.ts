@@ -13,7 +13,7 @@ import {
   ImageDataResponse,
   ImageInfo,
   ImagesInternalAPIService,
-  ImagesExportImportAPIService,
+  ConfigExportImportAPIService,
   WelcomeSnapshot,
   ObjectFit
 } from 'src/app/shared/generated'
@@ -42,7 +42,7 @@ const imageInfos: ImageInfo[] = [
   { id: '1234567', imageId: '1234567', visible: true, position: '3', workspaceName: 'ws' }
 ]
 
-const imageExport: WelcomeSnapshot = {
+const imageDTO: WelcomeSnapshot = {
   id: 'export-id',
   created: '2025-02-03T15:30:53.122632Z',
   config: {
@@ -90,8 +90,7 @@ describe('WelcomeConfigureComponent', () => {
     updateImageOrder: jasmine.createSpy('updateImageOrder').and.returnValue(of({}))
   }
   const eximServiceSpy = {
-    exportImages: jasmine.createSpy('exportImages').and.returnValue(of({})),
-    importImages: jasmine.createSpy('importImages').and.returnValue(of({}))
+    exportConfiguration: jasmine.createSpy('exportConfiguration').and.returnValue(of({}))
   }
 
   beforeEach(waitForAsync(() => {
@@ -109,7 +108,7 @@ describe('WelcomeConfigureComponent', () => {
         provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
-        { provide: ImagesExportImportAPIService, useValue: eximServiceSpy }
+        { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
       ]
     }).compileComponents()
     // reset
@@ -119,8 +118,7 @@ describe('WelcomeConfigureComponent', () => {
     apiServiceSpy.getImageById.calls.reset()
     apiServiceSpy.deleteImageInfoById.calls.reset()
     apiServiceSpy.updateImageInfo.calls.reset()
-    eximServiceSpy.exportImages.calls.reset()
-    eximServiceSpy.importImages.calls.reset()
+    eximServiceSpy.exportConfiguration.calls.reset()
   }))
 
   beforeEach(() => {
@@ -370,12 +368,14 @@ describe('WelcomeConfigureComponent', () => {
     it('should not refresh after closing', () => {
       component.displayCreateDialog = true
       component.displayDetailDialog = true
+      component.displayImportDialog = true
       spyOn(component, 'fetchImageInfos')
 
       component.onCloseDetailDialog(false)
 
       expect(component.displayCreateDialog).toBeFalse()
       expect(component.displayDetailDialog).toBeFalse()
+      expect(component.displayImportDialog).toBeFalse()
       expect(component.fetchImageInfos).not.toHaveBeenCalled()
     })
   })
@@ -444,31 +444,43 @@ describe('WelcomeConfigureComponent', () => {
 
       component.onExport()
 
-      expect(eximServiceSpy.exportImages).not.toHaveBeenCalled()
+      expect(eximServiceSpy.exportConfiguration).not.toHaveBeenCalled()
     })
 
     it('should save export file', () => {
       spyOn(JSON, 'stringify').and.returnValue('themejson')
       spyOn(FileSaver, 'saveAs')
 
-      eximServiceSpy.exportImages.and.returnValue(of(imageExport) as any)
+      eximServiceSpy.exportConfiguration.and.returnValue(of(imageDTO) as any)
 
       component.onExport()
 
-      expect(eximServiceSpy.exportImages).toHaveBeenCalledOnceWith(
+      expect(eximServiceSpy.exportConfiguration).toHaveBeenCalledOnceWith(
         jasmine.objectContaining({ exportWelcomeRequest: { workspaceName: component.workspace?.workspaceName } })
       )
     })
 
     it('should display error on export fail', () => {
       const errorResponse = { status: 400, statusText: 'Error on exporting configuration' }
-      eximServiceSpy.exportImages.and.returnValue(throwError(() => errorResponse))
+      eximServiceSpy.exportConfiguration.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
       component.onExport()
 
-      expect(console.error).toHaveBeenCalledWith('exportImages', errorResponse)
+      expect(console.error).toHaveBeenCalledWith('exportConfiguration', errorResponse)
       expect(msgServiceSpy.error).toHaveBeenCalledOnceWith({ summaryKey: 'ACTIONS.EXPORT.MESSAGE_NOK' })
+    })
+  })
+
+  describe('Import', () => {
+    beforeEach(() => {
+      component.workspace = ws
+    })
+
+    it('should open import dialog', () => {
+      component.onImport()
+
+      expect(component.displayImportDialog).toBeTrue()
     })
   })
 })

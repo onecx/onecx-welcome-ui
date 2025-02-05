@@ -30,11 +30,11 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 
 
-export interface ExportImagesRequestParams {
+export interface ExportConfigurationRequestParams {
     exportWelcomeRequest: ExportWelcomeRequest;
 }
 
-export interface ImportImagesRequestParams {
+export interface ImportConfigurationRequestParams {
     /** target workspace for import */
     workspaceName: string;
     welcomeSnapshot: WelcomeSnapshot;
@@ -44,7 +44,7 @@ export interface ImportImagesRequestParams {
 @Injectable({
   providedIn: 'any'
 })
-export class ImagesExportImportAPIService {
+export class ConfigExportImportAPIService {
 
     protected basePath = 'http://onecx-welcome-bff:8080';
     public defaultHeaders = new HttpHeaders();
@@ -106,18 +106,18 @@ export class ImagesExportImportAPIService {
     }
 
     /**
-     * export images
+     * export configuration
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public exportImages(requestParameters: ExportImagesRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<WelcomeSnapshot>;
-    public exportImages(requestParameters: ExportImagesRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<WelcomeSnapshot>>;
-    public exportImages(requestParameters: ExportImagesRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<WelcomeSnapshot>>;
-    public exportImages(requestParameters: ExportImagesRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public exportConfiguration(requestParameters: ExportConfigurationRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<WelcomeSnapshot>;
+    public exportConfiguration(requestParameters: ExportConfigurationRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<WelcomeSnapshot>>;
+    public exportConfiguration(requestParameters: ExportConfigurationRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<WelcomeSnapshot>>;
+    public exportConfiguration(requestParameters: ExportConfigurationRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         const exportWelcomeRequest = requestParameters.exportWelcomeRequest;
         if (exportWelcomeRequest === null || exportWelcomeRequest === undefined) {
-            throw new Error('Required parameter exportWelcomeRequest was null or undefined when calling exportImages.');
+            throw new Error('Required parameter exportWelcomeRequest was null or undefined when calling exportConfiguration.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -175,22 +175,22 @@ export class ImagesExportImportAPIService {
     }
 
     /**
-     * import images
+     * import configuration
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public importImages(requestParameters: ImportImagesRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
-    public importImages(requestParameters: ImportImagesRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
-    public importImages(requestParameters: ImportImagesRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
-    public importImages(requestParameters: ImportImagesRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public importConfiguration(requestParameters: ImportConfigurationRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
+    public importConfiguration(requestParameters: ImportConfigurationRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
+    public importConfiguration(requestParameters: ImportConfigurationRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
+    public importConfiguration(requestParameters: ImportConfigurationRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         const workspaceName = requestParameters.workspaceName;
         if (workspaceName === null || workspaceName === undefined) {
-            throw new Error('Required parameter workspaceName was null or undefined when calling importImages.');
+            throw new Error('Required parameter workspaceName was null or undefined when calling importConfiguration.');
         }
         const welcomeSnapshot = requestParameters.welcomeSnapshot;
         if (welcomeSnapshot === null || welcomeSnapshot === undefined) {
-            throw new Error('Required parameter welcomeSnapshot was null or undefined when calling importImages.');
+            throw new Error('Required parameter welcomeSnapshot was null or undefined when calling importConfiguration.');
         }
 
         let localVarHeaders = this.defaultHeaders;

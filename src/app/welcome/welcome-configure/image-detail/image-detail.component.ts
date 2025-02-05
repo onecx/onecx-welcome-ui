@@ -18,10 +18,10 @@ export interface ImageCssForm {
   styleUrls: ['./image-detail.component.scss']
 })
 export class ImageDetailComponent implements OnChanges {
-  @Input() public displayDetailDialog = false
+  @Input() public displayDialog = false
   @Input() public images: ImageDataResponse[] = []
   @Input() public imageInfos: ImageInfo[] = []
-  @Input() public imageIndex = 0
+  @Input() public imageIndex = -1
   @Output() public closeDialog = new EventEmitter<boolean>() // true on image changes
 
   public isLoading = false
@@ -42,7 +42,7 @@ export class ImageDetailComponent implements OnChanges {
   }
 
   public ngOnChanges(): void {
-    this.fillForm()
+    if (this.displayDialog && this.imageIndex > -1) this.fillForm()
   }
 
   // fill form - use default values if values are not yet set
@@ -57,6 +57,7 @@ export class ImageDetailComponent implements OnChanges {
   // if image data was captured before then use this data
   // otherwise use the image url
   public buildImageSrc(imageInfo: ImageInfo, images: ImageDataResponse[]): string | undefined {
+    if (this.imageIndex < 0) return
     if (imageInfo.url) return imageInfo.url
     const currentImage = images.find((image) => {
       return image.imageId === imageInfo.imageId
