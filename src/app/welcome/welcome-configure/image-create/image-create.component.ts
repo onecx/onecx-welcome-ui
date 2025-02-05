@@ -13,6 +13,7 @@ export class ImageCreateComponent implements OnInit, OnChanges {
   @Input() public displayCreateDialog = false
   @Input() public imageInfoCount: number = 0
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
+
   @ViewChild('fileUpload', { static: true }) fileUpload: any
 
   public isLoading = false

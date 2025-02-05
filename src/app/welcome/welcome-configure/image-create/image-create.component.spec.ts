@@ -85,6 +85,7 @@ describe('ImageCreateComponent', () => {
 
     it('should reset form field url', () => {
       component.ngOnInit()
+      component.ngOnChanges()
       fixture.detectChanges()
       const dElement = fixture.debugElement
       const uploadField = dElement.query(By.css('p-fileupload'))
@@ -140,32 +141,32 @@ describe('ImageCreateComponent', () => {
   })
 
   it('should handle error when creating image data', () => {
-    component.ngOnInit()
-
-    component.onFileSelected(new Blob())
-
+    const errorResponse = { status: 400, statusText: 'Error on creation' }
     apiServiceSpy.createImageInfo.and.returnValue(of({ id: '123', position: '1', modificationCount: 0 } as ImageInfo))
+    apiServiceSpy.createImage.and.returnValue(throwError(() => errorResponse))
+    spyOn(console, 'error')
 
-    apiServiceSpy.createImage.and.returnValue(throwError(() => new Error()))
-
+    component.ngOnInit()
+    component.onFileSelected(new Blob())
     component.onSave()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+    expect(console.error).toHaveBeenCalledWith('createImage', errorResponse)
   })
 
   it('should handle error when updating image info', () => {
-    component.ngOnInit()
-
-    component.onFileSelected(new Blob())
-
+    const errorResponse = { status: 400, statusText: 'Error on updating' }
     apiServiceSpy.createImageInfo.and.returnValue(of({ id: '123', position: '1', modificationCount: 0 } as ImageInfo))
     apiServiceSpy.createImage.and.returnValue(of({ imageId: '1234' } as ImageDataResponse))
+    apiServiceSpy.updateImageInfo.and.returnValue(throwError(() => errorResponse))
+    spyOn(console, 'error')
 
-    apiServiceSpy.updateImageInfo.and.returnValue(throwError(() => new Error()))
-
+    component.ngOnInit()
+    component.onFileSelected(new Blob())
     component.onSave()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+    expect(console.error).toHaveBeenCalledWith('updateImageInfo', errorResponse)
   })
 
   it('should close dialog', () => {

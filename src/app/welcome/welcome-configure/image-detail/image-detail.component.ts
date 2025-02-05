@@ -6,6 +6,12 @@ import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService, ObjectFit } from 'src/app/shared/generated'
 
+export interface ImageCssForm {
+  objectFit: FormControl<string | null>
+  objectPosition: FormControl<string | null>
+  backgroundColor: FormControl<string | null>
+}
+
 @Component({
   selector: 'app-image-detail',
   templateUrl: './image-detail.component.html',
@@ -13,7 +19,6 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService, ObjectFit } fro
 })
 export class ImageDetailComponent implements OnChanges {
   @Input() public displayDetailDialog = false
-  @Input() public imageInfoCount: number = 0
   @Input() public images: ImageDataResponse[] = []
   @Input() public imageInfos: ImageInfo[] = []
   @Input() public imageIndex = 0
@@ -29,30 +34,29 @@ export class ImageDetailComponent implements OnChanges {
     private readonly translate: TranslateService,
     private readonly msgService: PortalMessageService
   ) {
-    this.formGroup = new FormGroup({
-      objectFit: new FormControl(null),
-      objectPosition: new FormControl(null, [Validators.minLength(2), Validators.maxLength(50)]),
-      backgroundColor: new FormControl(null, [Validators.minLength(3), Validators.maxLength(100)])
+    this.formGroup = new FormGroup<ImageCssForm>({
+      objectFit: new FormControl(ObjectFit.ScaleDown),
+      objectPosition: new FormControl('center center', [Validators.minLength(2), Validators.maxLength(50)]),
+      backgroundColor: new FormControl('unset', [Validators.minLength(3), Validators.maxLength(100)])
     })
   }
 
   public ngOnChanges(): void {
-    this.fillForm(this.imageIndex)
+    this.fillForm()
   }
 
   // fill form - use default values if values are not yet set
-  private fillForm(idx: number): void {
+  private fillForm(): void {
     this.formGroup.patchValue({
-      objectFit: this.imageInfos[idx].objectFit ?? 'scale-down',
-      objectPosition: this.imageInfos[idx].objectPosition ?? 'center center',
-      backgroundColor: this.imageInfos[idx].backgroundColor ?? 'unset'
+      objectFit: this.imageInfos[this.imageIndex].objectFit ?? 'scale-down',
+      objectPosition: this.imageInfos[this.imageIndex].objectPosition ?? 'center center',
+      backgroundColor: this.imageInfos[this.imageIndex].backgroundColor ?? 'unset'
     })
   }
 
   // if image data was captured before then use this data
   // otherwise use the image url
   public buildImageSrc(imageInfo: ImageInfo, images: ImageDataResponse[]): string | undefined {
-    if (!imageInfo) return undefined
     if (imageInfo.url) return imageInfo.url
     const currentImage = images.find((image) => {
       return image.imageId === imageInfo.imageId
@@ -74,15 +78,15 @@ export class ImageDetailComponent implements OnChanges {
       },
       error: (err) => {
         this.msgService.error({ summaryKey: 'ACTIONS.SAVE.MESSAGE_NOK' })
-        console.error('updateImageById', err)
+        console.error('updateImageInfo', err)
       }
     })
   }
 
-  public onGoToImage(newIdx: number) {
+  public onNavigateToImage(newIdx: number) {
     if (newIdx === this.imageInfos.length) this.imageIndex = 0
     else if (newIdx === -1) this.imageIndex = this.imageInfos.length - 1
     else this.imageIndex = newIdx
-    this.fillForm(this.imageIndex)
+    this.fillForm()
   }
 }
