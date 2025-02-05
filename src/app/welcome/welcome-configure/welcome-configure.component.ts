@@ -1,10 +1,18 @@
 import { Component, OnInit } from '@angular/core'
 import { catchError, map, Observable, of, Subject, Subscription, takeUntil } from 'rxjs'
+import FileSaver from 'file-saver'
 
 import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, PortalMessageService } from '@onecx/angular-integration-interface'
 
-import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
+import { getCurrentDateTime } from 'src/app/shared/utils'
+
+import {
+  ImageDataResponse,
+  ImageInfo,
+  ImagesInternalAPIService,
+  ConfigExportImportAPIService
+} from 'src/app/shared/generated'
 
 @Component({
   selector: 'app-welcome-configure',
@@ -16,8 +24,10 @@ export class WelcomeConfigureComponent implements OnInit {
   // dialog
   public displayCreateDialog = false
   public displayDetailDialog = false
+  public displayImportDialog = false
   public isReordered = false
-  public detailImageIndex = 0
+  public detailImageIndex = -1
+  public maxImages = 20
   // data
   public workspace: Workspace | undefined
   public subscription: Subscription | undefined
@@ -25,13 +35,9 @@ export class WelcomeConfigureComponent implements OnInit {
   public imageInfos: ImageInfo[] = []
   public imageInfo$!: Observable<ImageInfo[]> | undefined
 
-  public selectedImageInfo: ImageInfo | undefined
-  public selectedImageData: ImageDataResponse | undefined
-
-  public console = console
-
   constructor(
     private readonly imageService: ImagesInternalAPIService,
+    private readonly eximService: ConfigExportImportAPIService,
     private readonly msgService: PortalMessageService,
     private readonly appStateService: AppStateService
   ) {
@@ -103,6 +109,21 @@ export class WelcomeConfigureComponent implements OnInit {
   /*
    * UI ACTIONS
    */
+  public onOpenCreateDialog() {
+    this.displayCreateDialog = true
+  }
+  public onOpenDetailDialog(idx: number): void {
+    this.displayDetailDialog = true
+    this.detailImageIndex = idx
+  }
+  public onCloseDetailDialog(refresh: boolean): void {
+    this.displayCreateDialog = false
+    this.displayDetailDialog = false
+    this.displayImportDialog = false
+    this.detailImageIndex = -1
+    if (refresh) this.fetchImageInfos()
+  }
+
   public onDeleteImage(id: string | undefined, idx: number, ii: ImageInfo[]) {
     if (id) {
       ii.splice(idx, 1) // remove locally
@@ -111,10 +132,36 @@ export class WelcomeConfigureComponent implements OnInit {
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.SUCCESS' })
           this.updatePositions(ii)
         },
-        error: () => {
+        error: (err) => {
           this.msgService.error({ summaryKey: 'ACTIONS.DELETE.ERROR' })
+          console.error('deleteImageInfoById', err)
         }
       })
+    }
+  }
+
+  public onExport() {
+    if (this.workspace?.workspaceName)
+      this.eximService
+        .exportConfiguration({ exportWelcomeRequest: { workspaceName: this.workspace.workspaceName } })
+        .subscribe({
+          next: (snapshot) => {
+            const workspaceJson = JSON.stringify(snapshot, null, 2)
+            FileSaver.saveAs(
+              new Blob([workspaceJson], { type: 'text/json' }),
+              `onecx-welcome_${this.workspace?.workspaceName}_${getCurrentDateTime()}.json`
+            )
+          },
+          error: (err) => {
+            this.msgService.error({ summaryKey: 'ACTIONS.EXPORT.MESSAGE_NOK' })
+            console.error('exportConfiguration', err)
+          }
+        })
+  }
+
+  public onImport() {
+    if (this.workspace?.workspaceName) {
+      this.displayImportDialog = true
     }
   }
 
@@ -129,11 +176,7 @@ export class WelcomeConfigureComponent implements OnInit {
             imageId: info.imageId,
             position: info.position,
             url: info.url,
-            creationDate: info.creationDate,
             id: info.id,
-            creationUser: info.creationUser,
-            modificationDate: info.modificationDate,
-            modificationUser: info.modificationUser,
             workspaceName: info.workspaceName
           }
         })
@@ -142,11 +185,25 @@ export class WelcomeConfigureComponent implements OnInit {
             this.fetchImageInfos()
             this.msgService.success({ summaryKey: 'ACTIONS.VISIBILITY.SUCCESS' })
           },
-          error: () => {
+          error: (err) => {
             this.msgService.error({ summaryKey: 'ACTIONS.VISIBILITY.ERROR' })
+            console.error('updateImageInfo', err)
           }
         })
     }
+  }
+
+  public onSaveOrder() {
+    const imagesToReorder = this.imageInfos
+    this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: imagesToReorder } }).subscribe({
+      next: () => {
+        this.msgService.success({ summaryKey: 'ACTIONS.REORDER.SUCCESS' })
+      },
+      error: (err) => {
+        this.msgService.error({ summaryKey: 'ACTIONS.REORDER.ERROR' })
+        console.error('updateImageOrder', err)
+      }
+    })
   }
 
   public onSwapElement(ii: ImageInfo[], indexA: number, indexB: number) {
@@ -160,38 +217,16 @@ export class WelcomeConfigureComponent implements OnInit {
       // switch end => start
     } else if (indexA === ii.length - 1 && indexB === ii.length) {
       ii[indexA].position = '0'
-      ii[0].position = (ii.length - 1).toString()
-      ii[ii.length - 1] = ii[0]
+      ii[0].position = indexA.toString()
+      ii[indexA] = ii[0]
       ii[0] = tmp
       // moving within the array
     } else {
-      ii[indexA].position = (indexB + 1).toString()
-      ii[indexB].position = (indexA + 1).toString()
+      ii[indexA].position = indexB.toString()
+      ii[indexB].position = indexA.toString()
       ii[indexA] = ii[indexB]
       ii[indexB] = tmp
     }
     this.isReordered = true
-  }
-
-  public onSaveOrder() {
-    const imagesToReorder = this.imageInfos
-    this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: imagesToReorder } }).subscribe({
-      next: () => {
-        this.msgService.success({ summaryKey: 'ACTIONS.REORDER.SUCCESS' })
-      },
-      error: () => {
-        this.msgService.error({ summaryKey: 'ACTIONS.REORDER.ERROR' })
-      }
-    })
-  }
-
-  public onOpenDetailDialog(idx: number): void {
-    this.displayDetailDialog = true
-    this.detailImageIndex = idx
-  }
-  public onCloseDetailDialog(refresh: boolean): void {
-    this.displayCreateDialog = false
-    this.displayDetailDialog = false
-    if (refresh) this.fetchImageInfos()
   }
 }

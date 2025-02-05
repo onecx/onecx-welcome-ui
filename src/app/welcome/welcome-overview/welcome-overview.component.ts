@@ -74,7 +74,7 @@ export class WelcomeOverviewComponent implements OnInit {
   }
 
   // load all stored image data, exclude invisible and images with URLs
-  public fetchImages(infos: ImageInfo[]): void {
+  private fetchImages(infos: ImageInfo[]): void {
     // do not twice
     if (this.images.length > 0) return
     const visibleInfoLength = infos.filter((i) => i.visible).length
@@ -84,9 +84,9 @@ export class WelcomeOverviewComponent implements OnInit {
     // images with URL
     const urlImageLength = infos.filter((i) => i.visible && i.url).length
     // images uploaded
-    const toBoLoadLength = infos.filter((i) => i.visible && !i.url).length
+    const toBeLoadLength = infos.filter((i) => i.visible && !i.url).length
 
-    if (toBoLoadLength === 0) this.setCarousel(urlImageLength)
+    if (toBeLoadLength === 0) this.setCarousel(urlImageLength)
     else
       infos
         .filter((i) => i.visible && !i.url)
@@ -96,8 +96,8 @@ export class WelcomeOverviewComponent implements OnInit {
               next: (img) => {
                 this.images.push(img)
                 // if all images loaded then start carousel
-                if (this.images.length === toBoLoadLength) {
-                  this.setCarousel(toBoLoadLength + urlImageLength)
+                if (this.images.length === toBeLoadLength) {
+                  this.setCarousel(toBeLoadLength + urlImageLength)
                   this.loading = false
                 }
               }

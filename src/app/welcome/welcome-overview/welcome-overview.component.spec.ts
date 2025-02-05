@@ -128,9 +128,36 @@ describe('WelcomeOverviewComponent', () => {
       expect(apiServiceSpy.getImageById).not.toHaveBeenCalled()
     })
 
+    it('should not fetch images if no image info is available', () => {
+      component['fetchImages']([])
+
+      expect(apiServiceSpy.getImageById).not.toHaveBeenCalled()
+    })
+
+    it('should not fetch images if no image to loaded is available', () => {
+      const iInfos: ImageInfo[] = [imageInfos[0]]
+      spyOn<any>(component, 'setCarousel')
+
+      component['fetchImages'](iInfos)
+
+      expect(apiServiceSpy.getImageById).not.toHaveBeenCalled()
+      expect(component['setCarousel']).toHaveBeenCalled()
+    })
+
     it('should get data for one image', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
       apiServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
+      component.currentImage = -1
+
+      component['fetchImages'](imageInfos)
+
+      expect(component.images).toContain(imgDataResponse)
+    })
+
+    it('should get data for one image', () => {
+      const imgDataResponse: ImageDataResponse = { imageId: 'id' }
+      apiServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
+      component.currentImage = 0
 
       component['fetchImages'](imageInfos)
 

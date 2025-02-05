@@ -1,14 +1,31 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { provideHttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
+import FileSaver from 'file-saver'
 
 import { Workspace } from '@onecx/integration-interface'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
-import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
+import {
+  ImageDataResponse,
+  ImageInfo,
+  ImagesInternalAPIService,
+  ConfigExportImportAPIService,
+  WelcomeSnapshot,
+  ObjectFit
+} from 'src/app/shared/generated'
 import { WelcomeConfigureComponent } from './welcome-configure.component'
 import { ImageCreateComponent } from './image-create/image-create.component'
+
+const ws: Workspace = {
+  workspaceName: 'wsName',
+  portalName: 'wsName',
+  baseUrl: 'url',
+  microfrontendRegistrations: []
+}
 
 const imageInfos: ImageInfo[] = [
   {
@@ -25,11 +42,39 @@ const imageInfos: ImageInfo[] = [
   { id: '1234567', imageId: '1234567', visible: true, position: '3', workspaceName: 'ws' }
 ]
 
-const ws: Workspace = {
-  workspaceName: 'wsName',
-  portalName: 'wsName',
-  baseUrl: 'url',
-  microfrontendRegistrations: []
+const imageDTO: WelcomeSnapshot = {
+  id: 'export-id',
+  created: '2025-02-03T15:30:53.122632Z',
+  config: {
+    images: [
+      {
+        image: {
+          visible: true,
+          position: '1',
+          url: 'http://example.com/image1.png',
+          objectFit: ObjectFit.ScaleDown,
+          objectPosition: undefined,
+          backgroundColor: 'unset'
+        },
+        imageData: undefined
+      },
+      {
+        image: {
+          visible: true,
+          position: '2',
+          url: undefined,
+          objectFit: ObjectFit.ScaleDown,
+          objectPosition: 'center center',
+          backgroundColor: 'white'
+        },
+        imageData: {
+          imageData: new Blob(['/9j/4AAQSkZJRgABAQEASABIAAD'], { type: 'image/*' }),
+          dataLength: 37,
+          mimeType: 'image/*'
+        }
+      }
+    ]
+  }
 }
 
 describe('WelcomeConfigureComponent', () => {
@@ -44,6 +89,9 @@ describe('WelcomeConfigureComponent', () => {
     updateImageInfo: jasmine.createSpy('updateImageInfo').and.returnValue(of({})),
     updateImageOrder: jasmine.createSpy('updateImageOrder').and.returnValue(of({}))
   }
+  const eximServiceSpy = {
+    exportConfiguration: jasmine.createSpy('exportConfiguration').and.returnValue(of({}))
+  }
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -56,8 +104,11 @@ describe('WelcomeConfigureComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: ImagesInternalAPIService, useValue: apiServiceSpy }
+        { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
+        { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
       ]
     }).compileComponents()
     // reset
@@ -67,7 +118,7 @@ describe('WelcomeConfigureComponent', () => {
     apiServiceSpy.getImageById.calls.reset()
     apiServiceSpy.deleteImageInfoById.calls.reset()
     apiServiceSpy.updateImageInfo.calls.reset()
-    apiServiceSpy.updateImageOrder.calls.reset()
+    eximServiceSpy.exportConfiguration.calls.reset()
   }))
 
   beforeEach(() => {
@@ -175,11 +226,14 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should handle error when deleting image', () => {
-      apiServiceSpy.deleteImageInfoById.and.returnValue(throwError(() => new Error()))
+      const errorResponse = { status: 400, statusText: 'Error on image deletion' }
+      apiServiceSpy.deleteImageInfoById.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
       component.onDeleteImage('123', 0, imageInfos)
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.ERROR' })
+      expect(console.error).toHaveBeenCalledWith('deleteImageInfoById', errorResponse)
     })
   })
 
@@ -193,27 +247,77 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should handle error when updating visiblity', () => {
-      apiServiceSpy.updateImageInfo.and.returnValue(throwError(() => new Error()))
+      const errorResponse = { status: 400, statusText: 'Error on image updating' }
+      apiServiceSpy.updateImageInfo.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
       component.onChangeVisibility({ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' })
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.VISIBILITY.ERROR' })
+      expect(console.error).toHaveBeenCalledWith('updateImageInfo', errorResponse)
     })
   })
 
   describe('onSaveOrder', () => {
-    it('should swap elements and update their positions', () => {
+    it('should swap elements and update their positions - normal case', () => {
       const ii: ImageInfo[] = [
-        { position: '1', workspaceName: 'ws' },
-        { position: '2', workspaceName: 'ws' },
-        { position: '3', workspaceName: 'ws' }
+        { position: '0', id: 'a', workspaceName: 'ws' },
+        { position: '1', id: 'b', workspaceName: 'ws' },
+        { position: '2', id: 'c', workspaceName: 'ws' },
+        { position: '3', id: 'd', workspaceName: 'ws' }
       ]
 
-      component.onSwapElement(ii, 0, 2)
+      component.onSwapElement(ii, 1, 2)
 
-      expect(ii[0].position).toBe('1')
-      expect(ii[2].position).toBe('3')
+      expect(ii[1].position).toBe('1')
+      expect(ii[2].position).toBe('2')
+
+      expect(ii[1].id).toBe('c')
+      expect(ii[2].id).toBe('b')
+
       expect(component.isReordered).toBe(true)
+    })
+
+    it('should swap elements and update their positions - edge case -1', () => {
+      const ii: ImageInfo[] = [
+        { position: '0', id: 'a', workspaceName: 'ws' },
+        { position: '1', id: 'b', workspaceName: 'ws' },
+        { position: '2', id: 'c', workspaceName: 'ws' },
+        { position: '3', id: 'd', workspaceName: 'ws' }
+      ]
+
+      component.onSwapElement(ii, 0, -1)
+
+      expect(ii[0].position).toBe('0')
+      expect(ii[1].position).toBe('1')
+      expect(ii[2].position).toBe('2')
+      expect(ii[3].position).toBe('3')
+
+      expect(ii[0].id).toBe('d')
+      expect(ii[1].id).toBe('b')
+      expect(ii[2].id).toBe('c')
+      expect(ii[3].id).toBe('a')
+    })
+
+    it('should swap elements and update their positions - edge case +1', () => {
+      const ii: ImageInfo[] = [
+        { position: '0', id: 'a', workspaceName: 'ws' },
+        { position: '1', id: 'b', workspaceName: 'ws' },
+        { position: '2', id: 'c', workspaceName: 'ws' },
+        { position: '3', id: 'd', workspaceName: 'ws' }
+      ]
+
+      component.onSwapElement(ii, 3, 4) // d <=> a
+
+      expect(ii[0].position).toBe('0')
+      expect(ii[1].position).toBe('1')
+      expect(ii[2].position).toBe('2')
+      expect(ii[3].position).toBe('3')
+
+      expect(ii[0].id).toBe('d')
+      expect(ii[1].id).toBe('b')
+      expect(ii[2].id).toBe('c')
+      expect(ii[3].id).toBe('a')
     })
 
     it('should save positions', () => {
@@ -225,15 +329,34 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should handle error when updating positions', () => {
-      apiServiceSpy.updateImageOrder.and.returnValue(throwError(() => new Error()))
+      const errorResponse = { status: 400, statusText: 'Error on image updating' }
+      apiServiceSpy.updateImageOrder.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
       component.onSaveOrder()
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.REORDER.ERROR' })
+      expect(console.error).toHaveBeenCalledWith('updateImageOrder', errorResponse)
     })
   })
 
-  describe('onCloseCreateDialog', () => {
+  describe('CreateDialog', () => {
+    it('should open create dialog', () => {
+      component.displayCreateDialog = false
+
+      component.onOpenCreateDialog()
+
+      expect(component.displayCreateDialog).toBeTrue()
+    })
+    it('should open detail dialog', () => {
+      component.displayDetailDialog = false
+
+      component.onOpenDetailDialog(123)
+
+      expect(component.displayDetailDialog).toBeTrue()
+      expect(component.detailImageIndex).toBe(123)
+    })
+
     it('should refresh images after closing', () => {
       spyOn(component, 'fetchImageInfos')
 
@@ -245,12 +368,14 @@ describe('WelcomeConfigureComponent', () => {
     it('should not refresh after closing', () => {
       component.displayCreateDialog = true
       component.displayDetailDialog = true
+      component.displayImportDialog = true
       spyOn(component, 'fetchImageInfos')
 
       component.onCloseDetailDialog(false)
 
       expect(component.displayCreateDialog).toBeFalse()
       expect(component.displayDetailDialog).toBeFalse()
+      expect(component.displayImportDialog).toBeFalse()
       expect(component.fetchImageInfos).not.toHaveBeenCalled()
     })
   })
@@ -306,6 +431,56 @@ describe('WelcomeConfigureComponent', () => {
         { position: '2', workspaceName: 'ws2' },
         { position: '3', workspaceName: 'ws5' }
       ])
+    })
+  })
+
+  describe('Export', () => {
+    beforeEach(() => {
+      component.workspace = ws
+    })
+
+    it('should do nothing if no workspace is available', () => {
+      component.workspace = undefined
+
+      component.onExport()
+
+      expect(eximServiceSpy.exportConfiguration).not.toHaveBeenCalled()
+    })
+
+    it('should save export file', () => {
+      spyOn(JSON, 'stringify').and.returnValue('themejson')
+      spyOn(FileSaver, 'saveAs')
+
+      eximServiceSpy.exportConfiguration.and.returnValue(of(imageDTO) as any)
+
+      component.onExport()
+
+      expect(eximServiceSpy.exportConfiguration).toHaveBeenCalledOnceWith(
+        jasmine.objectContaining({ exportWelcomeRequest: { workspaceName: component.workspace?.workspaceName } })
+      )
+    })
+
+    it('should display error on export fail', () => {
+      const errorResponse = { status: 400, statusText: 'Error on exporting configuration' }
+      eximServiceSpy.exportConfiguration.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+
+      component.onExport()
+
+      expect(console.error).toHaveBeenCalledWith('exportConfiguration', errorResponse)
+      expect(msgServiceSpy.error).toHaveBeenCalledOnceWith({ summaryKey: 'ACTIONS.EXPORT.MESSAGE_NOK' })
+    })
+  })
+
+  describe('Import', () => {
+    beforeEach(() => {
+      component.workspace = ws
+    })
+
+    it('should open import dialog', () => {
+      component.onImport()
+
+      expect(component.displayImportDialog).toBeTrue()
     })
   })
 })

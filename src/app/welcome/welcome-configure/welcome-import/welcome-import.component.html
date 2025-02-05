@@ -1,0 +1,55 @@
+<p-dialog
+  [header]="'ACTIONS.IMPORT.HEADER' | translate"
+  [(visible)]="displayDialog"
+  [modal]="true"
+  [closable]="true"
+  [resizable]="true"
+  [draggable]="true"
+  (onHide)="onClose(false)"
+  styleClass="disable-max-height-preset"
+>
+  <p-fileUpload
+    id="ws_menu_import_file_upload"
+    mode="advanced"
+    name="file"
+    accept=".json"
+    [maxFileSize]="20000000"
+    [headers]="httpHeaders"
+    [customUpload]="true"
+    (onClear)="onImportClear()"
+    (onRemove)="onImportClear()"
+    (onSelect)="onImportSelect($event)"
+    (uploadHandler)="onImportConfirmation()"
+    [showUploadButton]="!importError"
+    [uploadLabel]="'ACTIONS.UPLOAD' | translate"
+    [cancelLabel]="'ACTIONS.CANCEL' | translate"
+    [chooseLabel]="'ACTIONS.CHOOSE' | translate"
+    [attr.aria-label]="'ACTIONS.UPLOAD' | translate"
+    [pTooltip]="'ACTIONS.UPLOAD' | translate"
+    tooltipPosition="top"
+    tooltipEvent="hover"
+  ></p-fileUpload>
+
+  <p-message
+    *ngIf="importError"
+    severity="error"
+    styleClass="mt-3"
+    id="ws_menu_import_parse_error"
+    [text]="'VALIDATION.ERRORS.PARSE_ERROR' | translate"
+  ></p-message>
+
+  <ng-template pTemplate="footer">
+    <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
+      <p-button
+        id="ws_menu_import_action_close"
+        icon="pi pi-times"
+        (onClick)="onClose(false)"
+        [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
+        [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
+        [pTooltip]="'ACTIONS.NAVIGATION.CLOSE_WITHOUT_SAVE' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

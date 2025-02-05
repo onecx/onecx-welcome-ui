@@ -13,6 +13,7 @@ export class ImageCreateComponent implements OnInit, OnChanges {
   @Input() public displayCreateDialog = false
   @Input() public imageInfoCount: number = 0
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
+
   @ViewChild('fileUpload', { static: true }) fileUpload: any
 
   public isLoading = false
@@ -91,13 +92,15 @@ export class ImageCreateComponent implements OnInit, OnChanges {
                           this.onFileRemoval()
                           this.fileUpload.clear()
                         },
-                        error: () => {
+                        error: (err) => {
                           this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+                          console.error('updateImageInfo', err)
                         }
                       })
                   },
-                  error: () => {
+                  error: (err) => {
                     this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+                    console.error('createImage', err)
                   }
                 })
             } else {

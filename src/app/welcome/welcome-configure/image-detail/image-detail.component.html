@@ -1,6 +1,6 @@
 <p-dialog
   [header]="'DIALOG.DETAIL.HEADER' | translate"
-  [(visible)]="displayDetailDialog"
+  [(visible)]="displayDialog"
   (onHide)="onDialogHide()"
   [modal]="true"
   [closable]="true"
@@ -62,7 +62,7 @@
               <label for="wc_detail_form_object_position">{{ 'IMAGE.OBJECT_POSITION' | translate }}</label>
             </span>
             <div class="text-xs">
-              Format:
+              {{ 'IMAGE.FORMAT' | translate }}:
               <div style="max-width: 230px">
                 [left | <b>center</b> | right] [ top | <b>center</b> | bottom ] [percentage percentage]
               </div>
@@ -83,12 +83,12 @@
               />
               <label for="wc_detail_form_background">{{ 'IMAGE.BACKGROUND_COLOR' | translate }}</label>
             </span>
-            <div class="text-xs">Format: [ <b>unset</b> | color-name | color-value ]</div>
+            <div class="text-xs">{{ 'IMAGE.FORMAT' | translate }}: [ <b>unset</b> | color-name | color-value ]</div>
           </div>
         </div>
       </p-fieldset>
     </div>
-    <span *ngIf="imageInfos[imageIndex].url" class="p-float-label">
+    <span *ngIf="imageIndex > -1 && imageInfos[imageIndex].url" class="p-float-label">
       <input
         pInputText
         type="text"
@@ -111,7 +111,7 @@
         <p-button
           id="wc_image_detail_action_prev"
           icon="pi pi-caret-left"
-          (onClick)="onGoToImage(imageIndex - 1)"
+          (onClick)="onNavigateToImage(imageIndex - 1)"
           [label]="'ACTIONS.NAVIGATION.BACK' | translate"
           [attr.aria-label]="'ACTIONS.NAVIGATION.BACK' | translate"
           [pTooltip]="'ACTIONS.NAVIGATION.BACK.TOOLTIP' | translate"
@@ -121,7 +121,7 @@
         <p-button
           id="wc_image_detail_action_next"
           icon="pi pi-caret-right"
-          (onClick)="onGoToImage(imageIndex + 1)"
+          (onClick)="onNavigateToImage(imageIndex + 1)"
           [label]="'ACTIONS.NAVIGATION.NEXT' | translate"
           [attr.aria-label]="'ACTIONS.NAVIGATION.NEXT' | translate"
           [pTooltip]="'ACTIONS.NAVIGATION.NEXT.TOOLTIP' | translate"

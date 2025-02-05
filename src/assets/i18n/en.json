@@ -1,45 +1,9 @@
 {
   "ACTIONS": {
-    "VISIBILITY": {
-      "TOOLTIP": "Change visibility on the start screen",
-      "SUCCESS": "Visibility successfully changed",
-      "ERROR": "Visibility could not be updated"
-    },
-    "DELETE": {
-      "TOOLTIP": "Delete Image",
-      "SUCCESS": "Image deleted successfully",
-      "ERROR": "Image could not be deleted"
-    },
-    "REORDER": {
-      "SAVE": "Save",
-      "SAVE_TOOLTIP": "Save arrangement",
-      "SUCCESS": "Arrangement successfully changed",
-      "ERROR": "Arrangement could not be changed",
-      "MOVE_LEFT": "Move to left",
-      "MOVE_RIGHT": "Move to right"
-    },
-    "ADD": {
-      "LABEL": "Open Dialog to add a new Image",
-      "TOOLTIP": "Add new Image"
-    },
-    "NAVIGATION": {
-      "CLOSE": "Close",
-      "CLOSE.TOOLTIP": "Close dialog",
-      "CLOSE_WITHOUT_SAVE": "Close dialog without changes",
-      "BACK": "Back",
-      "NEXT": "Next",
-      "NEXT.TOOLTIP": "Next Image",
-      "BACK.TOOLTIP": "Previous Image",
-      "DETAILS.TOOLTIP": "Display details",
-      "NEW.TOOLTIP": "Create new entry"
-    },
     "CREATE": {
-      "TITLE": "Add Image",
-      "UPLOAD": "Upload Image",
-      "VISIBILITY": {
-        "TRUE": "Visible",
-        "FALSE": "Hidden"
-      },
+      "LABEL": "Add Image",
+      "TOOLTIP": "Add new Image",
+      "HEADER": "Add Image",
       "FILE_ERRORS": {
         "INVALID_SIZE_DETAIL": "Maximum upload size is 1MB.",
         "INVALID_SIZE_SUMMARY": "Invalid file size.",
@@ -54,16 +18,59 @@
       "SUCCESS": "Image successfully added",
       "ERROR": "Image could not be added"
     },
+    "DELETE": {
+      "TOOLTIP": "Delete Image",
+      "SUCCESS": "Image deleted successfully",
+      "ERROR": "Image could not be deleted"
+    },
+    "EXPORT": {
+      "LABEL": "Export",
+      "TOOLTIP": "Export configuration including images in JSON format",
+      "MESSAGE_NOK": "An error occurred, the configuration was not exported."
+    },
+    "IMPORT": {
+      "LABEL": "Import",
+      "TOOLTIP": "Upload configuration in JSON format. This will replace the existing configuration and all images.",
+      "HEADER": "Import Configuration",
+      "MESSAGE_OK": "The Configuration was successfully imported.",
+      "MESSAGE_NOK": "An error occurred. The Configuration was not imported."
+    },
+    "NAVIGATION": {
+      "CLOSE": "Close",
+      "CLOSE.TOOLTIP": "Close dialog",
+      "CLOSE_WITHOUT_SAVE": "Close dialog without changes",
+      "BACK": "Back",
+      "NEXT": "Next",
+      "NEXT.TOOLTIP": "Next Image",
+      "BACK.TOOLTIP": "Previous Image",
+      "DETAILS.TOOLTIP": "Display details",
+      "NEW.TOOLTIP": "Create new entry"
+    },
+    "REORDER": {
+      "SAVE": "Save",
+      "SAVE_TOOLTIP": "Save arrangement",
+      "SUCCESS": "Arrangement successfully changed",
+      "ERROR": "Arrangement could not be changed",
+      "MOVE_LEFT": "Move to left",
+      "MOVE_RIGHT": "Move to right"
+    },
     "SAVE": {
       "LABEL": "Save",
       "TOOLTIP": "Save changes",
       "MESSAGE_OK": "Image successfully saved",
       "MESSAGE_NOK": "Image could not be saved"
     },
+    "VISIBILITY": {
+      "TOOLTIP": "Change visibility on the start screen",
+      "SUCCESS": "Visibility successfully changed",
+      "ERROR": "Visibility could not be updated"
+    },
     "CLOSE": "Close",
     "CANCEL": "Cancel",
+    "CHOOSE": "Choose",
     "VIEW": "View",
     "CONFIGURE": "Configure",
+    "UPLOAD": "Upload",
     "TOOLTIPS": {
       "CLOSE": "Leave dialog",
       "CANCEL": "Cancel action",
@@ -89,6 +96,7 @@
     "OBJECT_FIT": "Object Fit",
     "OBJECT_POSITION": "Object Position",
     "BACKGROUND_COLOR": "Background Color",
+    "FORMAT": "Format",
     "TOOLTIPS": {
       "URL": "Image URL",
       "OBJECT_FIT": "Determines how the image should be adjusted to the space in the browser window. CSS: object-fit",
@@ -99,7 +107,8 @@
   "VALIDATION": {
     "ERRORS": {
       "IMAGES.NOT_FOUND": "Images could not be loaded",
-      "MISSING_IMG_SRC": "Upload an Image or add an external URL."
+      "MISSING_IMG_SRC": "Upload an Image or add an external URL.",
+      "PARSE_ERROR": "Parse error: The contained structure does not match the expected format."
     }
   }
 }

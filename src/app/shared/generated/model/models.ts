@@ -1,3 +1,7 @@
+export * from './eximImage';
+export * from './eximImageData';
+export * from './eximImageInfo';
+export * from './exportWelcomeRequest';
 export * from './imageDataResponse';
 export * from './imageInfo';
 export * from './imageInfoReorderRequest';
@@ -5,3 +9,5 @@ export * from './objectFit';
 export * from './problemDetailInvalidParam';
 export * from './problemDetailParam';
 export * from './problemDetailResponse';
+export * from './welcomeConfig';
+export * from './welcomeSnapshot';
