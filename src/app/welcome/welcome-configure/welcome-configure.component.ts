@@ -209,6 +209,7 @@ export class WelcomeConfigureComponent implements OnInit {
     const imagesToReorder = this.imageInfos
     this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: imagesToReorder } }).subscribe({
       next: () => {
+        this.onReload()
         this.msgService.success({ summaryKey: 'ACTIONS.REORDER.SUCCESS' })
       },
       error: (err) => {
