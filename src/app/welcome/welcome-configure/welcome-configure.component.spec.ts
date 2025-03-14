@@ -1,5 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { Location } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
@@ -81,6 +82,7 @@ describe('WelcomeConfigureComponent', () => {
   let component: WelcomeConfigureComponent
   let fixture: ComponentFixture<WelcomeConfigureComponent>
 
+  const locationSpy = jasmine.createSpyObj<Location>('Location', ['back'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const apiServiceSpy = {
     getAllImageInfosByWorkspaceName: jasmine.createSpy('getAllImageInfosByWorkspaceName').and.returnValue(of([])),
@@ -106,6 +108,7 @@ describe('WelcomeConfigureComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        { provide: Location, useValue: locationSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
         { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
@@ -220,7 +223,7 @@ describe('WelcomeConfigureComponent', () => {
     it('should delete an image', () => {
       apiServiceSpy.deleteImageInfoById.and.returnValue(of({}))
 
-      component.onDeleteImage('123', 0, imageInfos)
+      component.onDeleteImage('123', 0, [...imageInfos])
 
       expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.SUCCESS' })
     })
@@ -230,7 +233,7 @@ describe('WelcomeConfigureComponent', () => {
       apiServiceSpy.deleteImageInfoById.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
-      component.onDeleteImage('123', 0, imageInfos)
+      component.onDeleteImage('123', 0, [...imageInfos])
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.ERROR' })
       expect(console.error).toHaveBeenCalledWith('deleteImageInfoById', errorResponse)
@@ -481,6 +484,165 @@ describe('WelcomeConfigureComponent', () => {
       component.onImport()
 
       expect(component.displayImportDialog).toBeTrue()
+    })
+  })
+
+  describe('Page actions:', () => {
+    beforeEach(() => {
+      component.ngOnInit()
+    })
+
+    it('should have BACK navigation', () => {
+      if (component.actions$) {
+        component.actions$.subscribe((actions) => {
+          const action = actions[0]
+          action.actionCallback()
+
+          expect(locationSpy.back).toHaveBeenCalled()
+        })
+      }
+    })
+
+    describe('Export:', () => {
+      it('should call EXPORT: hide button if there are no items', () => {
+        component.imageInfos = []
+        component.isReordered = true
+
+        component.actions$.subscribe((actions) => {
+          const action = actions[1]
+
+          expect(action.showCondition).toBeFalse()
+        })
+      })
+
+      it('should call EXPORT: enabled button', () => {
+        spyOn(component, 'onExport')
+        component.imageInfos = imageInfos
+        component.isReordered = false
+
+        component.actions$.subscribe((actions) => {
+          const action = actions[1]
+          action.actionCallback()
+
+          expect(action.showCondition).toBeTrue()
+          expect(component.onExport).toHaveBeenCalled()
+        })
+      })
+    })
+
+    describe('Import:', () => {
+      it('should call IMPORT: hide button on condition', () => {
+        component.isReordered = true
+
+        component.actions$.subscribe((actions) => {
+          const action = actions[2]
+
+          expect(action.showCondition).toBeFalse()
+        })
+      })
+
+      it('should call IMPORT: enabled button', () => {
+        spyOn(component, 'onImport')
+        component.isReordered = false
+
+        component.actions$.subscribe((actions) => {
+          const action = actions[2]
+          action.actionCallback()
+
+          expect(action.showCondition).toBeTrue()
+          expect(component.onImport).toHaveBeenCalled()
+        })
+      })
+    })
+
+    describe('Create:', () => {
+      it('should call CREATE: hide button on conditions', () => {
+        component.isReordered = true
+        component.imageInfos = imageInfos
+
+        component.actions$.subscribe((actions) => {
+          const action = actions[3]
+
+          expect(action.showCondition).toBeFalse()
+        })
+      })
+
+      it('should call CREATE: hide button on conditions', () => {
+        component.isReordered = false
+        component.imageInfos = imageInfos
+        component.maxImages = imageInfos.length
+
+        component.actions$.subscribe((actions) => {
+          const action = actions[3]
+
+          expect(action.showCondition).toBeFalse()
+        })
+      })
+
+      it('should call CREATE: enabled button', () => {
+        spyOn(component, 'onOpenCreateDialog')
+        component.isReordered = false
+
+        component.actions$.subscribe((actions) => {
+          const action = actions[3]
+          action.actionCallback()
+
+          expect(action.showCondition).toBeTrue()
+          expect(component.onOpenCreateDialog).toHaveBeenCalled()
+        })
+      })
+    })
+  })
+
+  describe('Reorder Cancel:', () => {
+    it('should call REORDER: hide button on conditions', () => {
+      component.isReordered = false
+      component.imageInfos = imageInfos
+
+      component.actions$.subscribe((actions) => {
+        const action = actions[4]
+
+        expect(action.showCondition).toBeFalse()
+      })
+    })
+
+    it('should call REORDER: enabled button', () => {
+      spyOn(component, 'onReload')
+      component.isReordered = true
+
+      component.actions$.subscribe((actions) => {
+        const action = actions[4]
+        action.actionCallback()
+
+        expect(action.showCondition).toBeTrue()
+        expect(component.onReload).toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('Reorder Save:', () => {
+    it('should call REORDER: hide button on conditions', () => {
+      component.isReordered = false
+      component.imageInfos = imageInfos
+
+      component.actions$.subscribe((actions) => {
+        const action = actions[5]
+
+        expect(action.showCondition).toBeFalse()
+      })
+    })
+
+    it('should call REORDER: enabled button', () => {
+      spyOn(component, 'onSaveOrder')
+      component.isReordered = true
+
+      component.actions$.subscribe((actions) => {
+        const action = actions[5]
+        action.actionCallback()
+
+        expect(action.showCondition).toBeTrue()
+        expect(component.onSaveOrder).toHaveBeenCalled()
+      })
     })
   })
 })

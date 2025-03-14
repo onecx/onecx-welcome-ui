@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { Location } from '@angular/common'
 import { TranslateService } from '@ngx-translate/core'
-import { catchError, map, Observable, of, Subject, Subscription, takeUntil } from 'rxjs'
+import { catchError, finalize, map, Observable, of, Subject, Subscription, takeUntil } from 'rxjs'
 import FileSaver from 'file-saver'
 
 import { Action } from '@onecx/angular-accelerator'
@@ -25,7 +25,7 @@ import {
 export class WelcomeConfigureComponent implements OnInit {
   private readonly destroy$ = new Subject()
   // dialog
-  public actions$: Observable<Action[]> | undefined
+  public actions$: Observable<Action[]> = of([])
   public displayCreateDialog = false
   public displayDetailDialog = false
   public displayImportDialog = false
@@ -51,6 +51,7 @@ export class WelcomeConfigureComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    this.preparePageAction()
     this.onReload()
   }
 
@@ -68,7 +69,8 @@ export class WelcomeConfigureComponent implements OnInit {
           catchError((err) => {
             console.error('getAllImageInfosByWorkspaceName', err)
             return of([] as ImageInfo[])
-          })
+          }),
+          finalize(() => this.preparePageAction())
         )
         .pipe(takeUntil(this.destroy$))
   }
@@ -116,7 +118,6 @@ export class WelcomeConfigureComponent implements OnInit {
    * UI ACTIONS
    */
   public onReload() {
-    this.preparePageAction()
     this.fetchImageInfos()
   }
   public onOpenCreateDialog() {
@@ -280,7 +281,7 @@ export class WelcomeConfigureComponent implements OnInit {
               icon: 'pi pi-download',
               show: 'always',
               conditional: true,
-              showCondition: !this.isReordered && this.imageInfos.length === 0
+              showCondition: !this.isReordered && this.imageInfos.length > 0
             },
             {
               label: data['ACTIONS.IMPORT.LABEL'],
@@ -289,7 +290,7 @@ export class WelcomeConfigureComponent implements OnInit {
               icon: 'pi pi-upload',
               show: 'always',
               conditional: true,
-              showCondition: !this.isReordered && this.imageInfos.length <= this.maxImages
+              showCondition: !this.isReordered
             },
             {
               label: data['ACTIONS.CREATE.LABEL'],
@@ -298,7 +299,7 @@ export class WelcomeConfigureComponent implements OnInit {
               icon: 'pi pi-plus',
               show: 'always',
               conditional: true,
-              showCondition: !this.isReordered && this.imageInfos.length <= this.maxImages
+              showCondition: !this.isReordered && this.imageInfos.length < this.maxImages
             },
             {
               label: data['ACTIONS.REORDER.CANCEL'],
