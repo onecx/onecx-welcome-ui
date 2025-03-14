@@ -11,11 +11,11 @@
     <div class="m-3 md:m-4 flex flex-row flex-wrap gap-3 sm:gap-4 md:gap-5">
       <div *ngFor="let info of imageInfos; let i = index" class="p-card">
         <div
-          class="p-card-body p-1 sm:p-2 md:p-3 w-14rem h-12rem sm:w-16rem sm:h-14rem md:w-20rem md:h-18rem flex flex-column flex-nowrap justify-content-between row-gap-2"
+          class="p-card-body p-1 sm:py-2 sm:px-2 md:px-3 w-14rem h-12rem sm:w-16rem sm:h-14rem md:w-20rem md:h-18rem flex flex-column flex-nowrap justify-content-between row-gap-2"
         >
           <div
             [id]="'wc_configure_card_item_' + i"
-            class="flex justify-content-center align-items-center border-round border-3 border-solid hover:border-400 cursor-pointer"
+            class="p-1 flex justify-content-center align-items-center border-round border-3 border-solid hover:border-400 cursor-pointer"
             style="border-color: transparent"
             (click)="onOpenDetailDialog(i)"
             (keydown.enter)="onOpenDetailDialog(i)"
@@ -23,7 +23,7 @@
           >
             <img
               [id]="'wc_configure_card_item_' + i + '_image'"
-              class="w-12rem h-7rem sm:w-14rem sm:h-9rem md:w-18rem md:h-13rem"
+              class="w-11rem h-7rem sm:w-13rem sm:h-9rem md:w-17rem md:h-13rem"
               [ngStyle]="{
                 'object-fit': info.objectFit ?? 'scale-down',
                 'object-position': info.objectPosition ?? 'center center',
@@ -44,6 +44,7 @@
                 [id]="'wc_configure_card_item_' + i + '_action_visibility'"
                 [icon]="info.visible ? 'pi pi-eye' : 'pi pi-eye-slash'"
                 (onClick)="onChangeVisibility(info)"
+                [disabled]="isReordered"
                 [ariaLabel]="'ACTIONS.VISIBILITY' | translate"
                 [pTooltip]="'ACTIONS.VISIBILITY.TOOLTIP' | translate"
                 tooltipPosition="bottom"
@@ -54,6 +55,7 @@
                 [id]="'wc_configure_card_item_' + i + '_action_delete'"
                 icon="pi pi-trash"
                 (onClick)="onDeleteImage(info.id, i, imageInfos)"
+                [disabled]="isReordered"
                 [ariaLabel]="'ACTIONS.DELETE' | translate"
                 [pTooltip]="'ACTIONS.DELETE.TOOLTIP' | translate"
                 tooltipPosition="bottom"
