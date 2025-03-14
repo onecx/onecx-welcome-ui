@@ -118,6 +118,7 @@ export class WelcomeConfigureComponent implements OnInit {
    * UI ACTIONS
    */
   public onReload() {
+    this.isReordered = false
     this.fetchImageInfos()
   }
   public onOpenCreateDialog() {
