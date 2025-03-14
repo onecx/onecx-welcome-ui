@@ -121,6 +121,10 @@ export class WelcomeConfigureComponent implements OnInit {
     this.isReordered = false
     this.fetchImageInfos()
   }
+  public onClose(): void {
+    this.location.back()
+  }
+
   public onOpenCreateDialog() {
     this.displayCreateDialog = true
   }
@@ -133,7 +137,7 @@ export class WelcomeConfigureComponent implements OnInit {
     this.displayDetailDialog = false
     this.displayImportDialog = false
     this.detailImageIndex = -1
-    if (refresh) this.fetchImageInfos()
+    if (refresh) this.onReload()
   }
 
   public onDeleteImage(id: string | undefined, idx: number, ii: ImageInfo[]) {
@@ -242,10 +246,6 @@ export class WelcomeConfigureComponent implements OnInit {
     }
     if (!this.isReordered) this.preparePageAction()
     this.isReordered = true
-  }
-
-  public onClose(): void {
-    this.location.back()
   }
 
   private preparePageAction(): void {
