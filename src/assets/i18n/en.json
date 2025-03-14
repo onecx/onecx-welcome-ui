@@ -49,6 +49,8 @@
     "REORDER": {
       "SAVE": "Save",
       "SAVE_TOOLTIP": "Save arrangement",
+      "CANCEL": "Cancel",
+      "CANCEL.TOOLTIP": "Cancel sorting",
       "SUCCESS": "Arrangement successfully changed",
       "ERROR": "Arrangement could not be changed",
       "MOVE_LEFT": "Move to left",
@@ -78,10 +80,17 @@
       "CONFIGURE": "Upload and Editing of Background Images"
     }
   },
+  "BREADCRUMBS": {
+    "CONFIGURE": "Configure"
+  },
   "DIALOG": {
     "OVERVIEW": {
       "PIC": "Background Image",
       "TITLE": "Hello"
+    },
+    "CONFIGURE": {
+      "HEADER": "Configure Workspace Start page",
+      "SUBHEADER": "Upload and Editing of Background Images"
     },
     "DETAIL": {
       "PIC": "Picture",
