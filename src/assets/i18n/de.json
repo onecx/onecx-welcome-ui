@@ -48,7 +48,9 @@
     },
     "REORDER": {
       "SAVE": "Speichern",
-      "SAVE_TOOLTIP": "Anordnung speichern",
+      "SAVE.TOOLTIP": "Anordnung speichern",
+      "CANCEL": "Abbrechen",
+      "CANCEL.TOOLTIP": "Sortierung wiederherstellen",
       "SUCCESS": "Anordnung erfolgreich geändert",
       "ERROR": "Anordnung konnte nicht geändert werden",
       "MOVE_LEFT": "Nach links verschieben",
@@ -78,10 +80,17 @@
       "CONFIGURE": "Hintergrundbilder hochladen und bearbeiten"
     }
   },
+  "BREADCRUMBS": {
+    "CONFIGURE": "Konfigurieren"
+  },
   "DIALOG": {
     "OVERVIEW": {
       "PIC": "Hintergrundbild",
       "TITLE": "Hallo"
+    },
+    "CONFIGURE": {
+      "HEADER": "Startseite konfigurieren",
+      "SUBHEADER": "Hintergrundbilder hochladen und bearbeiten"
     },
     "DETAIL": {
       "PIC": "Bild",

@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core'
-import { catchError, map, Observable, of, Subject, Subscription, takeUntil } from 'rxjs'
+import { Location } from '@angular/common'
+import { TranslateService } from '@ngx-translate/core'
+import { catchError, finalize, map, Observable, of, Subject, Subscription, takeUntil } from 'rxjs'
 import FileSaver from 'file-saver'
 
+import { Action } from '@onecx/angular-accelerator'
 import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, PortalMessageService } from '@onecx/angular-integration-interface'
 
@@ -22,6 +25,7 @@ import {
 export class WelcomeConfigureComponent implements OnInit {
   private readonly destroy$ = new Subject()
   // dialog
+  public actions$: Observable<Action[]> = of([])
   public displayCreateDialog = false
   public displayDetailDialog = false
   public displayImportDialog = false
@@ -39,13 +43,16 @@ export class WelcomeConfigureComponent implements OnInit {
     private readonly imageService: ImagesInternalAPIService,
     private readonly eximService: ConfigExportImportAPIService,
     private readonly msgService: PortalMessageService,
+    private readonly location: Location,
+    private readonly translate: TranslateService,
     private readonly appStateService: AppStateService
   ) {
     this.workspace = this.appStateService.currentWorkspace$.getValue()
   }
 
   public ngOnInit(): void {
-    this.fetchImageInfos()
+    this.preparePageAction()
+    this.onReload()
   }
 
   public fetchImageInfos() {
@@ -62,7 +69,8 @@ export class WelcomeConfigureComponent implements OnInit {
           catchError((err) => {
             console.error('getAllImageInfosByWorkspaceName', err)
             return of([] as ImageInfo[])
-          })
+          }),
+          finalize(() => this.preparePageAction())
         )
         .pipe(takeUntil(this.destroy$))
   }
@@ -96,7 +104,7 @@ export class WelcomeConfigureComponent implements OnInit {
     }
   }
 
-  // reorder
+  // reorder action
   private updatePositions(ii: ImageInfo[]) {
     ii.forEach((info, index) => (info.position = (index + 1).toString()))
     this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: ii } }).subscribe({
@@ -109,6 +117,9 @@ export class WelcomeConfigureComponent implements OnInit {
   /*
    * UI ACTIONS
    */
+  public onReload() {
+    this.fetchImageInfos()
+  }
   public onOpenCreateDialog() {
     this.displayCreateDialog = true
   }
@@ -227,6 +238,89 @@ export class WelcomeConfigureComponent implements OnInit {
       ii[indexA] = ii[indexB]
       ii[indexB] = tmp
     }
+    if (!this.isReordered) this.preparePageAction()
     this.isReordered = true
+  }
+
+  public onClose(): void {
+    this.location.back()
+  }
+
+  private preparePageAction(): void {
+    this.actions$ = this.translate
+      .get([
+        'ACTIONS.NAVIGATION.BACK',
+        'ACTIONS.NAVIGATION.BACK.TOOLTIP',
+        'ACTIONS.EXPORT.LABEL',
+        'ACTIONS.EXPORT.TOOLTIP',
+        'ACTIONS.IMPORT.LABEL',
+        'ACTIONS.IMPORT.TOOLTIP',
+        'ACTIONS.CREATE.LABEL',
+        'ACTIONS.CREATE.TOOLTIP',
+        'ACTIONS.REORDER.CANCEL',
+        'ACTIONS.REORDER.CANCEL.TOOLTIP',
+        'ACTIONS.REORDER.SAVE',
+        'ACTIONS.REORDER.SAVE.TOOLTIP'
+      ])
+      .pipe(
+        map((data) => {
+          return [
+            {
+              label: data['ACTIONS.NAVIGATION.BACK'],
+              title: data['ACTIONS.NAVIGATION.BACK.TOOLTIP'],
+              actionCallback: () => this.onClose(),
+              icon: 'pi pi-arrow-left',
+              show: 'always',
+              conditional: true,
+              showCondition: !this.isReordered
+            },
+            {
+              label: data['ACTIONS.EXPORT.LABEL'],
+              title: data['ACTIONS.EXPORT.TOOLTIP'],
+              actionCallback: () => this.onExport(),
+              icon: 'pi pi-download',
+              show: 'always',
+              conditional: true,
+              showCondition: !this.isReordered && this.imageInfos.length > 0
+            },
+            {
+              label: data['ACTIONS.IMPORT.LABEL'],
+              title: data['ACTIONS.IMPORT.TOOLTIP'],
+              actionCallback: () => this.onImport(),
+              icon: 'pi pi-upload',
+              show: 'always',
+              conditional: true,
+              showCondition: !this.isReordered
+            },
+            {
+              label: data['ACTIONS.CREATE.LABEL'],
+              title: data['ACTIONS.CREATE.TOOLTIP'],
+              actionCallback: () => this.onOpenCreateDialog(),
+              icon: 'pi pi-plus',
+              show: 'always',
+              conditional: true,
+              showCondition: !this.isReordered && this.imageInfos.length < this.maxImages
+            },
+            {
+              label: data['ACTIONS.REORDER.CANCEL'],
+              title: data['ACTIONS.REORDER.CANCEL.TOOLTIP'],
+              actionCallback: () => this.onReload(),
+              icon: 'pi pi-times',
+              show: 'always',
+              conditional: true,
+              showCondition: this.isReordered
+            },
+            {
+              label: data['ACTIONS.REORDER.SAVE'],
+              title: data['ACTIONS.REORDER.SAVE.TOOLTIP'],
+              actionCallback: () => this.onSaveOrder(),
+              icon: 'pi pi-save',
+              show: 'always',
+              conditional: true,
+              showCondition: this.isReordered
+            }
+          ]
+        })
+      )
   }
 }

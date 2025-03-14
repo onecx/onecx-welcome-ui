@@ -49,23 +49,21 @@
   }
 }
 
-// disable preset of opacity in form: not readable
-@mixin readable-disabled-form-controls {
-  :host {
-    .p-inputtext.p-component:disabled,
-    .p-dropdown.p-component.p-disabled,
-    .p-checkbox-box.p-disabled,
-    .p-checkbox-label.p-disabled {
-      opacity: unset;
-    }
+@mixin displaying-text-ellipsis($lines: 1) {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  @if ($lines > 1) {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+  } @else {
+    white-space: nowrap;
   }
 }
 
-@mixin compact-dropdown-list-items {
+@mixin readable-disabled-components {
   :host ::ng-deep {
-    .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
-      padding: 0.4rem 1rem !important;
-    }
+    --disabled-opacity: 0.7;
   }
 }
 
@@ -73,6 +71,22 @@
   :host ::ng-deep {
     .invisible {
       visibility: hidden;
+    }
+  }
+}
+
+@mixin word-break-all {
+  :host ::ng-deep {
+    .word-break-all {
+      word-break: break-all;
+    }
+  }
+}
+
+@mixin cursor-default {
+  :host ::ng-deep {
+    .cursor-default {
+      cursor: default;
     }
   }
 }
@@ -86,6 +100,20 @@
     .danger-action-bg {
       color: white;
       background-color: var(--danger-button-bg);
+    }
+  }
+}
+
+@mixin card-with-more-contrast {
+  :host ::ng-deep {
+    --card-shadow: rgba(9, 30, 66, 0.25) 0px 2px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+  }
+}
+
+@mixin compact-dropdown-list-items {
+  :host ::ng-deep {
+    .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+      padding: 0.4rem 1rem !important;
     }
   }
 }

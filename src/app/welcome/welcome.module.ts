@@ -5,6 +5,8 @@ import { PortalCoreModule } from '@onecx/portal-integration-angular'
 import { InitializeModuleGuard, addInitializeModuleGuard } from '@onecx/angular-integration-interface'
 
 import { SharedModule } from '../shared/shared.module'
+import { LabelResolver } from 'src/app/shared/label.resolver'
+
 import { WelcomeOverviewComponent } from './welcome-overview/welcome-overview.component'
 import { WelcomeConfigureComponent } from './welcome-configure/welcome-configure.component'
 import { WelcomeImportComponent } from './welcome-configure/welcome-import/welcome-import.component'
@@ -20,7 +22,14 @@ const routes: Routes = [
   {
     path: 'configure',
     component: WelcomeConfigureComponent,
-    pathMatch: 'full'
+    pathMatch: 'full',
+    data: {
+      breadcrumb: 'BREADCRUMBS.CONFIGURE',
+      breadcrumbFn: (data: any) => `${data.labeli18n}`
+    },
+    resolve: {
+      labeli18n: LabelResolver
+    }
   }
 ]
 @NgModule({

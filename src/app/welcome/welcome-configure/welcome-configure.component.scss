@@ -1,6 +1,7 @@
 @import '/src/app/_wc-mixins.scss';
 
 @include danger-action;
+@include card-with-more-contrast;
 
 .new-image-card {
   outline-style: dashed;
