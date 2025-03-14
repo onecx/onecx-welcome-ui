@@ -11,7 +11,7 @@
     <div class="m-3 md:m-4 flex flex-row flex-wrap gap-3 sm:gap-4 md:gap-5">
       <div *ngFor="let info of imageInfos; let i = index" class="p-card">
         <div
-          class="p-card-body p-1 sm:p-2 md:p-3 w-14rem h-12rem sm:w-16rem sm:h-14rem md:w-20rem md:h-18rem flex flex-column flex-nowrap justify-content-between"
+          class="p-card-body p-1 sm:p-2 md:p-3 w-14rem h-12rem sm:w-16rem sm:h-14rem md:w-20rem md:h-18rem flex flex-column flex-nowrap justify-content-between row-gap-2"
         >
           <div
             [id]="'wc_configure_card_item_' + i"
@@ -89,7 +89,7 @@
         *ngIf="imageInfos.length < maxImages"
         tabindex="0"
         id="wc_configure_card_action_add"
-        class="w-20rem h-18rem new-image-card block flex justify-content-center align-items-center border-primary border-round-xl cursor-pointer"
+        class="w-14rem h-12rem sm:w-16rem sm:h-14rem md:w-20rem md:h-18rem new-image-card block flex justify-content-center align-items-center border-primary border-round-xl cursor-pointer"
         (click)="onOpenCreateDialog()"
         (keydown.enter)="onOpenCreateDialog()"
         (keydown.space)="onOpenCreateDialog()"
