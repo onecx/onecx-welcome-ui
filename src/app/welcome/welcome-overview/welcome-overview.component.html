@@ -20,26 +20,25 @@
   </div>
   <!-- INFO -->
   <div class="absolute top-0 left-0 w-full z-1 wc-overview-info">
-    <div class="py-3 sm:py-4 px-3 sm:px-4 md:px-5 flex flex-row flex-wrap justify-content-between">
-      <div class="flex flex-column gap-2 sm:gap-3 forced">
-        <div id="wc_overview_info_title" class="text-xl sm:text-2xl md:text-4xl">
-          {{ 'DIALOG.OVERVIEW.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
-        </div>
-        <div id="wc_overview_info_workspace" class="text-sm sm:text-base">Workspace: {{ workspace?.displayName }}</div>
+    <p-dock *ocxIfPermission="'IMAGE#EDIT'" [model]="dockItems" [position]="'right'">
+      <ng-template pTemplate="item" let-item>
+        <a
+          id="wc_overview_action_configure"
+          [routerLink]="['./configure']"
+          [tabIndex]="0"
+          [class]="'cursor-pointer text-xl pi ' + item.icon"
+          [attr.aria-label]="item.titleKey | translate"
+          [pTooltip]="item.titleKey | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        ></a>
+      </ng-template>
+    </p-dock>
+    <div class="py-3 sm:py-4 px-3 sm:px-4 md:px-5 flex flex-column gap-2 sm:gap-3 forced">
+      <div id="wc_overview_info_title" class="text-xl sm:text-2xl md:text-4xl">
+        {{ 'DIALOG.OVERVIEW.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
       </div>
-      <p-button
-        *ocxIfPermission="'IMAGE#EDIT'"
-        id="wc_overview_info_configure"
-        styleClass="p-button-text text-xs sm:text-base"
-        icon="pi pi-pencil"
-        [text]="true"
-        [routerLink]="['./configure']"
-        [label]="'ACTIONS.CONFIGURE' | translate"
-        [ariaLabel]="'ACTIONS.CONFIGURE' | translate"
-        [pTooltip]="'ACTIONS.TOOLTIPS.CONFIGURE' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      ></p-button>
+      <div id="wc_overview_info_workspace" class="text-sm sm:text-base">Workspace: {{ workspace?.displayName }}</div>
     </div>
   </div>
 

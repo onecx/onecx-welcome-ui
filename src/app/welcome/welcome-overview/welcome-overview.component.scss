@@ -1,4 +1,8 @@
 :host ::ng-deep {
+  .p-dock-right {
+    top: -1.7rem;
+    right: 0.3rem;
+  }
   .wc-overview-image {
     display: block;
     object-fit: none; /* fill | contain | cover | none | scale-down */

@@ -11,6 +11,7 @@ import { ConfirmationService } from 'primeng/api'
 import { DataViewModule } from 'primeng/dataview'
 import { DialogModule } from 'primeng/dialog'
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
+import { DockModule } from 'primeng/dock'
 import { DropdownModule } from 'primeng/dropdown'
 import { FieldsetModule } from 'primeng/fieldset'
 import { FileUploadModule } from 'primeng/fileupload'
@@ -34,6 +35,7 @@ import { LabelResolver } from './label.resolver'
     ConfirmPopupModule,
     DataViewModule,
     DialogModule,
+    DockModule,
     DropdownModule,
     DynamicDialogModule,
     FieldsetModule,
@@ -55,6 +57,7 @@ import { LabelResolver } from './label.resolver'
     DataViewModule,
     DialogModule,
     DropdownModule,
+    DockModule,
     DynamicDialogModule,
     FieldsetModule,
     FileUploadModule,

@@ -9,6 +9,7 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
+type DockItem = { icon: string; titleKey: string }
 @Component({
   selector: 'app-welcome-overview',
   templateUrl: './welcome-overview.component.html',
@@ -27,6 +28,7 @@ export class WelcomeOverviewComponent implements OnInit {
   public loading = true
   public currentImage = -1
   public currentDate = new Date()
+  public dockItems: DockItem[] = [{ icon: 'pi-cog', titleKey: 'ACTIONS.TOOLTIPS.CONFIGURE' }]
   // data
   public user$: Observable<UserProfile>
   public workspace: Workspace | undefined
