@@ -41,8 +41,10 @@
       "CLOSE_WITHOUT_SAVE": "Close dialog without changes",
       "BACK": "Back",
       "NEXT": "Next",
-      "NEXT.TOOLTIP": "Next Image",
-      "BACK.TOOLTIP": "Previous Image",
+      "NEXT.TOOLTIP": "Next Page",
+      "NEXT.IMAGE.TOOLTIP": "Next Image",
+      "BACK.TOOLTIP": "Previous Page",
+      "BACK.IMAGE.TOOLTIP": "Previous Image",
       "DETAILS.TOOLTIP": "Display details",
       "NEW.TOOLTIP": "Create new entry"
     },

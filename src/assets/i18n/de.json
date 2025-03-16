@@ -41,8 +41,10 @@
       "CLOSE_WITHOUT_SAVE": "Dialog ohne Änderungen schließen",
       "BACK": "Zurück",
       "NEXT": "Weiter",
-      "NEXT.TOOLTIP": "Nächstes Bild",
-      "BACK.TOOLTIP": "Vorheriges Bild",
+      "NEXT.TOOLTIP": "Nächste Seite",
+      "NEXT.IMAGE.TOOLTIP": "Nächstes Bild",
+      "BACK.TOOLTIP": "Vorherige Seite",
+      "BACK.IMAGE.TOOLTIP": "Vorheriges Bild",
       "DETAILS.TOOLTIP": "Details anzeigen",
       "NEW.TOOLTIP": "Erstelle neuen Eintrag"
     },
