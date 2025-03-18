@@ -281,7 +281,7 @@ export class WelcomeConfigureComponent implements OnInit {
               title: data['ACTIONS.EXPORT.TOOLTIP'],
               actionCallback: () => this.onExport(),
               icon: 'pi pi-download',
-              show: 'always',
+              show: 'asOverflow',
               conditional: true,
               showCondition: !this.isReordered && this.imageInfos.length > 0
             },
@@ -290,7 +290,7 @@ export class WelcomeConfigureComponent implements OnInit {
               title: data['ACTIONS.IMPORT.TOOLTIP'],
               actionCallback: () => this.onImport(),
               icon: 'pi pi-upload',
-              show: 'always',
+              show: 'asOverflow',
               conditional: true,
               showCondition: !this.isReordered
             },
