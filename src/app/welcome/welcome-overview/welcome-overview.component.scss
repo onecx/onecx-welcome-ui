@@ -1,7 +1,8 @@
 :host ::ng-deep {
-  .p-dock-right {
-    top: -1.7rem;
-    right: 0.3rem;
+  .dock-top-right-minimized {
+    top: 0;
+    right: 2rem;
+    width: 4rem;
   }
   .wc-overview-image {
     display: block;

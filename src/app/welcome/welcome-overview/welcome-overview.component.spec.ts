@@ -79,8 +79,15 @@ describe('WelcomeOverviewComponent', () => {
     fixture.detectChanges()
   })
 
-  it('should create', () => {
+  it('should create', (done) => {
     expect(component).toBeTruthy()
+    component.dockItems$.subscribe({
+      next: (items) => {
+        expect(items.length).toBe(1)
+        done()
+      },
+      error: done.fail
+    })
   })
 
   describe('getImages', () => {

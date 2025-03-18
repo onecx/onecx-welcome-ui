@@ -18,22 +18,19 @@
       />
     </ng-container>
   </div>
-  <!-- INFO -->
-  <div class="absolute top-0 left-0 w-full z-1 wc-overview-info">
-    <p-dock *ocxIfPermission="'IMAGE#EDIT'" [model]="dockItems" [position]="'right'">
+  <!-- DOCK -->
+  <div class="absolute dock-top-right-minimized">
+    <p-dock *ocxIfPermission="'IMAGE#EDIT'" [model]="dockItems$ | async" [position]="'top'" styleClass="z-2">
       <ng-template pTemplate="item" let-item>
-        <a
-          id="wc_overview_action_configure"
-          [routerLink]="['./configure']"
-          [tabIndex]="0"
-          [class]="'cursor-pointer text-xl pi ' + item.icon"
-          [attr.aria-label]="item.titleKey | translate"
-          [pTooltip]="item.titleKey | translate"
-          tooltipPosition="left"
-          tooltipEvent="hover"
-        ></a>
+        <span
+          [class]="'cursor-pointer text-lg sm:text-2xl ' + item.iconClass"
+          [attr.aria-label]="'ACTIONS.CONFIGURE' | translate"
+        ></span>
       </ng-template>
     </p-dock>
+  </div>
+  <!-- INFO -->
+  <div class="absolute top-0 left-0 w-full z-1 wc-overview-info">
     <div class="py-3 sm:py-4 px-3 sm:px-4 md:px-5 flex flex-column gap-2 sm:gap-3 forced">
       <div id="wc_overview_info_title" class="text-xl sm:text-2xl md:text-4xl">
         {{ 'DIALOG.OVERVIEW.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}

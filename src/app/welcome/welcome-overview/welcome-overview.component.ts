@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core'
 import { animate, style, transition, trigger } from '@angular/animations'
+import { TranslateService } from '@ngx-translate/core'
 import { catchError, map, Observable, of, Subject, Subscription, takeUntil, timer } from 'rxjs'
+import { MenuItem } from 'primeng/api'
 
 import { Workspace } from '@onecx/integration-interface'
 import { SlotService } from '@onecx/angular-remote-components'
@@ -9,7 +11,6 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
-type DockItem = { icon: string; titleKey: string }
 @Component({
   selector: 'app-welcome-overview',
   templateUrl: './welcome-overview.component.html',
@@ -28,7 +29,7 @@ export class WelcomeOverviewComponent implements OnInit {
   public loading = true
   public currentImage = -1
   public currentDate = new Date()
-  public dockItems: DockItem[] = [{ icon: 'pi-cog', titleKey: 'ACTIONS.TOOLTIPS.CONFIGURE' }]
+  public dockItems$: Observable<MenuItem[]> = of([])
   // data
   public user$: Observable<UserProfile>
   public workspace: Workspace | undefined
@@ -44,6 +45,7 @@ export class WelcomeOverviewComponent implements OnInit {
   constructor(
     private readonly userService: UserService,
     private readonly slotService: SlotService,
+    private readonly translate: TranslateService,
     private readonly appStateService: AppStateService,
     private readonly imageService: ImagesInternalAPIService
   ) {
@@ -54,6 +56,7 @@ export class WelcomeOverviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.workspace = this.appStateService.currentWorkspace$.getValue()
+    this.prepareDockItems()
     this.getImages()
   }
 
@@ -121,5 +124,25 @@ export class WelcomeOverviewComponent implements OnInit {
     if (imageInfo.url) return imageInfo.url
     const existingImage = this.images.find((image) => image.imageId === imageInfo.imageId)
     return 'data:' + existingImage?.mimeType + ';base64,' + existingImage?.imageData
+  }
+
+  private prepareDockItems(): void {
+    this.dockItems$ = this.translate.get(['ACTIONS.TOOLTIPS.CONFIGURE']).pipe(
+      map((data) => {
+        return [
+          {
+            id: 'wc_overview_action_configure',
+            iconClass: 'pi pi-cog',
+            tabindex: '0',
+            tooltipOptions: {
+              tooltipLabel: data['ACTIONS.TOOLTIPS.CONFIGURE'],
+              tooltipPosition: 'left',
+              tooltipEvent: 'hover'
+            },
+            routerLink: 'configure'
+          }
+        ]
+      })
+    )
   }
 }
