@@ -23,7 +23,7 @@
     <p-dock *ocxIfPermission="'IMAGE#EDIT'" [model]="dockItems$ | async" [position]="'top'" styleClass="z-2">
       <ng-template pTemplate="item" let-item>
         <span
-          [class]="'cursor-pointer text-lg sm:text-2xl ' + item.iconClass"
+          [class]="'text-primary cursor-pointer text-lg sm:text-2xl ' + item.iconClass"
           [attr.aria-label]="'ACTIONS.CONFIGURE' | translate"
         ></span>
       </ng-template>
