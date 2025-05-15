@@ -92,7 +92,12 @@
     },
     "CONFIGURE": {
       "HEADER": "Startseite konfigurieren",
-      "SUBHEADER": "Hintergrundbilder hochladen und bearbeiten"
+      "SUBHEADER": "Hintergrundbilder hochladen und bearbeiten",
+      "REGIONS": {
+        "MANAGE_IMAGES": "Hintergrundbilder verwalten",
+        "MANAGE_IMAGE": "Bild ## verwalten",
+        "NEW_IMAGE": "Bild hinzufügen"
+      }
     },
     "DETAIL": {
       "PIC": "Bild",

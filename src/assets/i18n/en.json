@@ -92,7 +92,12 @@
     },
     "CONFIGURE": {
       "HEADER": "Configure Workspace Start page",
-      "SUBHEADER": "Upload and Editing of Background Images"
+      "SUBHEADER": "Upload and Editing of Background Images",
+      "REGIONS": {
+        "MANAGE_IMAGES": "Manage Background Images ",
+        "MANAGE_IMAGE": "Manage the ## Image",
+        "NEW_IMAGE": "Add Image"
+      }
     },
     "DETAIL": {
       "PIC": "Picture",

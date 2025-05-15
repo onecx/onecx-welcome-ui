@@ -2,18 +2,3 @@
 
 @include danger-action;
 @include card-with-more-contrast;
-
-.new-image-card {
-  outline-style: dashed;
-  outline-offset: -3px;
-  outline-color: lightgray;
-  a {
-    color: lightgray;
-  }
-  &:hover {
-    outline-color: var(--primary-color);
-    a {
-      color: var(--primary-color);
-    }
-  }
-}
