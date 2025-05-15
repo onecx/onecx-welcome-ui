@@ -8,15 +8,13 @@
   </ocx-page-header>
 
   <ocx-page-content *ngIf="imageInfo$ | async as imageInfos">
-    <div
+    <section
       class="m-3 md:m-4 flex flex-row flex-wrap gap-3 sm:gap-4 md:gap-5"
-      role="region"
       [attr.aria-label]="'DIALOG.CONFIGURE.REGIONS.MANAGE_IMAGES' | translate"
     >
-      <div
+      <section
         *ngFor="let info of imageInfos; let i = index"
         class="p-card p-1 sm:py-2 sm:px-2 amd:px-3 w-14rem h-11rem sm:w-16rem sm:h-14rem md:w-20rem md:h-18rem flex flex-column flex-nowrap ajustify-content-between row-gap-1 sm:row-gap-2"
-        role="region"
         [attr.aria-label]="('DIALOG.CONFIGURE.REGIONS.MANAGE_IMAGE' | translate).replace('##', i + 1)"
       >
         @let ii = i + 1;
@@ -95,8 +93,8 @@
             ></p-button>
           </div>
         </div>
-      </div>
-      <div role="region" [attr.aria-label]="'DIALOG.CONFIGURE.REGIONS.NEW_IMAGE' | translate">
+      </section>
+      <section [attr.aria-label]="'DIALOG.CONFIGURE.REGIONS.NEW_IMAGE' | translate">
         <button
           *ngIf="imageInfos.length < maxImages"
           id="wc_configure_card_action_add"
@@ -111,8 +109,8 @@
         >
           <span class="pi pi-plus font-bold text-3xl"> </span>
         </button>
-      </div>
-    </div>
+      </section>
+    </section>
 
     <!-- CREATE -->
     <app-image-create
