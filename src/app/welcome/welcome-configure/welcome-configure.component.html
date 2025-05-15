@@ -89,11 +89,10 @@
           </div>
         </div>
       </div>
-      <a
+      <button
         *ngIf="imageInfos.length < maxImages"
-        tabindex="0"
         id="wc_configure_card_action_add"
-        class="w-14rem h-11rem sm:w-16rem sm:h-14rem md:w-20rem md:h-18rem new-image-card block flex justify-content-center align-items-center border-primary border-round-lg cursor-pointer"
+        class="w-14rem h-11rem sm:w-16rem sm:h-14rem md:w-20rem md:h-18rem block flex justify-content-center align-items-center border-round-lg border-3 border-dashed border-400 hover:border-primary cursor-pointer"
         (click)="onOpenCreateDialog()"
         (keydown.enter)="onOpenCreateDialog()"
         (keydown.space)="onOpenCreateDialog()"
@@ -103,7 +102,7 @@
         tooltipEvent="hover"
       >
         <span class="pi pi-plus font-bold text-3xl"> </span>
-      </a>
+      </button>
     </div>
 
     <!-- CREATE -->
