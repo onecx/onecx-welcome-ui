@@ -92,10 +92,8 @@ export class WelcomeOverviewComponent implements OnInit {
     const toBeLoadLength = infos.filter((i) => i.visible && !i.url).length
 
     if (toBeLoadLength === 0) {
-      // init carousel with sum of URL images only
-      this.loading = false
-      // https://www.capgemini.com/wp-content/themes/capgemini2020/assets/images/logo.svg
-      this.setCarousel(urlImageLength)
+      this.loading = false // finish loading
+      this.setCarousel(urlImageLength) // init carousel with sum of URL images only
     } else {
       // get images from BFF and init carousel with sum of images
       infos
