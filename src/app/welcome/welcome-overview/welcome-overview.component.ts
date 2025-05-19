@@ -91,8 +91,11 @@ export class WelcomeOverviewComponent implements OnInit {
     // images uploaded
     const toBeLoadLength = infos.filter((i) => i.visible && !i.url).length
 
-    if (toBeLoadLength === 0) this.setCarousel(urlImageLength)
-    else
+    if (toBeLoadLength === 0) {
+      this.loading = false // finish loading
+      this.setCarousel(urlImageLength) // init carousel with sum of URL images only
+    } else {
+      // get images from BFF and init carousel with sum of images
       infos
         .filter((i) => i.visible && !i.url)
         .forEach((info) => {
@@ -109,6 +112,7 @@ export class WelcomeOverviewComponent implements OnInit {
             })
           }
         })
+    }
   }
 
   // max => number of visible images
@@ -120,8 +124,9 @@ export class WelcomeOverviewComponent implements OnInit {
   }
 
   public buildImageSrc(imageInfo: ImageInfo): string | undefined {
-    if (this.loading || this.images.length === 0) return undefined
+    if (this.loading) return undefined
     if (imageInfo.url) return imageInfo.url
+    if (this.images.length === 0) return undefined
     const existingImage = this.images.find((image) => image.imageId === imageInfo.imageId)
     return 'data:' + existingImage?.mimeType + ';base64,' + existingImage?.imageData
   }
