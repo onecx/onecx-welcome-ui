@@ -91,8 +91,13 @@ export class WelcomeOverviewComponent implements OnInit {
     // images uploaded
     const toBeLoadLength = infos.filter((i) => i.visible && !i.url).length
 
-    if (toBeLoadLength === 0) this.setCarousel(urlImageLength)
-    else
+    if (toBeLoadLength === 0) {
+      // init carousel with sum of URL images only
+      this.loading = false
+      // https://www.capgemini.com/wp-content/themes/capgemini2020/assets/images/logo.svg
+      this.setCarousel(urlImageLength)
+    } else {
+      // get images from BFF and init carousel with sum of images
       infos
         .filter((i) => i.visible && !i.url)
         .forEach((info) => {
@@ -109,6 +114,7 @@ export class WelcomeOverviewComponent implements OnInit {
             })
           }
         })
+    }
   }
 
   // max => number of visible images
@@ -120,8 +126,9 @@ export class WelcomeOverviewComponent implements OnInit {
   }
 
   public buildImageSrc(imageInfo: ImageInfo): string | undefined {
-    if (this.loading || this.images.length === 0) return undefined
+    if (this.loading) return undefined
     if (imageInfo.url) return imageInfo.url
+    if (this.images.length === 0) return undefined
     const existingImage = this.images.find((image) => image.imageId === imageInfo.imageId)
     return 'data:' + existingImage?.mimeType + ';base64,' + existingImage?.imageData
   }

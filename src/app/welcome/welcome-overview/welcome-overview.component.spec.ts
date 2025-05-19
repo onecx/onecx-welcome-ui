@@ -173,6 +173,15 @@ describe('WelcomeOverviewComponent', () => {
   })
 
   describe('buildImageSrc', () => {
+    it('should return data string if image is found', () => {
+      component.loading = false
+      component.images = []
+
+      const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
+
+      expect(result).toBeUndefined()
+    })
+
     it('should not build source if page is loading', () => {
       component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
 
