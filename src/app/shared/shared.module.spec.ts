@@ -2,7 +2,9 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { provideHttpClient, HttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { MfeInfo } from '@onecx/portal-integration-angular'
+
+import { MfeInfo } from '@onecx/integration-interface'
+
 import { environment } from 'src/environments/environment'
 
 describe('SharedModule', () => {

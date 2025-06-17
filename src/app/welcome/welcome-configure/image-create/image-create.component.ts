@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core'
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn } from '@angular/forms'
 
-import { AppStateService, PortalMessageService } from '@onecx/portal-integration-angular'
+import { AppStateService, PortalMessageService } from '@onecx/angular-integration-interface'
+
 import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
