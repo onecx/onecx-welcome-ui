@@ -6,7 +6,7 @@ import { MenuItem } from 'primeng/api'
 
 import { Workspace } from '@onecx/integration-interface'
 import { SlotService } from '@onecx/angular-remote-components'
-import { UserProfile } from '@onecx/portal-integration-angular'
+import { UserProfile } from '@onecx/integration-interface'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
