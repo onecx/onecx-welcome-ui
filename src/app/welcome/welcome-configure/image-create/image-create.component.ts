@@ -68,7 +68,11 @@ export class ImageCreateComponent implements OnInit, OnChanges {
         })
         .subscribe({
           next: (data) => {
-            if (this.selectedFile !== undefined) {
+            if (this.selectedFile == undefined) {
+              this.msgService.success({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
+              this.formGroup.controls['url'].reset()
+              this.hideDialogAndChanged.emit(true)
+            } else {
               this.imageApiService
                 .createImage({
                   body: this.selectedFile
@@ -104,10 +108,6 @@ export class ImageCreateComponent implements OnInit, OnChanges {
                     console.error('createImage', err)
                   }
                 })
-            } else {
-              this.msgService.success({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
-              this.formGroup.controls['url'].reset()
-              this.hideDialogAndChanged.emit(true)
             }
           },
           error: () => this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
