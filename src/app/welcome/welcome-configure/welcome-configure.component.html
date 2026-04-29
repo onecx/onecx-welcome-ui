@@ -94,7 +94,7 @@
           </div>
         </div>
       </section>
-      <section [attr.aria-label]="'DIALOG.CONFIGURE.REGIONS.NEW_IMAGE' | translate">
+      <section *ngIf="!this.isReordered" [attr.aria-label]="'DIALOG.CONFIGURE.REGIONS.NEW_IMAGE' | translate">
         <button
           *ngIf="imageInfos.length < maxImages"
           id="wc_configure_card_action_add"

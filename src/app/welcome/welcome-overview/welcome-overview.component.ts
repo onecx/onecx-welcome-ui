@@ -127,7 +127,9 @@ export class WelcomeOverviewComponent implements OnInit {
     if (imageInfo.url) return imageInfo.url
     if (this.images.length === 0) return undefined
     const existingImage = this.images.find((image) => image.imageId === imageInfo.imageId)
-    return 'data:' + existingImage?.mimeType + ';base64,' + existingImage?.imageData
+    const imageData = existingImage?.imageData
+    if (imageData instanceof Blob) return undefined
+    return 'data:' + existingImage?.mimeType + ';base64,' + (imageData ?? '')
   }
 
   private prepareDockItems(): void {

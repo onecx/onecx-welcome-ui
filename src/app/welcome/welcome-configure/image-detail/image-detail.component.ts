@@ -62,7 +62,9 @@ export class ImageDetailComponent implements OnChanges {
     const currentImage = images.find((image) => {
       return image.imageId === imageInfo.imageId
     })
-    return 'data:' + currentImage?.mimeType + ';base64,' + currentImage?.imageData
+    const imageData = currentImage?.imageData
+    if (imageData instanceof Blob) return undefined
+    return 'data:' + currentImage?.mimeType + ';base64,' + (imageData ?? '')
   }
 
   public onDialogHide() {
