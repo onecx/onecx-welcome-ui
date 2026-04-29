@@ -201,12 +201,12 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should return data string if image is found', () => {
-      component.images = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
+      component.images = [{ imageId: '1234', mimeType: 'image/png', imageData: 'abc123' as any }]
       component.loading = false
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
-      expect(result).toBe('data:image/png;base64,[object Blob]')
+      expect(result).toBe('data:image/png;base64,abc123')
     })
   })
 })

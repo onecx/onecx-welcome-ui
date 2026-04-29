@@ -129,7 +129,7 @@ describe('ImageDetailComponent', () => {
     it('should return the image URL if the image data are not found', () => {
       const result = component.buildImageSrc(imageInfos[1], imageData)
 
-      expect(result).toBe('data:mimeType;base64,[object Blob]')
+      expect(result).toBeUndefined()
     })
 
     it('should return the correct URL if imageData is empty', () => {

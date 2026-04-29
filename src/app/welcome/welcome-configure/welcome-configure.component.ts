@@ -99,6 +99,7 @@ export class WelcomeConfigureComponent implements OnInit {
     })
     if (image) {
       const imageData = image?.imageData
+      // console.log('imageData', imageData)
       if (imageData instanceof Blob) return undefined
       return 'data:' + image?.mimeType + ';base64,' + (imageData ?? '')
     } else {
