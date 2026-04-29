@@ -18,7 +18,7 @@
         [attr.aria-label]="('DIALOG.CONFIGURE.REGIONS.MANAGE_IMAGE' | translate).replace('##', i + 1)"
       >
         @let ii = i + 1;
-        <div
+        <a
           [id]="'wc_configure_card_item_' + ii"
           class="p-1 flex justify-content-center align-items-center border-round border-2 sm:border-3 border-solid hover:border-400 cursor-pointer"
           style="border-color: transparent"
@@ -42,7 +42,7 @@
             tooltipPosition="top"
             tooltipEvent="hover"
           />
-        </div>
+        </a>
         <!-- BUTTON bar - schema: (B B) .T. (B B) -->
         <div class="sm:mx-2 flex flex-row flex-nowrap justify-content-between align-items-center">
           <div class="flex flex-row flex-nowrap justify-content-start gap-1 sm:gap-2">
