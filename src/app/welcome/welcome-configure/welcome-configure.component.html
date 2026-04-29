@@ -22,6 +22,7 @@
           [id]="'wc_configure_card_item_' + ii"
           class="p-1 flex justify-content-center align-items-center border-round border-2 sm:border-3 border-solid hover:border-400 cursor-pointer"
           style="border-color: transparent"
+          [attr.tabindex]="0"
           (click)="onOpenDetailDialog(i)"
           (keydown.enter)="onOpenDetailDialog(i)"
           (keydown.space)="onOpenDetailDialog(i)"
@@ -34,7 +35,6 @@
               'object-position': info.objectPosition ?? 'center center',
               'background-color': info.backgroundColor ?? 'unset'
             }"
-            [attr.tabindex]="0"
             [alt]="('DIALOG.DETAIL.PIC' | translate) + '_' + ii"
             [src]="buildImageSrc(info)"
             [attr.aria-label]="'DIALOG.DETAIL.TOOLTIP' | translate"
