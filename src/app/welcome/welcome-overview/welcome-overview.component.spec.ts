@@ -192,8 +192,8 @@ describe('WelcomeOverviewComponent', () => {
 
     it('should return the URL if image is based on', () => {
       component.images = [{ imageId: '123' }]
-      const info = imageInfos.find((i) => i.imageId === '123')!
       component.loading = false
+      const info = imageInfos.find((i) => i.imageId === '123')!
 
       const result = component.buildImageSrc(info)
 
@@ -201,12 +201,30 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should return data string if image is found', () => {
+      component.images = [{ imageId: '1234', mimeType: 'image/png', imageData: 'abc123' as any }]
+      component.loading = false
+
+      const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
+
+      expect(result).toBe('data:image/png;base64,abc123')
+    })
+
+    it('should return undefined if image is found but imageData is a Blob', () => {
       component.images = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
       component.loading = false
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
-      expect(result).toBe('data:image/png;base64,[object Blob]')
+      expect(result).toBeUndefined()
+    })
+
+    it('should return base64 string with empty data if image is not matched in loaded images', () => {
+      component.images = [{ imageId: 'other', mimeType: 'image/png' }]
+      component.loading = false
+
+      const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
+
+      expect(result).toBe('data:undefined;base64,')
     })
   })
 })

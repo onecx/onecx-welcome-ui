@@ -18,10 +18,11 @@
         [attr.aria-label]="('DIALOG.CONFIGURE.REGIONS.MANAGE_IMAGE' | translate).replace('##', i + 1)"
       >
         @let ii = i + 1;
-        <div
+        <a
           [id]="'wc_configure_card_item_' + ii"
           class="p-1 flex justify-content-center align-items-center border-round border-2 sm:border-3 border-solid hover:border-400 cursor-pointer"
           style="border-color: transparent"
+          [attr.tabindex]="0"
           (click)="onOpenDetailDialog(i)"
           (keydown.enter)="onOpenDetailDialog(i)"
           (keydown.space)="onOpenDetailDialog(i)"
@@ -34,7 +35,6 @@
               'object-position': info.objectPosition ?? 'center center',
               'background-color': info.backgroundColor ?? 'unset'
             }"
-            [attr.tabindex]="0"
             [alt]="('DIALOG.DETAIL.PIC' | translate) + '_' + ii"
             [src]="buildImageSrc(info)"
             [attr.aria-label]="'DIALOG.DETAIL.TOOLTIP' | translate"
@@ -42,7 +42,7 @@
             tooltipPosition="top"
             tooltipEvent="hover"
           />
-        </div>
+        </a>
         <!-- BUTTON bar - schema: (B B) .T. (B B) -->
         <div class="sm:mx-2 flex flex-row flex-nowrap justify-content-between align-items-center">
           <div class="flex flex-row flex-nowrap justify-content-start gap-1 sm:gap-2">
@@ -94,7 +94,7 @@
           </div>
         </div>
       </section>
-      <section [attr.aria-label]="'DIALOG.CONFIGURE.REGIONS.NEW_IMAGE' | translate">
+      <section *ngIf="!this.isReordered" [attr.aria-label]="'DIALOG.CONFIGURE.REGIONS.NEW_IMAGE' | translate">
         <button
           *ngIf="imageInfos.length < maxImages"
           id="wc_configure_card_action_add"

@@ -98,7 +98,10 @@ export class WelcomeConfigureComponent implements OnInit {
       return image.imageId === ii.imageId
     })
     if (image) {
-      return 'data:' + image.mimeType + ';base64,' + image.imageData
+      const imageData = image?.imageData
+      // console.log('imageData', imageData)
+      if (imageData instanceof Blob) return undefined
+      return 'data:' + image?.mimeType + ';base64,' + (imageData ?? '')
     } else {
       return ii.url
     }
@@ -227,9 +230,10 @@ export class WelcomeConfigureComponent implements OnInit {
     const tmp = ii[indexA]
     // switch start => end
     if (indexA === 0 && indexB === -1) {
-      ii[0].position = (ii.length - 1).toString()
-      ii[ii.length - 1].position = '0'
-      ii[0] = ii[ii.length - 1]
+      const last = ii.at(-1)!
+      ii[0].position = last.position!
+      last.position = '0'
+      ii[0] = last
       ii[ii.length - 1] = tmp
       // switch end => start
     } else if (indexA === ii.length - 1 && indexB === ii.length) {

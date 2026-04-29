@@ -191,12 +191,28 @@ describe('WelcomeConfigureComponent', () => {
   })
 
   describe('buildImageSrc', () => {
-    it('should return base64 string if image is found', () => {
+    it('should return undefined if image is found but imageData is a Blob', () => {
       component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
 
       const result = component.buildImageSrc(imageInfos[0])
 
-      expect(result).toBe('data:image/png;base64,[object Blob]')
+      expect(result).toBeUndefined()
+    })
+
+    it('should return base64 string if image is found and imageData is a string', () => {
+      component.images = [{ imageId: '123', mimeType: 'image/png', imageData: 'abc123' as any }]
+
+      const result = component.buildImageSrc(imageInfos[0])
+
+      expect(result).toBe('data:image/png;base64,abc123')
+    })
+
+    it('should return base64 string with empty data if image is found but imageData is undefined', () => {
+      component.images = [{ imageId: '123' }]
+
+      const result = component.buildImageSrc(imageInfos[0])
+
+      expect(result).toBe('data:undefined;base64,')
     })
 
     it('should return the URL if image is not found', () => {
@@ -321,6 +337,20 @@ describe('WelcomeConfigureComponent', () => {
       expect(ii[1].id).toBe('b')
       expect(ii[2].id).toBe('c')
       expect(ii[3].id).toBe('a')
+    })
+
+    it('should not call preparePageAction if already reordered', () => {
+      const ii: ImageInfo[] = [
+        { position: '0', id: 'a', workspaceName: 'ws' },
+        { position: '1', id: 'b', workspaceName: 'ws' }
+      ]
+      component.isReordered = true
+      spyOn<any>(component, 'preparePageAction')
+
+      component.onSwapElement(ii, 0, 1)
+
+      expect(component['preparePageAction']).not.toHaveBeenCalled()
+      expect(component.isReordered).toBe(true)
     })
 
     it('should save positions', () => {
