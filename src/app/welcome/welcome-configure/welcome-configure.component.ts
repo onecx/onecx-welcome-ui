@@ -231,7 +231,7 @@ export class WelcomeConfigureComponent implements OnInit {
     // switch start => end
     if (indexA === 0 && indexB === -1) {
       const last = ii.at(-1)!
-      ii[0].position = last.position ?? '0'
+      ii[0].position = last.position!
       last.position = '0'
       ii[0] = last
       ii[ii.length - 1] = tmp
