@@ -2,18 +2,15 @@
 openapi: 3.0.3
 info:
   title: onecx-welcome-bff
-  description: OneCX Welcome BFF
+  description: Backend-For-Frontend (BFF) service for onecx-welcome. This API provides endpoints to manage Welcome Images
   version: 1.0.0
-  contact:
-    email: "tkit_dev@1000kit.org"
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
 servers:
   - url: "http://onecx-welcome-bff:8080"
 tags:
   - name: imagesInternal
+    description: Managing Welcome page Images
   - name: configExportImport
+    description: Importing and Exporting Welcome page configuration (Images)
 paths:
   /images/info/{id}:
     get:
@@ -23,19 +20,19 @@ paths:
             - read
       tags:
         - imagesInternal
-      description: get Image information by id
+      description: Get an image information by its id
       operationId: getImageInfoById
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         "200":
-          description: OK
+          description: Image information retrieved successfully
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ImageInfo"
         "404":
-          description: NOT FOUND
+          description: Image information not found
     put:
       x-onecx:
         permissions:
@@ -43,7 +40,7 @@ paths:
             - write
       tags:
         - imagesInternal
-      description: update Image information
+      description: Update an image information by its id
       operationId: updateImageInfo
       parameters:
         - $ref: '#/components/parameters/id'
@@ -55,13 +52,13 @@ paths:
               $ref: '#/components/schemas/ImageInfo'
       responses:
         "200":
-          description: UPDATED
+          description: Image information updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageInfo'
         "400":
-          description: BAD REQUEST
+          description: Bad request
           content:
             application/json:
               schema:
@@ -73,15 +70,15 @@ paths:
             - delete
       tags:
         - imagesInternal
-      description: delete Image information
+      description: Delete an image information by its id
       operationId: deleteImageInfoById
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         "204":
-          description: DELETED
+          description: Image information deleted successfully
         "404":
-          description: NOT FOUND
+          description: Image information not found
   /images/info:
     post:
       x-onecx:
@@ -90,7 +87,7 @@ paths:
             - write
       tags:
         - imagesInternal
-      description: create image information
+      description: Create an new image information
       operationId: createImageInfo
       requestBody:
         required: true
@@ -100,13 +97,13 @@ paths:
               $ref: '#/components/schemas/ImageInfo'
       responses:
         "201":
-          description: CREATED
+          description: Image information created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageInfo'
         "400":
-          description: BAD REQUEST
+          description: Bad request
           content:
             application/json:
               schema:
@@ -119,7 +116,7 @@ paths:
             - read
       tags:
         - imagesInternal
-      description: get all existing Image informations by workspace name
+      description: Get all existing image information by workspace name
       operationId: getAllImageInfosByWorkspaceName
       parameters:
         - in: path
@@ -129,7 +126,7 @@ paths:
           required: true
       responses:
         "200":
-          description: OK
+          description: Image information retrieved successfully
           content:
             application/json:
               schema:
@@ -144,7 +141,7 @@ paths:
             - write
       tags:
         - imagesInternal
-      description: update order of Images
+      description: Update the order of images
       operationId: updateImageOrder
       requestBody:
         required: true
@@ -154,9 +151,9 @@ paths:
               $ref: '#/components/schemas/ImageInfoReorderRequest'
       responses:
         "200":
-          description: UPDATED
+          description: Image order updated successfully
         "400":
-          description: BAD REQUEST
+          description: Bad request
           content:
             application/json:
               schema:
@@ -169,7 +166,7 @@ paths:
             - write
       tags:
         - imagesInternal
-      description: create Image
+      description: Create an new image
       operationId: createImage
       requestBody:
         content:
@@ -179,13 +176,13 @@ paths:
               format: binary
       responses:
         "201":
-          description: CREATED
+          description: Image created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageDataResponse'
         "400":
-          description: BAD REQUEST
+          description: Bad request
           content:
             application/json:
               schema:
@@ -198,19 +195,19 @@ paths:
             - read
       tags:
         - imagesInternal
-      description: get Image by id
+      description: Get an image by its id
       operationId: getImageById
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         "200":
-          description: OK
+          description: Image retrieved successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageDataResponse'
         "404":
-          description: NOT FOUND
+          description: Image not found
     put:
       x-onecx:
         permissions:
@@ -218,7 +215,7 @@ paths:
             - write
       tags:
         - imagesInternal
-      description: update Image by id
+      description: Update an image by its id
       operationId: updateImageById
       parameters:
         - $ref: '#/components/parameters/id'
@@ -230,13 +227,13 @@ paths:
               format: binary
       responses:
         "200":
-          description: OK
+          description: Image updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageDataResponse'
         "400":
-          description: BAD REQUEST
+          description: Bad request
           content:
             application/json:
               schema:
@@ -249,7 +246,7 @@ paths:
             - write
       tags:
         - configExportImport
-      description: import configuration
+      description: Import welcome page configuration into a specific workspace by its name
       operationId: importConfiguration
       parameters:
         - in: path
@@ -266,7 +263,7 @@ paths:
               $ref: '#/components/schemas/WelcomeSnapshot'
       responses:
         "200":
-          description: Import successful
+          description: Configuration imported successfully
         "400":
           description: Bad request
           content:
@@ -281,7 +278,7 @@ paths:
             - read
       tags:
         - configExportImport
-      description: export configuration
+      description: Export a welcome page configuration
       operationId: exportConfiguration
       requestBody:
         required: true
@@ -291,7 +288,7 @@ paths:
               $ref: '#/components/schemas/ExportWelcomeRequest'
       responses:
         "200":
-          description: OK
+          description: Configuration exported successfully
           content:
             application/json:
               schema:
