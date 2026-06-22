@@ -209,13 +209,13 @@ describe('WelcomeOverviewComponent', () => {
       expect(result).toBe('data:image/png;base64,abc123')
     })
 
-    it('should return undefined if image is found but imageData is a Blob', () => {
+    it('should return blob URL if image is found and imageData is a Blob', () => {
       component.images = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
       component.loading = false
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
-      expect(result).toBeUndefined()
+      expect(result).toContain('blob:')
     })
 
     it('should return base64 string with empty data if image is not matched in loaded images', () => {

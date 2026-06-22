@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnDestroy, OnInit } from '@angular/core'
 import { Location } from '@angular/common'
 import { TranslateService } from '@ngx-translate/core'
-import { catchError, finalize, map, Observable, of, Subject, Subscription, takeUntil } from 'rxjs'
+import { catchError, filter, finalize, map, Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs'
 import FileSaver from 'file-saver'
 
 import { Action } from '@onecx/angular-accelerator'
@@ -18,12 +18,14 @@ import {
 } from 'src/app/shared/generated'
 
 @Component({
+  standalone: false,
   selector: 'app-welcome-configure',
   templateUrl: './welcome-configure.component.html',
   styleUrls: ['./welcome-configure.component.scss']
 })
-export class WelcomeConfigureComponent implements OnInit {
-  private readonly destroy$ = new Subject()
+export class WelcomeConfigureComponent implements OnInit, OnDestroy {
+  private readonly destroy$ = new Subject<void>()
+  private readonly blobUrls = new Map<string, string>()
   // dialog
   public actions$: Observable<Action[]> = of([])
   public displayCreateDialog = false
@@ -37,7 +39,7 @@ export class WelcomeConfigureComponent implements OnInit {
   public subscription: Subscription | undefined
   public images: ImageDataResponse[] = []
   public imageInfos: ImageInfo[] = []
-  public imageInfo$!: Observable<ImageInfo[]> | undefined
+  public imageInfo$: Observable<ImageInfo[]> = of([])
 
   constructor(
     private readonly imageService: ImagesInternalAPIService,
@@ -46,33 +48,58 @@ export class WelcomeConfigureComponent implements OnInit {
     private readonly location: Location,
     private readonly translate: TranslateService,
     private readonly appStateService: AppStateService
-  ) {
-    this.workspace = this.appStateService.currentWorkspace$.getValue()
-  }
+  ) {}
 
   public ngOnInit(): void {
     this.preparePageAction()
+    // Render page actions/content immediately, then reload once workspace is available.
     this.onReload()
+    this.appStateService.currentWorkspace$
+      .pipe(
+        filter((ws): ws is Workspace => !!ws?.workspaceName),
+        take(1)
+      )
+      .subscribe((ws) => {
+        this.workspace = ws
+        this.onReload()
+      })
+  }
+
+  public ngOnDestroy(): void {
+    this.destroy$.next()
+    this.destroy$.complete()
+    this.blobUrls.forEach((url) => URL.revokeObjectURL(url))
+    this.blobUrls.clear()
   }
 
   public fetchImageInfos() {
-    if (this.workspace)
-      this.imageInfo$ = this.imageService
-        .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
-        .pipe(
-          map((images) => {
-            this.imageInfos = images
-            this.imageInfos.sort(this.sortImagesByPosition)
-            this.fetchImageData(images)
-            return images.sort((a, b) => Number(a.position) - Number(b.position))
-          }),
-          catchError((err) => {
-            console.error('getAllImageInfosByWorkspaceName', err)
-            return of([] as ImageInfo[])
-          }),
-          finalize(() => this.preparePageAction())
-        )
-        .pipe(takeUntil(this.destroy$))
+    if (!this.workspace?.workspaceName) {
+      this.images = []
+      this.imageInfos = []
+      this.imageInfo$ = of([])
+      this.preparePageAction()
+      return
+    }
+
+    this.blobUrls.forEach((url) => URL.revokeObjectURL(url))
+    this.blobUrls.clear()
+    this.images = []
+    this.imageInfo$ = this.imageService
+      .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
+      .pipe(
+        map((images) => {
+          this.imageInfos = images
+          this.imageInfos.sort(this.sortImagesByPosition)
+          this.fetchImageData(images)
+          return images.sort((a, b) => Number(a.position) - Number(b.position))
+        }),
+        catchError((err) => {
+          console.error('getAllImageInfosByWorkspaceName', err)
+          return of([] as ImageInfo[])
+        }),
+        finalize(() => this.preparePageAction())
+      )
+      .pipe(takeUntil(this.destroy$))
   }
 
   private sortImagesByPosition(a: ImageInfo, b: ImageInfo): number {
@@ -99,8 +126,14 @@ export class WelcomeConfigureComponent implements OnInit {
     })
     if (image) {
       const imageData = image?.imageData
-      // console.log('imageData', imageData)
-      if (imageData instanceof Blob) return undefined
+      if (imageData instanceof Blob) {
+        if (!image.imageId) return undefined
+        const cachedBlobUrl = this.blobUrls.get(image.imageId)
+        if (cachedBlobUrl) return cachedBlobUrl
+        const blobUrl = URL.createObjectURL(imageData)
+        this.blobUrls.set(image.imageId, blobUrl)
+        return blobUrl
+      }
       return 'data:' + image?.mimeType + ';base64,' + (imageData ?? '')
     } else {
       return ii.url

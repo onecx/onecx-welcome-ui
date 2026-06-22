@@ -126,10 +126,10 @@ describe('ImageDetailComponent', () => {
       expect(result).toBe('http://example.com/image1.png')
     })
 
-    it('should return the image URL if the image data are not found', () => {
+    it('should return blob URL if image data is loaded as Blob', () => {
       const result = component.buildImageSrc(imageInfos[1], imageData)
 
-      expect(result).toBeUndefined()
+      expect(result).toContain('blob:')
     })
 
     it('should return the correct URL if imageData is empty', () => {

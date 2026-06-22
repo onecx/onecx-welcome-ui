@@ -191,12 +191,12 @@ describe('WelcomeConfigureComponent', () => {
   })
 
   describe('buildImageSrc', () => {
-    it('should return undefined if image is found but imageData is a Blob', () => {
+    it('should return blob URL if image is found and imageData is a Blob', () => {
       component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
 
       const result = component.buildImageSrc(imageInfos[0])
 
-      expect(result).toBeUndefined()
+      expect(result).toContain('blob:')
     })
 
     it('should return base64 string if image is found and imageData is a string', () => {

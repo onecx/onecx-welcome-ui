@@ -6,6 +6,7 @@
   }
   .wc-overview-image {
     display: block;
+    margin: 0 auto;
     object-fit: none; /* fill | contain | cover | none | scale-down */
     object-position: center center; /* [left | center | right] [ top | center | bottom ] [percentage percentage] */
   }

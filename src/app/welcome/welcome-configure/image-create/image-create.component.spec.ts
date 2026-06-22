@@ -8,7 +8,7 @@ import { of, throwError } from 'rxjs'
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
 
-import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { AppStateService, PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 import { ImageCreateComponent } from './image-create.component'
@@ -32,6 +32,9 @@ describe('ImageCreateComponent', () => {
       asObservable: jasmine.createSpy('asObservable')
     }
   }
+  const appStateServiceSpy = {
+    currentWorkspace$: of({ workspaceName: 'test-ws' })
+  }
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -49,7 +52,8 @@ describe('ImageCreateComponent', () => {
       providers: [
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
-        { provide: UserService, useValue: mockUserService }
+        { provide: UserService, useValue: mockUserService },
+        { provide: AppStateService, useValue: appStateServiceSpy }
       ]
     }).compileComponents()
     // reset
@@ -98,12 +102,10 @@ describe('ImageCreateComponent', () => {
     component.formGroup.controls['url'].setValue('someUrl')
     component.ngOnInit()
     fixture.detectChanges()
-    const dElement = fixture.debugElement
     apiServiceSpy.createImageInfo.and.returnValue(of({ id: '123', url: 'someUrl', position: '1' } as ImageInfo))
 
-    const saveButton = dElement.queryAll(By.css('button'))[2]
-    expect(saveButton).toBeTruthy()
-    saveButton.nativeElement.click()
+    component.onSave()
+
     expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
   })
   it('should save image with fileUpload', () => {
@@ -111,16 +113,14 @@ describe('ImageCreateComponent', () => {
     component.onFileSelected(new Blob())
 
     fixture.detectChanges()
-    const dElement = fixture.debugElement
     apiServiceSpy.createImageInfo.and.returnValue(of({ id: '123', position: '1', modificationCount: 0 } as ImageInfo))
     apiServiceSpy.createImage.and.returnValue(of({ imageId: '1234' } as ImageDataResponse))
     apiServiceSpy.updateImageInfo.and.returnValue(
       of({ id: '123', imageId: '1234', position: '1', modificationCount: 1 } as ImageInfo)
     )
 
-    const saveButton = dElement.queryAll(By.css('button'))[2]
-    expect(saveButton).toBeTruthy()
-    saveButton.nativeElement.click()
+    component.onSave()
+
     expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
   })
 
@@ -133,7 +133,7 @@ describe('ImageCreateComponent', () => {
   })
 
   it('should handle error when creating imageinfo', () => {
-    apiServiceSpy.createImageInfo.and.returnValue(throwError(() => new Error()))
+    apiServiceSpy.createImageInfo.and.returnValue(throwError(() => new Error('createImageInfo failed')))
     component.formGroup.controls['url'].setValue('someUrl')
     component.onSave()
 
@@ -175,22 +175,17 @@ describe('ImageCreateComponent', () => {
 
     const dElement = fixture.debugElement
 
-    const dialog = dElement.nativeElement.querySelector('p-dialog')
-    expect(dialog.attributes.getNamedItem('ng-reflect-visible').value).toBeTruthy()
-    const closeButton = dElement.queryAll(By.css('button'))[1]
+    const dialog = dElement.query(By.css('p-dialog'))
+    expect(dialog).toBeTruthy()
+    const closeButton = dElement.query(By.css("p-button[icon='pi pi-times']"))
     expect(closeButton).toBeTruthy()
-    //spyOn(component, 'onDialogHide').and.callThrough()
     let dialogCloseEvent
     component.hideDialogAndChanged.subscribe((event: any) => {
       dialogCloseEvent = event
     })
     expect(dialogCloseEvent).toBeUndefined()
-    closeButton.nativeElement.click()
+    component.onDialogHide()
 
-    //component.onDialogHide()
-    //fixture.detectChanges()
-    //const dialogAfterChange = dElement.nativeElement.querySelector('p-dialog')
-    //expect(dialogAfterChange.attributes.getNamedItem('ng-reflect-visible').value).toBe('false')
     expect(dialogCloseEvent).toBeDefined()
     if (dialogCloseEvent) {
       expect(dialogCloseEvent).toBe(false)

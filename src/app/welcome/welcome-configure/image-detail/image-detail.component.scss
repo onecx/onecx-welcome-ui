@@ -1,5 +1,6 @@
 @import 'src/app/_wc-mixins.scss';
 
+@include displaying-text-responsive;
 @include dialog-footer-buttons;
 @include dropdown-zebra-rows;
 @include compact-dropdown-list-items;
@@ -8,6 +9,7 @@
   .wc-detail-preview-frame {
     border: var(--panel-content-border);
   }
+
   .p-fieldset {
     &.p-fieldset-toggleable .p-fieldset-legend a,
     .p-fieldset-legend {

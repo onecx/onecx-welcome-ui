@@ -8,6 +8,7 @@ import { PortalMessageService } from '@onecx/angular-integration-interface'
 import { ConfigExportImportAPIService, WelcomeSnapshot } from 'src/app/shared/generated'
 
 @Component({
+  standalone: false,
   selector: 'app-welcome-import',
   templateUrl: './welcome-import.component.html',
   styleUrls: ['./welcome-import.component.scss']

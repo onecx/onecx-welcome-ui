@@ -1,11 +1,14 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core'
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn } from '@angular/forms'
+import { filter, take } from 'rxjs'
+import { FileUpload } from 'primeng/fileupload'
 
 import { AppStateService, PortalMessageService } from '@onecx/angular-integration-interface'
 
 import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
+  standalone: false,
   selector: 'app-image-create',
   templateUrl: './image-create.component.html',
   styleUrls: ['./image-create.component.scss']
@@ -15,11 +18,11 @@ export class ImageCreateComponent implements OnInit, OnChanges {
   @Input() public imageInfoCount: number = 0
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
 
-  @ViewChild('fileUpload', { static: true }) fileUpload: any
+  @ViewChild('fileUpload', { static: true }) fileUpload?: FileUpload
 
   public isLoading = false
   formGroup: FormGroup
-  selectedFile: any
+  selectedFile?: Blob
   uploadDisabled: boolean = false
   currentWorkspaceName: string = ''
 
@@ -33,7 +36,12 @@ export class ImageCreateComponent implements OnInit, OnChanges {
       url: new FormControl(null, this.imageSrcValidator()),
       image: new FormControl(null)
     })
-    this.currentWorkspaceName = this.appstateService.currentWorkspace$.getValue()?.workspaceName || ''
+    this.appstateService.currentWorkspace$
+      .pipe(
+        filter((ws) => !!ws?.workspaceName),
+        take(1)
+      )
+      .subscribe((ws) => (this.currentWorkspaceName = ws?.workspaceName || ''))
   }
 
   ngOnInit(): void {
@@ -44,6 +52,8 @@ export class ImageCreateComponent implements OnInit, OnChanges {
 
   ngOnChanges(): void {
     this.formGroup.get('url')?.reset()
+    this.uploadDisabled = false
+    this.onFileRemoval()
   }
 
   private imageSrcValidator(): ValidatorFn {
@@ -58,6 +68,11 @@ export class ImageCreateComponent implements OnInit, OnChanges {
 
   public onSave(): void {
     if (this.formGroup.valid) {
+      if (!this.currentWorkspaceName) {
+        this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+        return
+      }
+
       const imageInfo = this.submitFormValues() as ImageInfo
       imageInfo.modificationCount = 0
       imageInfo.position = (this.imageInfoCount + 1).toString()
@@ -95,7 +110,6 @@ export class ImageCreateComponent implements OnInit, OnChanges {
                           this.msgService.success({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
                           this.hideDialogAndChanged.emit(true)
                           this.onFileRemoval()
-                          this.fileUpload.clear()
                         },
                         error: (err) => {
                           this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
@@ -115,16 +129,23 @@ export class ImageCreateComponent implements OnInit, OnChanges {
     }
   }
 
-  public onFileSelected(selectedFile: Blob) {
-    if (selectedFile.size < 1000000) {
-      this.selectedFile = selectedFile
-      this.formGroup.controls['url'].disable()
+  public onFileSelected(selectedFile: Blob | undefined): void {
+    if (!selectedFile) {
+      this.onFileRemoval()
+      return
     }
+
+    this.selectedFile = selectedFile
+    this.formGroup.controls['url'].disable()
   }
 
   public onFileRemoval() {
     this.formGroup.controls['url'].enable()
     this.selectedFile = undefined
+
+    if (this.fileUpload?.files?.length && typeof this.fileUpload.clear === 'function') {
+      this.fileUpload.clear()
+    }
   }
 
   private submitFormValues(): any {

@@ -7,7 +7,7 @@
   >
   </ocx-page-header>
 
-  <ocx-page-content *ngIf="imageInfo$ | async as imageInfos">
+  <ocx-content *ngIf="imageInfo$ | async as imageInfos">
     <section
       class="m-3 md:m-4 flex flex-row flex-wrap gap-3 sm:gap-4 md:gap-5"
       [attr.aria-label]="'DIALOG.CONFIGURE.REGIONS.MANAGE_IMAGES' | translate"
@@ -134,5 +134,5 @@
       (importEmitter)="onCloseDetailDialog($event)"
       [workspaceName]="workspace?.workspaceName"
     ></app-welcome-import>
-  </ocx-page-content>
+  </ocx-content>
 </ocx-portal-page>
