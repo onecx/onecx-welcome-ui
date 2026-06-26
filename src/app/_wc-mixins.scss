@@ -112,7 +112,7 @@
 
 @mixin compact-dropdown-list-items {
   :host ::ng-deep {
-    .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    .p-select-overlay .p-select-list .p-select-option {
       padding: 0.4rem 1rem !important;
     }
   }
@@ -253,33 +253,6 @@
   }
 }
 
-// File Upload
-@mixin correct-file-upload {
-  :host ::ng-deep {
-    .p-fileupload {
-      .p-fileupload-buttonbar,
-      .p-fileupload-content {
-        background-color: var(--surface-100) !important;
-      }
-      .p-fileupload-content {
-        padding: 0.5rem;
-        .p-fileupload-row {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          gap: 0;
-          > div {
-            width: unset;
-            &.p-fileupload-filename {
-              max-width: 25rem;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
 @mixin correct-select-button {
   :host ::ng-deep {
     .p-selectbutton.p-buttonset {
@@ -399,7 +372,7 @@
 }
 @mixin dropdown-zebra-rows {
   :host ::ng-deep {
-    .p-dropdown-panel .p-dropdown-items *:nth-child(odd) .p-dropdown-item {
+    .p-select-overlay .p-select-list *:nth-child(odd) .p-select-option {
       background-color: #f8f9fa;
     }
   }

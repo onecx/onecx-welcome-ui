@@ -4,11 +4,12 @@ import { Location } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { of, throwError } from 'rxjs'
+import { BehaviorSubject, of, throwError } from 'rxjs'
 import FileSaver from 'file-saver'
 
 import { Workspace } from '@onecx/integration-interface'
-import { PortalMessageService } from '@onecx/angular-integration-interface'
+import { AppStateService, PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { PermissionService } from '@onecx/angular-utils'
 
 import {
   ImageDataResponse,
@@ -81,6 +82,8 @@ const imageDTO: WelcomeSnapshot = {
 describe('WelcomeConfigureComponent', () => {
   let component: WelcomeConfigureComponent
   let fixture: ComponentFixture<WelcomeConfigureComponent>
+  let appStateSubject: BehaviorSubject<Workspace | undefined>
+  let langSubject: BehaviorSubject<string>
 
   const locationSpy = jasmine.createSpyObj<Location>('Location', ['back'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
@@ -96,9 +99,12 @@ describe('WelcomeConfigureComponent', () => {
   }
 
   beforeEach(waitForAsync(() => {
+    appStateSubject = new BehaviorSubject<Workspace | undefined>(undefined)
+    langSubject = new BehaviorSubject<string>('de')
     TestBed.configureTestingModule({
-      declarations: [WelcomeConfigureComponent, ImageCreateComponent],
       imports: [
+        WelcomeConfigureComponent,
+        ImageCreateComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -110,10 +116,25 @@ describe('WelcomeConfigureComponent', () => {
         provideHttpClientTesting(),
         { provide: Location, useValue: locationSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
+        { provide: PermissionService, useValue: { hasPermission: () => of(true), getPermissions: () => of([]) } },
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
-        { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
+        { provide: ConfigExportImportAPIService, useValue: eximServiceSpy },
+        { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } },
+        { provide: UserService, useValue: { lang$: langSubject, profile$: new BehaviorSubject<any>({}) } }
       ]
-    }).compileComponents()
+    })
+      .overrideProvider(ImagesInternalAPIService, { useValue: apiServiceSpy })
+      .overrideProvider(ConfigExportImportAPIService, { useValue: eximServiceSpy })
+      .overrideComponent(WelcomeConfigureComponent, {
+        set: {
+          providers: [
+            { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
+            { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
+          ],
+          template: '<div></div>'
+        }
+      })
+      .compileComponents()
     // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
@@ -127,6 +148,9 @@ describe('WelcomeConfigureComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WelcomeConfigureComponent)
     component = fixture.componentInstance
+    ;(component as any).imageService = apiServiceSpy
+    ;(component as any).eximService = eximServiceSpy
+    ;(component as any).msgService = msgServiceSpy
     fixture.detectChanges()
   })
 
@@ -134,9 +158,38 @@ describe('WelcomeConfigureComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  it('should set workspace and reload when workspace becomes available', () => {
+    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of([]))
+    spyOn(component, 'onReload')
+
+    appStateSubject.next(ws)
+
+    expect(component.workspace).toEqual(ws)
+    expect(component.onReload).toHaveBeenCalled()
+  })
+
+  it('should revoke blob URLs on destroy', () => {
+    component['blobUrls'].set('id1', 'blob:test-url')
+    spyOn(URL, 'revokeObjectURL')
+
+    component.ngOnDestroy()
+
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:test-url')
+  })
+
   describe('fetchImageData', () => {
     beforeEach(() => {
       component.workspace = ws
+    })
+
+    it('should revoke existing blob URLs before fetching new ones', () => {
+      component['blobUrls'].set('id1', 'blob:old-url')
+      spyOn(URL, 'revokeObjectURL')
+      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of([]))
+
+      component.fetchImageInfos()
+
+      expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:old-url')
     })
 
     it('should get infos for all images', (done) => {
@@ -191,10 +244,29 @@ describe('WelcomeConfigureComponent', () => {
   })
 
   describe('buildImageSrc', () => {
-    it('should return undefined if image is found but imageData is a Blob', () => {
+    it('should return blob URL if image is found and imageData is a Blob', () => {
       component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
 
       const result = component.buildImageSrc(imageInfos[0])
+
+      expect(result).toContain('blob:')
+    })
+
+    it('should return cached blob URL on second call', () => {
+      component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
+
+      const result1 = component.buildImageSrc(imageInfos[0])
+      const result2 = component.buildImageSrc(imageInfos[0])
+
+      expect(result1).toContain('blob:')
+      expect(result2).toBe(result1)
+    })
+
+    it('should return undefined if imageData is Blob but imageId is missing', () => {
+      component.images = [{ imageId: undefined, mimeType: 'image/png', imageData: new Blob() }]
+      const imageInfo = { id: 'x', imageId: undefined, visible: true, workspaceName: 'ws' }
+
+      const result = component.buildImageSrc(imageInfo)
 
       expect(result).toBeUndefined()
     })

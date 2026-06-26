@@ -6,6 +6,8 @@
   [closable]="true"
   [draggable]="true"
   [resizable]="true"
+  [appendTo]="'body'"
+  [position]="'center'"
   [style]="{ 'min-width': '600px' }"
   [breakpoints]="{
     '992px': '65vw',
@@ -14,19 +16,20 @@
     '500px': '100vw'
   }"
 >
-  <form [formGroup]="formGroup" errorTailor>
+  <form [formGroup]="formGroup">
     <div class="flex flex-wrap flex-column justify-content-between row-gap-4">
       <p-fileUpload
         #fileUpload
         id="wc_image_create_action_upload"
         class="w-full"
         (onRemove)="onFileRemoval()"
+        (onClear)="onFileRemoval()"
         (onSelect)="onFileSelected($event.files[0])"
         [maxFileSize]="1000000"
         previewWidth="300"
         [showUploadButton]="false"
         [showCancelButton]="false"
-        [disabled]="this.uploadDisabled"
+        [disabled]="uploadDisabled"
         accept=".jpg, .jpeg, .png"
         [multiple]="false"
         [invalidFileSizeMessageDetail]="'ACTIONS.CREATE.FILE_ERRORS.INVALID_SIZE_DETAIL' | translate"
@@ -40,16 +43,13 @@
         tooltipEvent="hover"
       ></p-fileUpload>
       <div class="w-12">
-        <span class="p-float-label w-full p-input-icon-right" controlErrorAnchor>
+        <p-floatlabel class="w-full p-input-icon-right">
           <a
             *ngIf="createUrl.value !== ''"
-            [id]="'wc_image_create_form_url_action_remove'"
+            id="wc_image_create_form_url_action_remove"
             class="pi pi-times cursor-pointer"
             (click)="formGroup.controls['url'].reset()"
             [attr.aria-label]="'ACTIONS.CREATE.URL.REMOVE' | translate"
-            [pTooltip]="'ACTIONS.CREATE.URL.REMOVE' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
           ></a>
           <input
             #createUrl
@@ -62,8 +62,8 @@
             tooltipPosition="top"
             tooltipEvent="hover"
           />
-          <label for="wc_image_create_form_url"> {{ 'ACTIONS.CREATE.URL' | translate }} </label>
-        </span>
+          <label for="wc_image_create_form_url">{{ 'ACTIONS.CREATE.URL' | translate }}</label>
+        </p-floatlabel>
         <label
           *ngIf="
             formGroup.controls['url'].errors?.hasOwnProperty('srcMissing') && formGroup.controls['url'].value === ''

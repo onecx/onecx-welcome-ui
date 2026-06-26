@@ -14,6 +14,7 @@
       "URL.REMOVE": "Remove content",
       "URL.TOOLTIP": "An external URL as an alternative to upload",
       "SELECT": "Select Image",
+      "NO_FILE": "No file selected",
       "SELECT.TOOLTIP": "Select and Upload an Image",
       "SUCCESS": "Image successfully added",
       "ERROR": "Image could not be added"

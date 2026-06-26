@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 
-import { PortalCoreModule } from '@onecx/portal-integration-angular'
-import { InitializeModuleGuard, addInitializeModuleGuard } from '@onecx/angular-integration-interface'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { PortalPageComponent } from '@onecx/angular-utils'
 
 import { SharedModule } from '../shared/shared.module'
 import { LabelResolver } from 'src/app/shared/label.resolver'
@@ -33,19 +33,17 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  declarations: [
+  imports: [
+    AngularAcceleratorModule,
+    PortalPageComponent,
+    [RouterModule.forChild(routes)],
+    SharedModule,
     WelcomeOverviewComponent,
     WelcomeConfigureComponent,
     WelcomeImportComponent,
     ImageCreateComponent,
     ImageDetailComponent
-  ],
-  imports: [
-    PortalCoreModule.forMicroFrontend(),
-    [RouterModule.forChild(addInitializeModuleGuard(routes))],
-    SharedModule
-  ],
-  providers: [InitializeModuleGuard]
+  ]
 })
 export class WelcomeModule {
   constructor() {

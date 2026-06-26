@@ -6,26 +6,27 @@
         #backgroundImage
         *ngIf="!loading && i === currentImage"
         @carouselAnimation
-        class="w-full h-full"
+        class="w-full h-full wc-overview-image"
         [ngStyle]="{
           'object-fit': info.objectFit ?? 'scale-down',
           'object-position': info.objectPosition ?? 'center center',
           'background-color': info.backgroundColor ?? 'unset'
         }"
-        [src]="this.buildImageSrc(info)"
+        [src]="buildImageSrc(info)"
         [alt]="'DIALOG.OVERVIEW.PIC' | translate"
         [attr.aria-label]="'DIALOG.OVERVIEW.PIC' | translate"
       />
     </ng-container>
   </div>
   <!-- DOCK -->
-  <div class="absolute dock-top-right-minimized">
+  <div class="absolute z-3 dock-top-right-minimized">
     <p-dock *ocxIfPermission="'IMAGE#EDIT'" [model]="dockItems$ | async" [position]="'top'" styleClass="z-2">
-      <ng-template pTemplate="item" let-item>
-        <span
-          [class]="'text-primary cursor-pointer text-lg sm:text-2xl ' + item.iconClass"
+      <ng-template #item pTemplate="item" let-item>
+        <i
+          class="text-primary cursor-pointer text-lg sm:text-2xl"
+          [ngClass]="item.iconClass || item.icon || 'pi pi-cog'"
           [attr.aria-label]="'ACTIONS.CONFIGURE' | translate"
-        ></span>
+        ></i>
       </ng-template>
     </p-dock>
   </div>

@@ -58,8 +58,8 @@ describe('WelcomeImportComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [WelcomeImportComponent],
       imports: [
+        WelcomeImportComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -73,7 +73,14 @@ describe('WelcomeImportComponent', () => {
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
       ]
-    }).compileComponents()
+    })
+      .overrideProvider(ConfigExportImportAPIService, { useValue: eximServiceSpy })
+      .overrideComponent(WelcomeImportComponent, {
+        set: {
+          providers: [{ provide: ConfigExportImportAPIService, useValue: eximServiceSpy }]
+        }
+      })
+      .compileComponents()
     // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
@@ -83,6 +90,8 @@ describe('WelcomeImportComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WelcomeImportComponent)
     component = fixture.componentInstance
+    ;(component as any).eximApi = eximServiceSpy
+    ;(component as any).msgService = msgServiceSpy
     fixture.detectChanges()
   })
 

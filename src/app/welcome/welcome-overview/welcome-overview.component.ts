@@ -1,17 +1,30 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnDestroy, OnInit } from '@angular/core'
 import { animate, style, transition, trigger } from '@angular/animations'
-import { TranslateService } from '@ngx-translate/core'
-import { catchError, map, Observable, of, Subject, Subscription, takeUntil, timer } from 'rxjs'
+import { CommonModule } from '@angular/common'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { catchError, filter, map, Observable, of, Subject, Subscription, take, takeUntil, timer } from 'rxjs'
 import { MenuItem } from 'primeng/api'
+import { DockModule } from 'primeng/dock'
 
-import { SlotService } from '@onecx/angular-remote-components'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { AngularRemoteComponentsModule, SlotService } from '@onecx/angular-remote-components'
 import { UserProfile, Workspace } from '@onecx/integration-interface'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
+import { PortalPageComponent } from '@onecx/angular-utils'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
+  standalone: true,
   selector: 'app-welcome-overview',
+  imports: [
+    CommonModule,
+    TranslateModule,
+    DockModule,
+    AngularAcceleratorModule,
+    AngularRemoteComponentsModule,
+    PortalPageComponent
+  ],
   templateUrl: './welcome-overview.component.html',
   styleUrls: ['./welcome-overview.component.scss'],
   animations: [
@@ -21,8 +34,9 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
     ])
   ]
 })
-export class WelcomeOverviewComponent implements OnInit {
-  private readonly destroy$ = new Subject()
+export class WelcomeOverviewComponent implements OnInit, OnDestroy {
+  private readonly destroy$ = new Subject<void>()
+  private readonly blobUrls = new Map<string, string>()
   // dialog
   public readonly CAROUSEL_SPEED: number = 15000 // ms
   public loading = true
@@ -34,7 +48,7 @@ export class WelcomeOverviewComponent implements OnInit {
   public workspace: Workspace | undefined
   public subscription: Subscription | undefined
   public images: ImageDataResponse[] = []
-  public imageInfo$!: Observable<ImageInfo[]>
+  public imageInfo$: Observable<ImageInfo[]> = of([])
   // slot
   public isAnnouncementListComponentAvailable$: Observable<boolean>
   public isBookmarkListComponentAvailable$: Observable<boolean>
@@ -54,27 +68,48 @@ export class WelcomeOverviewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.workspace = this.appStateService.currentWorkspace$.getValue()
     this.prepareDockItems()
-    this.getImages()
+    this.appStateService.currentWorkspace$
+      .pipe(
+        filter((ws): ws is Workspace => !!ws?.workspaceName),
+        take(1)
+      )
+      .subscribe((ws) => {
+        this.workspace = ws
+        this.getImages()
+      })
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next()
+    this.destroy$.complete()
+    this.subscription?.unsubscribe()
+    this.blobUrls.forEach((url) => URL.revokeObjectURL(url))
+    this.blobUrls.clear()
   }
 
   private getImages(): void {
     this.loading = true
-    if (this.workspace)
-      this.imageInfo$ = this.imageService
-        .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
-        .pipe(
-          map((images: ImageInfo[]) => {
-            this.fetchImages(images) // get images
-            return images.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
-          }),
-          catchError((err) => {
-            console.error('getAllImageInfosByWorkspaceName', err)
-            return of([] as ImageInfo[])
-          })
-        )
-        .pipe(takeUntil(this.destroy$))
+    if (!this.workspace?.workspaceName) {
+      this.loading = false
+      this.imageInfo$ = of([])
+      return
+    }
+
+    this.imageInfo$ = this.imageService
+      .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
+      .pipe(
+        map((images: ImageInfo[]) => {
+          this.fetchImages(images) // get images
+          return images.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
+        }),
+        catchError((err) => {
+          console.error('getAllImageInfosByWorkspaceName', err)
+          this.loading = false
+          return of([] as ImageInfo[])
+        })
+      )
+      .pipe(takeUntil(this.destroy$))
   }
 
   // load all stored image data, exclude invisible and images with URLs
@@ -83,7 +118,10 @@ export class WelcomeOverviewComponent implements OnInit {
     if (this.images.length > 0) return
     const visibleInfoLength = infos.filter((i) => i.visible).length
     // nothing to do
-    if (infos.length === 0 || visibleInfoLength === 0) return
+    if (infos.length === 0 || visibleInfoLength === 0) {
+      this.loading = false
+      return
+    }
 
     // images with URL
     const urlImageLength = infos.filter((i) => i.visible && i.url).length
@@ -128,7 +166,14 @@ export class WelcomeOverviewComponent implements OnInit {
     if (this.images.length === 0) return undefined
     const existingImage = this.images.find((image) => image.imageId === imageInfo.imageId)
     const imageData = existingImage?.imageData
-    if (imageData instanceof Blob) return undefined
+    if (imageData instanceof Blob) {
+      if (!existingImage?.imageId) return undefined
+      const cachedBlobUrl = this.blobUrls.get(existingImage.imageId)
+      if (cachedBlobUrl) return cachedBlobUrl
+      const blobUrl = URL.createObjectURL(imageData)
+      this.blobUrls.set(existingImage.imageId, blobUrl)
+      return blobUrl
+    }
     return 'data:' + existingImage?.mimeType + ';base64,' + (imageData ?? '')
   }
 
@@ -138,6 +183,7 @@ export class WelcomeOverviewComponent implements OnInit {
         return [
           {
             id: 'wc_overview_action_configure',
+            icon: 'pi pi-cog',
             iconClass: 'pi pi-cog',
             tabindex: '0',
             tooltipOptions: {
