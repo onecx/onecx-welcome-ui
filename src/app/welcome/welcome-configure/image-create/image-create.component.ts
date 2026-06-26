@@ -1,15 +1,34 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core'
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn } from '@angular/forms'
+import { CommonModule } from '@angular/common'
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms'
+import { TranslateModule } from '@ngx-translate/core'
+import { ButtonModule } from 'primeng/button'
+import { DialogModule } from 'primeng/dialog'
 import { filter, take } from 'rxjs'
-import { FileUpload } from 'primeng/fileupload'
+import { FileUploadModule, FileUpload } from 'primeng/fileupload'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { InputTextModule } from 'primeng/inputtext'
+import { TooltipModule } from 'primeng/tooltip'
 
 import { AppStateService, PortalMessageService } from '@onecx/angular-integration-interface'
+import { Workspace } from '@onecx/integration-interface'
 
 import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
-  standalone: false,
+  standalone: true,
   selector: 'app-image-create',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    ButtonModule,
+    DialogModule,
+    FileUploadModule,
+    FloatLabelModule,
+    InputTextModule,
+    TooltipModule
+  ],
   templateUrl: './image-create.component.html',
   styleUrls: ['./image-create.component.scss']
 })
@@ -38,10 +57,10 @@ export class ImageCreateComponent implements OnInit, OnChanges {
     })
     this.appstateService.currentWorkspace$
       .pipe(
-        filter((ws) => !!ws?.workspaceName),
+        filter((ws): ws is Workspace => !!ws?.workspaceName),
         take(1)
       )
-      .subscribe((ws) => (this.currentWorkspaceName = ws?.workspaceName || ''))
+      .subscribe((ws) => (this.currentWorkspaceName = ws.workspaceName))
   }
 
   ngOnInit(): void {

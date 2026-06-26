@@ -1,6 +1,13 @@
 import { Component, EventEmitter, Input, Output, OnChanges, OnDestroy } from '@angular/core'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { TranslateService } from '@ngx-translate/core'
+import { CommonModule } from '@angular/common'
+import { FormsModule, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { ButtonModule } from 'primeng/button'
+import { DialogModule } from 'primeng/dialog'
+import { FieldsetModule } from 'primeng/fieldset'
+import { SelectModule } from 'primeng/select'
+import { InputTextModule } from 'primeng/inputtext'
+import { TooltipModule } from 'primeng/tooltip'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
@@ -13,8 +20,20 @@ export interface ImageCssForm {
 }
 
 @Component({
-  standalone: false,
+  standalone: true,
   selector: 'app-image-detail',
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    ButtonModule,
+    DialogModule,
+    FieldsetModule,
+    SelectModule,
+    InputTextModule,
+    TooltipModule
+  ],
   templateUrl: './image-detail.component.html',
   styleUrls: ['./image-detail.component.scss']
 })

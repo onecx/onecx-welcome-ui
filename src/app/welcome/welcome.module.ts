@@ -33,14 +33,17 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  declarations: [
+  imports: [
+    AngularAcceleratorModule,
+    PortalPageComponent,
+    [RouterModule.forChild(routes)],
+    SharedModule,
     WelcomeOverviewComponent,
     WelcomeConfigureComponent,
     WelcomeImportComponent,
     ImageCreateComponent,
     ImageDetailComponent
-  ],
-  imports: [AngularAcceleratorModule, PortalPageComponent, [RouterModule.forChild(routes)], SharedModule]
+  ]
 })
 export class WelcomeModule {
   constructor() {

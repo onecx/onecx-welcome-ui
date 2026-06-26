@@ -1,12 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
-import { Location } from '@angular/common'
-import { TranslateService } from '@ngx-translate/core'
+import { CommonModule, Location } from '@angular/common'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, filter, finalize, map, Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs'
 import FileSaver from 'file-saver'
+import { ButtonModule } from 'primeng/button'
+import { TooltipModule } from 'primeng/tooltip'
 
-import { Action } from '@onecx/angular-accelerator'
+import { Action, AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, PortalMessageService } from '@onecx/angular-integration-interface'
+import { PortalPageComponent } from '@onecx/angular-utils'
 
 import { getCurrentDateTime } from 'src/app/shared/utils'
 
@@ -16,10 +19,24 @@ import {
   ImagesInternalAPIService,
   ConfigExportImportAPIService
 } from 'src/app/shared/generated'
+import { ImageCreateComponent } from './image-create/image-create.component'
+import { ImageDetailComponent } from './image-detail/image-detail.component'
+import { WelcomeImportComponent } from './welcome-import/welcome-import.component'
 
 @Component({
-  standalone: false,
+  standalone: true,
   selector: 'app-welcome-configure',
+  imports: [
+    CommonModule,
+    TranslateModule,
+    ButtonModule,
+    TooltipModule,
+    AngularAcceleratorModule,
+    PortalPageComponent,
+    ImageCreateComponent,
+    ImageDetailComponent,
+    WelcomeImportComponent
+  ],
   templateUrl: './welcome-configure.component.html',
   styleUrls: ['./welcome-configure.component.scss']
 })

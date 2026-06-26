@@ -1,4 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { provideHttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { FormControl, FormGroup } from '@angular/forms'
 import { of, throwError } from 'rxjs'
@@ -44,8 +46,8 @@ describe('ImageDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ImageDetailComponent],
       imports: [
+        ImageDetailComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -53,10 +55,20 @@ describe('ImageDetailComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy }
       ]
-    }).compileComponents()
+    })
+      .overrideProvider(ImagesInternalAPIService, { useValue: apiServiceSpy })
+      .overrideComponent(ImageDetailComponent, {
+        set: {
+          providers: [{ provide: ImagesInternalAPIService, useValue: apiServiceSpy }],
+          template: '<div></div>'
+        }
+      })
+      .compileComponents()
     // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
@@ -66,6 +78,8 @@ describe('ImageDetailComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ImageDetailComponent)
     component = fixture.componentInstance
+    ;(component as any).imageApi = apiServiceSpy
+    ;(component as any).msgService = msgServiceSpy
     // satisfy the displaying of the url in HTML
     component.imageInfos = [{ imageId: '1', url: 'http://example.com/image1.png', workspaceName: 'ws' }]
     component.displayDialog = true
@@ -120,10 +134,44 @@ describe('ImageDetailComponent', () => {
       fixture.detectChanges() // trigger lifecycle hook: ngOnChanges()
     })
 
-    it('should return the base64 image source if image data are available', () => {
-      const result = component.buildImageSrc(imageInfos[0], imageData)
+    it('should return undefined when image index is invalid', () => {
+      fixture.componentRef.setInput('imageIndex', -1)
+      fixture.detectChanges()
 
-      expect(result).toBe('http://example.com/image1.png')
+      const result = component.buildImageSrc({ imageId: '02', workspaceName: 'ws' }, imageData)
+
+      expect(result).toBeUndefined()
+    })
+
+    it('should return undefined if imageData is Blob but imageId is missing', () => {
+      const imageInfo: ImageInfo = { imageId: undefined, workspaceName: 'ws' }
+      const imageData: ImageDataResponse[] = [{ imageId: undefined, mimeType: 'image/png', imageData: new Blob() }]
+
+      const result = component.buildImageSrc(imageInfo, imageData)
+
+      expect(result).toBeUndefined()
+    })
+
+    it('should return cached blob URL on second call', () => {
+      const result1 = component.buildImageSrc(imageInfos[1], imageData)
+      const result2 = component.buildImageSrc(imageInfos[1], imageData)
+
+      expect(result1).toContain('blob:')
+      expect(result2).toBe(result1)
+    })
+
+    it('should return the base64 image source if image data are available', () => {
+      const encodedData: ImageDataResponse[] = [{ imageId: '01', mimeType: 'image/png', imageData: 'abc123' as any }]
+      const result = component.buildImageSrc({ imageId: '01', workspaceName: 'ws' }, encodedData)
+
+      expect(result).toBe('data:image/png;base64,abc123')
+    })
+
+    it('should return empty base64 payload when image data are undefined', () => {
+      const emptyData: ImageDataResponse[] = [{ imageId: '01', mimeType: 'image/png' }]
+      const result = component.buildImageSrc({ imageId: '01', workspaceName: 'ws' }, emptyData)
+
+      expect(result).toBe('data:image/png;base64,')
     })
 
     it('should return blob URL if image data is loaded as Blob', () => {

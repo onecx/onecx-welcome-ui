@@ -1,10 +1,13 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { provideHttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { ComponentFixture, fakeAsync, TestBed, tick, discardPeriodicTasks, waitForAsync } from '@angular/core/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { of, throwError } from 'rxjs'
+import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { Workspace } from '@onecx/integration-interface'
-import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { AppStateService, PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { PermissionService } from '@onecx/angular-utils'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 import { WelcomeOverviewComponent } from './welcome-overview.component'
@@ -35,23 +38,24 @@ const ws: Workspace = {
 describe('WelcomeOverviewComponent', () => {
   let component: WelcomeOverviewComponent
   let fixture: ComponentFixture<WelcomeOverviewComponent>
+  let appStateSubject: BehaviorSubject<Workspace | undefined>
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const apiServiceSpy = {
     getAllImageInfosByWorkspaceName: jasmine.createSpy('getAllImageInfosByWorkspaceName').and.returnValue(of({})),
     getImageById: jasmine.createSpy('getImageById').and.returnValue(of({}))
   }
+  const lang$ = new BehaviorSubject<string>('de')
+  const profile$ = new BehaviorSubject<any>({})
   const mockUserService = {
-    lang$: { getValue: jasmine.createSpy('getValue') },
-    profile$: {
-      getValue: jasmine.createSpy('getValue'),
-      asObservable: jasmine.createSpy('asObservable')
-    }
+    lang$,
+    profile$
   }
 
   beforeEach(waitForAsync(() => {
+    appStateSubject = new BehaviorSubject<Workspace | undefined>(undefined)
     TestBed.configureTestingModule({
-      declarations: [WelcomeOverviewComponent],
       imports: [
+        WelcomeOverviewComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -59,18 +63,31 @@ describe('WelcomeOverviewComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: UserService, useValue: mockUserService },
+        { provide: PermissionService, useValue: { hasPermission: () => of(true), getPermissions: () => of([]) } },
         { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: ImagesInternalAPIService, useValue: apiServiceSpy }
+        { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
+        { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } }
       ]
-    }).compileComponents()
+    })
+      .overrideProvider(ImagesInternalAPIService, { useValue: apiServiceSpy })
+      .overrideProvider(UserService, { useValue: mockUserService })
+      .overrideComponent(WelcomeOverviewComponent, {
+        set: {
+          providers: [{ provide: ImagesInternalAPIService, useValue: apiServiceSpy }],
+          template: '<div></div>'
+        }
+      })
+      .compileComponents()
     // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
     apiServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
     apiServiceSpy.getImageById.calls.reset()
     // default data
-    mockUserService.lang$.getValue.and.returnValue('de')
+    lang$.next('de')
   }))
 
   beforeEach(() => {
@@ -90,38 +107,59 @@ describe('WelcomeOverviewComponent', () => {
     })
   })
 
+  it('should set workspace and load images when workspace becomes available', () => {
+    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of([]))
+    spyOn<any>(component, 'getImages')
+
+    appStateSubject.next(ws)
+
+    expect(component.workspace).toEqual(ws)
+    expect(component['getImages']).toHaveBeenCalled()
+  })
+
   describe('getImages', () => {
-    beforeEach(() => {
-      component.workspace = ws
-    })
-
-    it('should get infos for all images', (done) => {
-      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
+    it('should return early and reset loading when workspace has no name', () => {
+      component.workspace = undefined
+      component.loading = true
 
       component['getImages']()
 
-      component.imageInfo$?.subscribe({
-        next: (images) => {
-          expect(images.length).toBe(5)
-          done()
-        },
-        error: done.fail
+      expect(component.loading).toBeFalse()
+    })
+
+    describe('with workspace', () => {
+      beforeEach(() => {
+        component.workspace = ws
       })
-    })
 
-    it('should handle error when fetching imageinfos', (done) => {
-      const errorResponse = { status: 404, statusText: 'Not Found' }
-      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => errorResponse))
-      spyOn(console, 'error')
+      it('should get infos for all images', (done) => {
+        apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
 
-      component['getImages']()
+        component['getImages']()
 
-      component.imageInfo$?.subscribe({
-        next: () => {
-          expect(console.error).toHaveBeenCalledWith('getAllImageInfosByWorkspaceName', errorResponse)
-          done()
-        },
-        error: done.fail
+        component.imageInfo$?.subscribe({
+          next: (images) => {
+            expect(images.length).toBe(5)
+            done()
+          },
+          error: done.fail
+        })
+      })
+
+      it('should handle error when fetching imageinfos', (done) => {
+        const errorResponse = { status: 404, statusText: 'Not Found' }
+        apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => errorResponse))
+        spyOn(console, 'error')
+
+        component['getImages']()
+
+        component.imageInfo$?.subscribe({
+          next: () => {
+            expect(console.error).toHaveBeenCalledWith('getAllImageInfosByWorkspaceName', errorResponse)
+            done()
+          },
+          error: done.fail
+        })
       })
     })
   })
@@ -172,6 +210,18 @@ describe('WelcomeOverviewComponent', () => {
     })
   })
 
+  describe('setCarousel', () => {
+    it('should advance currentImage on subsequent ticks (else branch)', fakeAsync(() => {
+      component.currentImage = 0
+
+      component['setCarousel'](5)
+      tick(0) // fire the first timer emission (currentImage is 0, not -1 → else branch)
+
+      expect(component.currentImage).toBe(1)
+      discardPeriodicTasks()
+    }))
+  })
+
   describe('buildImageSrc', () => {
     it('should return data string if image is found', () => {
       component.loading = false
@@ -216,6 +266,28 @@ describe('WelcomeOverviewComponent', () => {
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
       expect(result).toContain('blob:')
+    })
+
+    it('should return cached blob URL on second call', () => {
+      component.images = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
+      component.loading = false
+      const info = imageInfos.find((i) => i.imageId === '1234')!
+
+      const result1 = component.buildImageSrc(info)
+      const result2 = component.buildImageSrc(info)
+
+      expect(result1).toContain('blob:')
+      expect(result2).toBe(result1)
+    })
+
+    it('should return undefined if imageData is Blob but imageId is missing', () => {
+      component.images = [{ imageId: undefined, mimeType: 'image/png', imageData: new Blob() }]
+      component.loading = false
+      const info: ImageInfo = { imageId: undefined, workspaceName: 'ws' }
+
+      const result = component.buildImageSrc(info)
+
+      expect(result).toBeUndefined()
     })
 
     it('should return base64 string with empty data if image is not matched in loaded images', () => {

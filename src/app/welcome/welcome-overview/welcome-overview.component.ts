@@ -1,18 +1,30 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { animate, style, transition, trigger } from '@angular/animations'
-import { TranslateService } from '@ngx-translate/core'
+import { CommonModule } from '@angular/common'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, filter, map, Observable, of, Subject, Subscription, take, takeUntil, timer } from 'rxjs'
 import { MenuItem } from 'primeng/api'
+import { DockModule } from 'primeng/dock'
 
-import { SlotService } from '@onecx/angular-remote-components'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { AngularRemoteComponentsModule, SlotService } from '@onecx/angular-remote-components'
 import { UserProfile, Workspace } from '@onecx/integration-interface'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
+import { PortalPageComponent } from '@onecx/angular-utils'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
-  standalone: false,
+  standalone: true,
   selector: 'app-welcome-overview',
+  imports: [
+    CommonModule,
+    TranslateModule,
+    DockModule,
+    AngularAcceleratorModule,
+    AngularRemoteComponentsModule,
+    PortalPageComponent
+  ],
   templateUrl: './welcome-overview.component.html',
   styleUrls: ['./welcome-overview.component.scss'],
   animations: [

@@ -1,9 +1,11 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { provideHttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { of, throwError } from 'rxjs'
+import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
@@ -23,14 +25,11 @@ describe('ImageCreateComponent', () => {
     createImage: jasmine.createSpy('createImage').and.returnValue(of({})),
     updateImageInfo: jasmine.createSpy('updateImageInfo').and.returnValue(of({}))
   }
+  const lang$ = new BehaviorSubject<string>('de')
+  const profile$ = new BehaviorSubject<any>({})
   const mockUserService = {
-    lang$: {
-      getValue: jasmine.createSpy('getValue')
-    },
-    profile$: {
-      getValue: jasmine.createSpy('getValue'),
-      asObservable: jasmine.createSpy('asObservable')
-    }
+    lang$,
+    profile$
   }
   const appStateServiceSpy = {
     currentWorkspace$: of({ workspaceName: 'test-ws' })
@@ -38,8 +37,8 @@ describe('ImageCreateComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ImageCreateComponent],
       imports: [
+        ImageCreateComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -50,12 +49,23 @@ describe('ImageCreateComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
         { provide: UserService, useValue: mockUserService },
         { provide: AppStateService, useValue: appStateServiceSpy }
       ]
-    }).compileComponents()
+    })
+      .overrideProvider(ImagesInternalAPIService, { useValue: apiServiceSpy })
+      .overrideProvider(UserService, { useValue: mockUserService })
+      .overrideProvider(AppStateService, { useValue: appStateServiceSpy })
+      .overrideComponent(ImageCreateComponent, {
+        set: {
+          providers: [{ provide: ImagesInternalAPIService, useValue: apiServiceSpy }]
+        }
+      })
+      .compileComponents()
     // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
@@ -63,12 +73,15 @@ describe('ImageCreateComponent', () => {
     apiServiceSpy.createImageInfo.calls.reset()
     apiServiceSpy.updateImageInfo.calls.reset()
     // default data
-    mockUserService.lang$.getValue.and.returnValue('de')
+    lang$.next('de')
   }))
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ImageCreateComponent)
     component = fixture.componentInstance
+    ;(component as any).imageApiService = apiServiceSpy
+    ;(component as any).msgService = msgServiceSpy
+    component.currentWorkspaceName = 'test-ws'
     component.displayCreateDialog = true
     fixture.detectChanges()
   })
@@ -167,6 +180,34 @@ describe('ImageCreateComponent', () => {
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.ERROR' })
     expect(console.error).toHaveBeenCalledWith('updateImageInfo', errorResponse)
+  })
+
+  it('should show error if workspace name is empty when saving', () => {
+    component.currentWorkspaceName = ''
+    component.formGroup.controls['url'].setValue('someUrl')
+
+    component.onSave()
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+    expect(apiServiceSpy.createImageInfo).not.toHaveBeenCalled()
+  })
+
+  it('should call onFileRemoval when onFileSelected is called with undefined', () => {
+    spyOn(component, 'onFileRemoval')
+
+    component.onFileSelected(undefined)
+
+    expect(component.onFileRemoval).toHaveBeenCalled()
+    expect(component.selectedFile).toBeUndefined()
+  })
+
+  it('should clear fileUpload when files exist on removal', () => {
+    const mockClear = jasmine.createSpy('clear')
+    component.fileUpload = { files: [new File([], 'test.png')], clear: mockClear } as any
+
+    component.onFileRemoval()
+
+    expect(mockClear).toHaveBeenCalled()
   })
 
   it('should close dialog', () => {
