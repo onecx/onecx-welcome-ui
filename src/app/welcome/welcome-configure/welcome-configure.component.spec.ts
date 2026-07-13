@@ -598,7 +598,7 @@ describe('WelcomeConfigureComponent', () => {
       if (component.actions$) {
         component.actions$.subscribe((actions) => {
           const action = actions[0]
-          action.actionCallback()
+          action.actionCallback?.()
 
           expect(locationSpy.back).toHaveBeenCalled()
         })
@@ -624,7 +624,7 @@ describe('WelcomeConfigureComponent', () => {
 
         component.actions$.subscribe((actions) => {
           const action = actions[1]
-          action.actionCallback()
+          action.actionCallback?.()
 
           expect(action.showCondition).toBeTrue()
           expect(component.onExport).toHaveBeenCalled()
@@ -649,7 +649,7 @@ describe('WelcomeConfigureComponent', () => {
 
         component.actions$.subscribe((actions) => {
           const action = actions[2]
-          action.actionCallback()
+          action.actionCallback?.()
 
           expect(action.showCondition).toBeTrue()
           expect(component.onImport).toHaveBeenCalled()
@@ -687,7 +687,7 @@ describe('WelcomeConfigureComponent', () => {
 
         component.actions$.subscribe((actions) => {
           const action = actions[3]
-          action.actionCallback()
+          action.actionCallback?.()
 
           expect(action.showCondition).toBeTrue()
           expect(component.onOpenCreateDialog).toHaveBeenCalled()
@@ -714,7 +714,7 @@ describe('WelcomeConfigureComponent', () => {
 
       component.actions$.subscribe((actions) => {
         const action = actions[4]
-        action.actionCallback()
+        action.actionCallback?.()
 
         expect(action.showCondition).toBeTrue()
         expect(component.onReload).toHaveBeenCalled()
@@ -740,7 +740,7 @@ describe('WelcomeConfigureComponent', () => {
 
       component.actions$.subscribe((actions) => {
         const action = actions[5]
-        action.actionCallback()
+        action.actionCallback?.()
 
         expect(action.showCondition).toBeTrue()
         expect(component.onSaveOrder).toHaveBeenCalled()
