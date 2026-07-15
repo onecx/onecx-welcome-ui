@@ -189,6 +189,21 @@
   }
 }
 
+@mixin fileupload-surface($scope-class, $divider-color: var(--p-content-border-color, #d9d9d9)) {
+  ::ng-deep .#{$scope-class}.p-fileupload-advanced {
+    --wc-fileupload-bg: var(--p-fileupload-header-background, var(--p-content-background, #f5f5f5));
+    background: var(--wc-fileupload-bg);
+  }
+
+  ::ng-deep .#{$scope-class} .p-fileupload-content {
+    background: var(--wc-fileupload-bg);
+  }
+
+  ::ng-deep .#{$scope-class} .p-fileupload-header {
+    border-bottom-color: $divider-color;
+  }
+}
+
 @mixin correct-autocomplete {
   :host ::ng-deep {
     .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
@@ -448,6 +463,22 @@
     .p-dialog .p-dialog-footer button {
       margin: 0;
     }
+  }
+}
+
+@mixin page-header-action-spacing($space: 0.5rem) {
+  ::ng-deep
+    .onecx-page-header
+    .title-bar
+    .action-items-wrap
+    [name='ocx-page-header-inline-action-icon-button']
+    + [name='ocx-page-header-inline-action-icon-button'],
+  ::ng-deep .onecx-page-header .title-bar .action-items-wrap .p-button + .p-button {
+    margin-left: $space !important;
+  }
+
+  ::ng-deep .p-menu .p-menuitem-link .p-menuitem-icon {
+    margin-right: $space !important;
   }
 }
 
