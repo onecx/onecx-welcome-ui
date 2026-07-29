@@ -14,6 +14,7 @@
       "URL.REMOVE": "Inhalt löschen",
       "URL.TOOLTIP": "Eine externe URL als Alternative zum Hochladen",
       "SELECT": "Bild auswählen",
+      "NO_FILE": "Keine Datei ausgewählt",
       "SELECT.TOOLTIP": "Ein Bild auswählen und hochladen",
       "SUCCESS": "Bild erfolgreich hinzugefügt",
       "ERROR": "Bild konnte nicht hinzugefügt werden"

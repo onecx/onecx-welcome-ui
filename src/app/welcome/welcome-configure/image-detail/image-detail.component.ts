@@ -1,6 +1,13 @@
-import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { TranslateService } from '@ngx-translate/core'
+import { Component, EventEmitter, Input, Output, OnChanges, OnDestroy } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { FormsModule, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { ButtonModule } from 'primeng/button'
+import { DialogModule } from 'primeng/dialog'
+import { FieldsetModule } from 'primeng/fieldset'
+import { SelectModule } from 'primeng/select'
+import { InputTextModule } from 'primeng/inputtext'
+import { TooltipModule } from 'primeng/tooltip'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
@@ -13,11 +20,24 @@ export interface ImageCssForm {
 }
 
 @Component({
+  standalone: true,
   selector: 'app-image-detail',
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    ButtonModule,
+    DialogModule,
+    FieldsetModule,
+    SelectModule,
+    InputTextModule,
+    TooltipModule
+  ],
   templateUrl: './image-detail.component.html',
   styleUrls: ['./image-detail.component.scss']
 })
-export class ImageDetailComponent implements OnChanges {
+export class ImageDetailComponent implements OnChanges, OnDestroy {
   @Input() public displayDialog = false
   @Input() public images: ImageDataResponse[] = []
   @Input() public imageInfos: ImageInfo[] = []
@@ -28,6 +48,7 @@ export class ImageDetailComponent implements OnChanges {
   public isChanged = false
   public formGroup: FormGroup
   public objectFitOptions = [ObjectFit.None, ObjectFit.Contain, ObjectFit.Cover, ObjectFit.Fill, ObjectFit.ScaleDown]
+  private readonly blobUrls = new Map<string, string>()
 
   constructor(
     private readonly imageApi: ImagesInternalAPIService,
@@ -43,6 +64,11 @@ export class ImageDetailComponent implements OnChanges {
 
   public ngOnChanges(): void {
     if (this.displayDialog && this.imageIndex > -1) this.fillForm()
+  }
+
+  public ngOnDestroy(): void {
+    this.blobUrls.forEach((url) => URL.revokeObjectURL(url))
+    this.blobUrls.clear()
   }
 
   // fill form - use default values if values are not yet set
@@ -63,7 +89,14 @@ export class ImageDetailComponent implements OnChanges {
       return image.imageId === imageInfo.imageId
     })
     const imageData = currentImage?.imageData
-    if (imageData instanceof Blob) return undefined
+    if (imageData instanceof Blob) {
+      if (!currentImage?.imageId) return undefined
+      const cachedBlobUrl = this.blobUrls.get(currentImage.imageId)
+      if (cachedBlobUrl) return cachedBlobUrl
+      const blobUrl = URL.createObjectURL(imageData)
+      this.blobUrls.set(currentImage.imageId, blobUrl)
+      return blobUrl
+    }
     return 'data:' + currentImage?.mimeType + ';base64,' + (imageData ?? '')
   }
 

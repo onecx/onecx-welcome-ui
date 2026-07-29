@@ -1,14 +1,21 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { CommonModule } from '@angular/common'
 import { HttpHeaders } from '@angular/common/http'
-import { TranslateService } from '@ngx-translate/core'
-import { FileSelectEvent } from 'primeng/fileupload'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { ButtonModule } from 'primeng/button'
+import { DialogModule } from 'primeng/dialog'
+import { FileSelectEvent, FileUploadModule } from 'primeng/fileupload'
+import { MessageModule } from 'primeng/message'
+import { TooltipModule } from 'primeng/tooltip'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import { ConfigExportImportAPIService, WelcomeSnapshot } from 'src/app/shared/generated'
 
 @Component({
+  standalone: true,
   selector: 'app-welcome-import',
+  imports: [CommonModule, TranslateModule, ButtonModule, DialogModule, FileUploadModule, MessageModule, TooltipModule],
   templateUrl: './welcome-import.component.html',
   styleUrls: ['./welcome-import.component.scss']
 })
