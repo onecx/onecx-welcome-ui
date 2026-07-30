@@ -1,6 +1,6 @@
+import { ComponentFixture, fakeAsync, TestBed, tick, discardPeriodicTasks, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { ComponentFixture, fakeAsync, TestBed, tick, discardPeriodicTasks, waitForAsync } from '@angular/core/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
 
@@ -46,10 +46,7 @@ describe('WelcomeOverviewComponent', () => {
   }
   const lang$ = new BehaviorSubject<string>('de')
   const profile$ = new BehaviorSubject<any>({})
-  const mockUserService = {
-    lang$,
-    profile$
-  }
+  const mockUserService = { lang$, profile$ }
   const slotServiceSpy = {
     isSomeComponentDefinedForSlot: jasmine.createSpy('isSomeComponentDefinedForSlot').and.returnValue(of(true))
   }
@@ -74,10 +71,19 @@ describe('WelcomeOverviewComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: SlotService, useValue: slotServiceSpy },
+        { provide: UserService, useValue: mockUserService },
+        { provide: PortalMessageService, useValue: msgServiceSpy },
+        { provide: ImagesInternalAPIService, useValue: imageServiceSpy },
         { provide: PermissionService, useValue: { hasPermission: () => of(true), getPermissions: () => of([]) } },
         { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } }
       ]
     })
+      .overrideComponent(WelcomeOverviewComponent, {
+        set: {
+          template: '<div></div>'
+        }
+      })
+      /*
       .overrideComponent(WelcomeOverviewComponent, {
         add: {
           providers: [
@@ -86,20 +92,21 @@ describe('WelcomeOverviewComponent', () => {
             { provide: ImagesInternalAPIService, useValue: imageServiceSpy }
           ]
         }
-      })
+      }) */
       .compileComponents()
   }))
 
   beforeEach(() => {
-    // reset spy BEFORE creating component so initTestComponent uses neutral value
+    initTestComponent()
+    // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
     imageServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
-    imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of({}))
     imageServiceSpy.getImageById.calls.reset()
-    imageServiceSpy.getImageById.and.returnValue(of({}))
+    ;(component as any).imageService = imageServiceSpy
+    ;(component as any).msgService = msgServiceSpy
+    // default data
     lang$.next('de')
-    initTestComponent()
   })
 
   it('should create', (done) => {
