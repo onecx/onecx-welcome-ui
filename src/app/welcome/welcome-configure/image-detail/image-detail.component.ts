@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, OnChanges, OnDestroy } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { NgIf, NgStyle } from '@angular/common'
 import { FormsModule, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 
@@ -25,7 +25,8 @@ export interface ImageCssForm {
   selector: 'app-image-detail',
   standalone: true,
   imports: [
-    CommonModule,
+    NgIf,
+    NgStyle,
     ButtonModule,
     DialogModule,
     FieldsetModule,

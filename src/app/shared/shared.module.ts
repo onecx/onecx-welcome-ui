@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 
@@ -32,7 +31,6 @@ import { LabelResolver } from './label.resolver'
     AngularRemoteComponentsModule,
     ButtonModule,
     CarouselModule,
-    CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
     DataViewModule,
@@ -55,7 +53,6 @@ import { LabelResolver } from './label.resolver'
     AngularRemoteComponentsModule,
     ButtonModule,
     CarouselModule,
-    CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
     DataViewModule,

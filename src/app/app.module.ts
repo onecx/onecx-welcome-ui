@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { RouterModule, Routes } from '@angular/router'
 import { BrowserModule } from '@angular/platform-browser'
@@ -30,7 +29,6 @@ const routes: Routes = [
   bootstrap: [AppComponent],
   imports: [
     AppComponent,
-    CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
     AngularAuthModule,

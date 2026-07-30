@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { NgIf } from '@angular/common'
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import { filter, take } from 'rxjs'
@@ -20,7 +20,7 @@ import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
   standalone: true,
   selector: 'app-image-create',
   imports: [
-    CommonModule,
+    NgIf,
     ButtonModule,
     DialogModule,
     FileUploadModule,
