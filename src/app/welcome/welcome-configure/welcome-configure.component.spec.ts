@@ -80,7 +80,7 @@ const imageDTO: WelcomeSnapshot = {
   }
 }
 
-fdescribe('WelcomeConfigureComponent', () => {
+describe('WelcomeConfigureComponent', () => {
   let component: WelcomeConfigureComponent
   let fixture: ComponentFixture<WelcomeConfigureComponent>
   let appStateSubject: BehaviorSubject<Workspace | undefined>
@@ -126,15 +126,10 @@ fdescribe('WelcomeConfigureComponent', () => {
         { provide: Location, useValue: locationSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: PermissionService, useValue: { hasPermission: () => of(true), getPermissions: () => of([]) } },
-        { provide: ImagesInternalAPIService, useValue: imageServiceSpy },
-        { provide: ConfigExportImportAPIService, useValue: eximServiceSpy },
         { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } },
         { provide: UserService, useValue: { lang$: langSubject, profile$: new BehaviorSubject<any>({}) } }
       ]
     })
-      /*
-      .overrideProvider(ImagesInternalAPIService, { useValue: imageServiceSpy })
-      .overrideProvider(ConfigExportImportAPIService, { useValue: eximServiceSpy })
       .overrideComponent(WelcomeConfigureComponent, {
         set: {
           providers: [
@@ -143,7 +138,7 @@ fdescribe('WelcomeConfigureComponent', () => {
           ],
           template: '<div></div>'
         }
-      }) */
+      })
       .compileComponents()
   }))
 
