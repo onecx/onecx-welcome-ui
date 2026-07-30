@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
-import { CommonModule, Location } from '@angular/common'
+import { AsyncPipe, NgFor, NgIf, NgStyle, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, filter, finalize, map, Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs'
 import FileSaver from 'file-saver'
@@ -28,8 +28,11 @@ import { WelcomeImportComponent } from './welcome-import/welcome-import.componen
   standalone: true,
   selector: 'app-welcome-configure',
   imports: [
+    AsyncPipe,
+    NgFor,
+    NgIf,
+    NgStyle,
     AngularAcceleratorModule,
-    CommonModule,
     ButtonModule,
     TooltipModule,
     TranslateModule,

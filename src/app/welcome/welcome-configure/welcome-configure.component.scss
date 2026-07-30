@@ -1,4 +1,4 @@
-@import '/src/app/_wc-mixins.scss';
+@use 'src/app/_wc-mixins.scss' as *;
 
 @include danger-action;
 @include card-with-more-contrast;

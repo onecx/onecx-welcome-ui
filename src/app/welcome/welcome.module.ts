@@ -4,7 +4,6 @@ import { RouterModule, Routes } from '@angular/router'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { PortalPageComponent } from '@onecx/angular-utils'
 
-import { SharedModule } from '../shared/shared.module'
 import { LabelResolver } from 'src/app/shared/label.resolver'
 
 import { WelcomeOverviewComponent } from './welcome-overview/welcome-overview.component'
@@ -37,7 +36,6 @@ const routes: Routes = [
     AngularAcceleratorModule,
     PortalPageComponent,
     [RouterModule.forChild(routes)],
-    SharedModule,
     WelcomeOverviewComponent,
     WelcomeConfigureComponent,
     WelcomeImportComponent,

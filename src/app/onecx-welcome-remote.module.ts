@@ -1,6 +1,5 @@
 import { DoBootstrap, Injector, NgModule, inject, provideAppInitializer } from '@angular/core'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations'
 import { RouterModule, Routes, Router } from '@angular/router'
 import { TranslateLoader, TranslateModule, MissingTranslationHandler } from '@ngx-translate/core'
@@ -20,6 +19,7 @@ import { AppStateService, ConfigurationService } from '@onecx/angular-integratio
 import { provideTranslateServiceForRoot, SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 
 import { Configuration } from './shared/generated'
+import { LabelResolver } from './shared/label.resolver'
 import { environment } from 'src/environments/environment'
 import { AppEntrypointComponent } from './app-entrypoint.component'
 
@@ -36,14 +36,14 @@ const routes: Routes = [
 @NgModule({
   imports: [
     AppEntrypointComponent,
-    AngularAuthModule,
-    BrowserModule,
-    BrowserAnimationsModule,
     AngularAcceleratorModule,
+    AngularAuthModule,
+    BrowserAnimationsModule,
     RouterModule.forRoot(routes),
     TranslateModule
   ],
   providers: [
+    LabelResolver,
     provideAnimations(),
     provideAngularUtils(),
     provideTranslationConnectionService(),
@@ -65,9 +65,7 @@ const routes: Routes = [
   ]
 })
 export class OneCXWelcomeModule implements DoBootstrap {
-  constructor(private readonly injector: Injector) {
-    console.info('OneCX Welcome Module constructor')
-  }
+  private readonly injector = inject(Injector)
 
   ngDoBootstrap(): void {
     createAppEntrypoint(AppEntrypointComponent, 'ocx-welcome-component', this.injector)

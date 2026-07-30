@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { AsyncPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common'
 import { animate, style, transition, trigger } from '@angular/animations'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, filter, map, Observable, of, Subject, Subscription, take, takeUntil, timer } from 'rxjs'
@@ -19,7 +19,11 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
   selector: 'app-welcome-overview',
   standalone: true,
   imports: [
-    CommonModule,
+    AsyncPipe,
+    NgClass,
+    NgFor,
+    NgIf,
+    NgStyle,
     TranslateModule,
     DockModule,
     AngularAcceleratorModule,
