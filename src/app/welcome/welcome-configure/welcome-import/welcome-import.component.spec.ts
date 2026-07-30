@@ -1,10 +1,9 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideRouter } from '@angular/router'
-import { of, throwError } from 'rxjs'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+import { of, throwError } from 'rxjs'
 import { FileSelectEvent } from 'primeng/fileupload'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
@@ -65,7 +64,6 @@ describe('WelcomeImportComponent', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
-      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
