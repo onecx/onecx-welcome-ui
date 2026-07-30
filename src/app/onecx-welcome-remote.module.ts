@@ -9,7 +9,6 @@ import { AngularAuthModule } from '@onecx/angular-auth'
 import {
   createTranslateLoader,
   MultiLanguageMissingTranslationHandler,
-  PortalApiConfiguration,
   provideAngularUtils,
   provideThemeConfig,
   provideTranslationPathFromMeta

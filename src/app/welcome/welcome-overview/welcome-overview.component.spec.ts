@@ -7,6 +7,7 @@ import { BehaviorSubject, of, throwError } from 'rxjs'
 import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import { PermissionService } from '@onecx/angular-utils'
+import { SlotService } from '@onecx/angular-remote-components'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 import { WelcomeOverviewComponent } from './welcome-overview.component'
@@ -39,7 +40,7 @@ describe('WelcomeOverviewComponent', () => {
   let fixture: ComponentFixture<WelcomeOverviewComponent>
   let appStateSubject: BehaviorSubject<Workspace | undefined>
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
-  const apiServiceSpy = {
+  const imageServiceSpy = {
     getAllImageInfosByWorkspaceName: jasmine.createSpy('getAllImageInfosByWorkspaceName').and.returnValue(of({})),
     getImageById: jasmine.createSpy('getImageById').and.returnValue(of({}))
   }
@@ -48,6 +49,15 @@ describe('WelcomeOverviewComponent', () => {
   const mockUserService = {
     lang$,
     profile$
+  }
+  const slotServiceSpy = {
+    isSomeComponentDefinedForSlot: jasmine.createSpy('isSomeComponentDefinedForSlot').and.returnValue(of(true))
+  }
+
+  function initTestComponent(): void {
+    fixture = TestBed.createComponent(WelcomeOverviewComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
   }
 
   beforeEach(waitForAsync(() => {
@@ -63,35 +73,33 @@ describe('WelcomeOverviewComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: UserService, useValue: mockUserService },
+        { provide: SlotService, useValue: slotServiceSpy },
         { provide: PermissionService, useValue: { hasPermission: () => of(true), getPermissions: () => of([]) } },
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
         { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } }
       ]
     })
-      .overrideProvider(ImagesInternalAPIService, { useValue: apiServiceSpy })
-      .overrideProvider(UserService, { useValue: mockUserService })
       .overrideComponent(WelcomeOverviewComponent, {
-        set: {
-          providers: [{ provide: ImagesInternalAPIService, useValue: apiServiceSpy }],
-          template: '<div></div>'
+        add: {
+          providers: [
+            { provide: UserService, useValue: mockUserService },
+            { provide: PortalMessageService, useValue: msgServiceSpy },
+            { provide: ImagesInternalAPIService, useValue: imageServiceSpy }
+          ]
         }
       })
       .compileComponents()
-    // reset
-    msgServiceSpy.success.calls.reset()
-    msgServiceSpy.error.calls.reset()
-    apiServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
-    apiServiceSpy.getImageById.calls.reset()
-    // default data
-    lang$.next('de')
   }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(WelcomeOverviewComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
+    // reset spy BEFORE creating component so initTestComponent uses neutral value
+    msgServiceSpy.success.calls.reset()
+    msgServiceSpy.error.calls.reset()
+    imageServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
+    imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of({}))
+    imageServiceSpy.getImageById.calls.reset()
+    imageServiceSpy.getImageById.and.returnValue(of({}))
+    lang$.next('de')
+    initTestComponent()
   })
 
   it('should create', (done) => {
@@ -106,7 +114,7 @@ describe('WelcomeOverviewComponent', () => {
   })
 
   it('should set workspace and load images when workspace becomes available', () => {
-    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of([]))
+    imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of([]))
     spyOn<any>(component, 'getImages')
 
     appStateSubject.next(ws)
@@ -131,7 +139,7 @@ describe('WelcomeOverviewComponent', () => {
       })
 
       it('should get infos for all images', (done) => {
-        apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
+        imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
 
         component['getImages']()
 
@@ -146,7 +154,7 @@ describe('WelcomeOverviewComponent', () => {
 
       it('should handle error when fetching imageinfos', (done) => {
         const errorResponse = { status: 404, statusText: 'Not Found' }
-        apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => errorResponse))
+        imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => errorResponse))
         spyOn(console, 'error')
 
         component['getImages']()
@@ -168,13 +176,13 @@ describe('WelcomeOverviewComponent', () => {
 
       component['fetchImages'](imageInfos)
 
-      expect(apiServiceSpy.getImageById).not.toHaveBeenCalled()
+      expect(imageServiceSpy.getImageById).not.toHaveBeenCalled()
     })
 
     it('should not fetch images if no image info is available', () => {
       component['fetchImages']([])
 
-      expect(apiServiceSpy.getImageById).not.toHaveBeenCalled()
+      expect(imageServiceSpy.getImageById).not.toHaveBeenCalled()
     })
 
     it('should not fetch images if no image to loaded is available', () => {
@@ -183,13 +191,13 @@ describe('WelcomeOverviewComponent', () => {
 
       component['fetchImages'](iInfos)
 
-      expect(apiServiceSpy.getImageById).not.toHaveBeenCalled()
+      expect(imageServiceSpy.getImageById).not.toHaveBeenCalled()
       expect(component['setCarousel']).toHaveBeenCalled()
     })
 
     it('should get data for one image', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
-      apiServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
+      imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
       component.currentImage = -1
 
       component['fetchImages'](imageInfos)
@@ -199,7 +207,7 @@ describe('WelcomeOverviewComponent', () => {
 
     it('should get data for one image', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
-      apiServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
+      imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
       component.currentImage = 0
 
       component['fetchImages'](imageInfos)
