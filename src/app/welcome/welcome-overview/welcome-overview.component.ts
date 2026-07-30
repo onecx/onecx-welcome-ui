@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
-import { animate, style, transition, trigger } from '@angular/animations'
 import { CommonModule } from '@angular/common'
+import { animate, style, transition, trigger } from '@angular/animations'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, filter, map, Observable, of, Subject, Subscription, take, takeUntil, timer } from 'rxjs'
+
 import { MenuItem } from 'primeng/api'
 import { DockModule } from 'primeng/dock'
 
@@ -15,8 +16,8 @@ import { PortalPageComponent } from '@onecx/angular-utils'
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
 
 @Component({
-  standalone: true,
   selector: 'app-welcome-overview',
+  standalone: true,
   imports: [
     CommonModule,
     TranslateModule,
@@ -26,7 +27,7 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
     PortalPageComponent
   ],
   templateUrl: './welcome-overview.component.html',
-  styleUrls: ['./welcome-overview.component.scss'],
+  styleUrl: './welcome-overview.component.scss',
   animations: [
     trigger('carouselAnimation', [
       transition('void => *', [style({ opacity: 0 }), animate('500ms', style({ opacity: 1 }))]),

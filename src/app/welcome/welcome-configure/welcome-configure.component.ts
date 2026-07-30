@@ -13,13 +13,13 @@ import { AppStateService, PortalMessageService } from '@onecx/angular-integratio
 import { PortalPageComponent } from '@onecx/angular-utils'
 
 import { getCurrentDateTime } from 'src/app/shared/utils'
-
 import {
   ImageDataResponse,
   ImageInfo,
   ImagesInternalAPIService,
   ConfigExportImportAPIService
 } from 'src/app/shared/generated'
+
 import { ImageCreateComponent } from './image-create/image-create.component'
 import { ImageDetailComponent } from './image-detail/image-detail.component'
 import { WelcomeImportComponent } from './welcome-import/welcome-import.component'
