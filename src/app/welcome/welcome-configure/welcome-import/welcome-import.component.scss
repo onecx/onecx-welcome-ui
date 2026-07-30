@@ -1,4 +1,4 @@
-@import 'src/app/_wc-mixins.scss';
+@use 'src/app/_wc-mixins.scss' as *;
 
 @include dialog-modal-dialog-content;
 @include dialog-non-full-size-modal;

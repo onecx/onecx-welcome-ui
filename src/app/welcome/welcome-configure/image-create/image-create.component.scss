@@ -1,4 +1,4 @@
-@import 'src/app/_wc-mixins.scss';
+@use 'src/app/_wc-mixins.scss' as *;
 
 @include ocx-text-responsive;
 @include ocx-required-label;

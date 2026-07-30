@@ -19,6 +19,7 @@ import { AppStateService, ConfigurationService } from '@onecx/angular-integratio
 import { provideTranslateServiceForRoot, SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 
 import { Configuration } from './shared/generated'
+import { LabelResolver } from './shared/label.resolver'
 import { environment } from 'src/environments/environment'
 import { AppEntrypointComponent } from './app-entrypoint.component'
 
@@ -42,6 +43,7 @@ const routes: Routes = [
     TranslateModule
   ],
   providers: [
+    LabelResolver,
     provideAnimations(),
     provideAngularUtils(),
     provideTranslationConnectionService(),
