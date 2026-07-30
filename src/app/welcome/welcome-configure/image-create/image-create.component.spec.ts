@@ -1,13 +1,10 @@
-import { ComponentFixture, fakeAsync, flush, TestBed, waitForAsync } from '@angular/core/testing'
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { By } from '@angular/platform-browser'
-import { BrowserAnimationsModule, provideNoopAnimations } from '@angular/platform-browser/animations'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
-
-import { ButtonModule } from 'primeng/button'
-import { DialogModule } from 'primeng/dialog'
 
 import { AppStateService, PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
