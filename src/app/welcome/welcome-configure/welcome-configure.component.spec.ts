@@ -19,7 +19,6 @@ import {
   ObjectFit
 } from 'src/app/shared/generated'
 import { WelcomeConfigureComponent } from './welcome-configure.component'
-import { ImageCreateComponent } from './image-create/image-create.component'
 
 const ws: Workspace = {
   workspaceName: 'wsName',
@@ -108,7 +107,6 @@ describe('WelcomeConfigureComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         WelcomeConfigureComponent,
-        ImageCreateComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -118,10 +116,10 @@ describe('WelcomeConfigureComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: Location, useValue: locationSpy },
-        { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } },
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: PermissionService, useValue: { hasPermission: () => of(true), getPermissions: () => of([]) } },
         { provide: UserService, useValue: { lang$: langSubject, profile$: new BehaviorSubject<any>({}) } },
+        { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } },
+        { provide: PermissionService, useValue: { hasPermission: () => of(true), getPermissions: () => of([]) } },
+        { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: imageServiceSpy },
         { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
       ]

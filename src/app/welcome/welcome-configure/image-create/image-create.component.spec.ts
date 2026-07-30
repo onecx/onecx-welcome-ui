@@ -45,18 +45,12 @@ describe('ImageCreateComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideNoopAnimations(),
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
         { provide: UserService, useValue: mockUserService },
-        { provide: AppStateService, useValue: appStateServiceSpy }
+        { provide: AppStateService, useValue: appStateServiceSpy },
+        { provide: PortalMessageService, useValue: msgServiceSpy },
+        { provide: ImagesInternalAPIService, useValue: apiServiceSpy }
       ]
-    })
-      .overrideComponent(ImageCreateComponent, {
-        add: {
-          providers: [{ provide: ImagesInternalAPIService, useValue: apiServiceSpy }]
-        }
-      })
-      .compileComponents()
+    }).compileComponents()
   }))
 
   beforeEach(() => {

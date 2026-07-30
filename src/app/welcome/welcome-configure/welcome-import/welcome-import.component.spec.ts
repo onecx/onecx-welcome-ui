@@ -74,13 +74,10 @@ describe('WelcomeImportComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([{ path: '', component: WelcomeImportComponent }]),
-        { provide: PortalMessageService, useValue: msgServiceSpy }
+        { provide: PortalMessageService, useValue: msgServiceSpy },
+        { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
       ]
-    })
-      .overrideComponent(WelcomeImportComponent, {
-        add: { providers: [{ provide: ConfigExportImportAPIService, useValue: eximServiceSpy }] }
-      })
-      .compileComponents()
+    }).compileComponents()
   }))
 
   beforeEach(() => {

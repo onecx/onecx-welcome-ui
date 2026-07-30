@@ -72,10 +72,10 @@ describe('WelcomeOverviewComponent', () => {
         provideHttpClientTesting(),
         { provide: SlotService, useValue: slotServiceSpy },
         { provide: UserService, useValue: mockUserService },
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: ImagesInternalAPIService, useValue: imageServiceSpy },
+        { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } },
         { provide: PermissionService, useValue: { hasPermission: () => of(true), getPermissions: () => of([]) } },
-        { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } }
+        { provide: PortalMessageService, useValue: msgServiceSpy },
+        { provide: ImagesInternalAPIService, useValue: imageServiceSpy }
       ]
     })
       .overrideComponent(WelcomeOverviewComponent, {
