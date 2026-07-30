@@ -3,6 +3,7 @@ import { CommonModule, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, filter, finalize, map, Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs'
 import FileSaver from 'file-saver'
+
 import { ButtonModule } from 'primeng/button'
 import { TooltipModule } from 'primeng/tooltip'
 
@@ -27,11 +28,11 @@ import { WelcomeImportComponent } from './welcome-import/welcome-import.componen
   standalone: true,
   selector: 'app-welcome-configure',
   imports: [
+    AngularAcceleratorModule,
     CommonModule,
-    TranslateModule,
     ButtonModule,
     TooltipModule,
-    AngularAcceleratorModule,
+    TranslateModule,
     PortalPageComponent,
     ImageCreateComponent,
     ImageDetailComponent,

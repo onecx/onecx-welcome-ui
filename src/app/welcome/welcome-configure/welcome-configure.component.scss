@@ -3,3 +3,41 @@
 @include danger-action;
 @include card-with-more-contrast;
 @include page-header-action-spacing(0.5rem);
+
+:host ::ng-deep {
+  /* fixes for p-card */
+  --onecx-welcome-onecx-welcome-ui-card-body-padding: 0.5rem;
+  --onecx-welcome-onecx-welcome-ui-card-border-radius: 4px;
+  --onecx-welcome-onecx-welcome-ui-card-shadow: 0 1px 2px -1px #002, 0 -1px 3px #0000001f, 1px 1px 2px #0000001f;
+  /*
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+  */
+
+  .card-layout {
+    box-shadow:
+      0 1px 2px -1px #002,
+      0 -1px 3px #0000001f,
+      1px 1px 2px #0000001f;
+  }
+}
+
+/* button small */
+:host ::ng-deep .responsive-btn {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.875rem;
+  padding-block: 0.625rem;
+  padding-inline: 0.625rem;
+}
+
+/* screen size bigger than 768px: normal size */
+@media (min-width: 768px) {
+  :host ::ng-deep .responsive-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+    padding-block: 0.643rem;
+    padding-inline: 0.643rem;
+  }
+}

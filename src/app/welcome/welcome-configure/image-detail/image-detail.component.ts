@@ -2,8 +2,10 @@ import { Component, EventEmitter, Input, Output, OnChanges, OnDestroy } from '@a
 import { CommonModule } from '@angular/common'
 import { FormsModule, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
+
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
+import { FloatLabel } from 'primeng/floatlabel'
 import { FieldsetModule } from 'primeng/fieldset'
 import { SelectModule } from 'primeng/select'
 import { InputTextModule } from 'primeng/inputtext'
@@ -20,22 +22,23 @@ export interface ImageCssForm {
 }
 
 @Component({
-  standalone: true,
   selector: 'app-image-detail',
+  standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    TranslateModule,
     ButtonModule,
     DialogModule,
     FieldsetModule,
-    SelectModule,
+    FloatLabel,
+    FormsModule,
     InputTextModule,
-    TooltipModule
+    ReactiveFormsModule,
+    SelectModule,
+    TooltipModule,
+    TranslateModule
   ],
   templateUrl: './image-detail.component.html',
-  styleUrls: ['./image-detail.component.scss']
+  styleUrl: './image-detail.component.scss'
 })
 export class ImageDetailComponent implements OnChanges, OnDestroy {
   @Input() public displayDialog = false

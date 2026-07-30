@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } 
 import { CommonModule } from '@angular/common'
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
+import { filter, take } from 'rxjs'
+
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
-import { filter, take } from 'rxjs'
 import { FileUploadModule, FileUpload } from 'primeng/fileupload'
 import { FloatLabelModule } from 'primeng/floatlabel'
 import { InputTextModule } from 'primeng/inputtext'
@@ -20,14 +21,14 @@ import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
   selector: 'app-image-create',
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    TranslateModule,
     ButtonModule,
     DialogModule,
     FileUploadModule,
     FloatLabelModule,
     InputTextModule,
-    TooltipModule
+    ReactiveFormsModule,
+    TooltipModule,
+    TranslateModule
   ],
   templateUrl: './image-create.component.html',
   styleUrls: ['./image-create.component.scss']

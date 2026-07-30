@@ -9,18 +9,18 @@
 
   <ocx-content *ngIf="imageInfo$ | async as imageInfos">
     <section
-      class="m-3 md:m-4 flex flex-row flex-wrap gap-3 sm:gap-4 md:gap-5"
+      class="m-1 sm:m-2 md:m-3 flex flex-row flex-wrap gap-3 sm:gap-4 md:gap-5"
       [attr.aria-label]="'DIALOG.CONFIGURE.REGIONS.MANAGE_IMAGES' | translate"
     >
       <section
         *ngFor="let info of imageInfos; let i = index"
-        class="p-card p-1 sm:py-2 sm:px-2 amd:px-3 w-14rem h-11rem sm:w-16rem sm:h-14rem md:w-20rem md:h-18rem flex flex-column flex-nowrap ajustify-content-between row-gap-1 sm:row-gap-2"
+        class="card-layout border-round-md p-1 sm:p-2 w-14rem h-11rem sm:w-16rem sm:h-13rem md:w-20rem md:h-18rem flex flex-column flex-nowrap justify-content-between row-gap-1 sm:row-gap-2"
         [attr.aria-label]="('DIALOG.CONFIGURE.REGIONS.MANAGE_IMAGE' | translate).replace('##', i + 1)"
       >
         @let ii = i + 1;
         <a
           [id]="'wc_configure_card_item_' + ii"
-          class="p-1 flex justify-content-center align-items-center border-round border-2 sm:border-3 border-solid hover:border-400 cursor-pointer"
+          class="p-1 flex justify-content-center align-items-center border-round border-2 sm:border-2 border-solid hover:border-400 hover:border-primary cursor-pointer"
           style="border-color: transparent"
           [attr.tabindex]="0"
           (click)="onOpenDetailDialog(i)"
@@ -29,7 +29,7 @@
         >
           <img
             [id]="'wc_configure_card_item_' + i + '_image'"
-            class="w-12rem h-7rem sm:w-14rem sm:h-9rem md:w-18rem md:h-13rem"
+            class="border-round-sm w-13rem sm:w-14rem md:w-18rem h-7rem sm:h-9rem md:h-13rem"
             [ngStyle]="{
               'object-fit': info.objectFit ?? 'scale-down',
               'object-position': info.objectPosition ?? 'center center',
@@ -37,7 +37,7 @@
             }"
             [alt]="('DIALOG.DETAIL.PIC' | translate) + '_' + ii"
             [src]="buildImageSrc(info)"
-            [attr.aria-label]="'DIALOG.DETAIL.TOOLTIP' | translate"
+            [ariaLabel]="'DIALOG.DETAIL.TOOLTIP' | translate"
             [pTooltip]="'DIALOG.DETAIL.TOOLTIP' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
@@ -45,10 +45,11 @@
         </a>
         <!-- BUTTON bar - schema: (B B) .T. (B B) -->
         <div class="sm:mx-2 flex flex-row flex-nowrap justify-content-between align-items-center">
-          <div class="flex flex-row flex-nowrap justify-content-start gap-1 sm:gap-2">
+          <div class="p-1 sm:p-0 flex flex-row flex-nowrap justify-content-start gap-1 sm:gap-2">
             <p-button
               [id]="'wc_configure_card_item_' + i + '_action_visibility'"
               [icon]="info.visible ? 'pi pi-eye' : 'pi pi-eye-slash'"
+              styleClass="responsive-btn"
               (onClick)="onChangeVisibility(info)"
               [disabled]="isReordered"
               [ariaLabel]="'ACTIONS.VISIBILITY.TOOLTIP' | translate"
@@ -60,6 +61,7 @@
               ocxIfPermission="IMAGE#DELETE"
               [id]="'wc_configure_card_item_' + i + '_action_delete'"
               icon="pi pi-trash"
+              styleClass="responsive-btn"
               (onClick)="onDeleteImage(info.id, i, imageInfos)"
               [disabled]="isReordered"
               [ariaLabel]="'ACTIONS.DELETE.TOOLTIP' | translate"
@@ -73,6 +75,7 @@
             <p-button
               [id]="'wc_configure_card_item_' + ii + '_action_left'"
               icon="pi pi-arrow-left"
+              styleClass="responsive-btn"
               (onClick)="onSwapElement(imageInfos, i, i - 1)"
               [disabled]="imageInfos.length < 2"
               [ariaLabel]="'ACTIONS.REORDER.MOVE_LEFT' | translate"
@@ -84,6 +87,7 @@
             <p-button
               [id]="'wc_configure_card_item_' + ii + '_action_right'"
               icon="pi pi-arrow-right"
+              styleClass="responsive-btn"
               (onClick)="onSwapElement(imageInfos, i, i + 1)"
               [disabled]="imageInfos.length < 2"
               [ariaLabel]="'ACTIONS.REORDER.MOVE_RIGHT' | translate"
@@ -94,11 +98,12 @@
           </div>
         </div>
       </section>
+
       <section *ngIf="!this.isReordered" [attr.aria-label]="'DIALOG.CONFIGURE.REGIONS.NEW_IMAGE' | translate">
         <button
           *ngIf="imageInfos.length < maxImages"
           id="wc_configure_card_action_add"
-          class="w-14rem h-11rem sm:w-16rem sm:h-14rem md:w-20rem md:h-18rem block flex justify-content-center align-items-center border-round-lg border-3 border-dashed border-400 hover:border-primary cursor-pointer"
+          class="w-14rem h-11rem sm:w-16rem sm:h-13rem md:w-20rem md:h-18rem block flex justify-content-center align-items-center border-round-lg border-2 border-dashed border-400 hover:border-primary cursor-pointer"
           (click)="onOpenCreateDialog()"
           (keydown.enter)="onOpenCreateDialog()"
           (keydown.space)="onOpenCreateDialog()"
