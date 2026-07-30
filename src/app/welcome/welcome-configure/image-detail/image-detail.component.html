@@ -89,21 +89,23 @@
         </div>
       </p-fieldset>
     </div>
-    <p-float-label *ngIf="imageIndex > -1 && imageInfos[imageIndex].url" variant="on">
-      <input
-        pInputText
-        type="text"
-        class="w-full"
-        id="wc_detail_url"
-        [disabled]="true"
-        [(ngModel)]="imageInfos[imageIndex].url"
-        [ariaLabel]="'IMAGE.URL' | translate"
-        [pTooltip]="'IMAGE.TOOLTIPS.URL' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      />
-      <label for="wc_detail_url">{{ 'IMAGE.URL' | translate }}</label>
-    </p-float-label>
+    @if (imageIndex > -1 && imageInfos[imageIndex].url) {
+      <p-float-label variant="on">
+        <input
+          pInputText
+          type="text"
+          class="w-full"
+          id="wc_detail_url"
+          [disabled]="true"
+          [(ngModel)]="imageInfos[imageIndex].url"
+          [ariaLabel]="'IMAGE.URL' | translate"
+          [pTooltip]="'IMAGE.TOOLTIPS.URL' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        />
+        <label for="wc_detail_url">{{ 'IMAGE.URL' | translate }}</label>
+      </p-float-label>
+    }
   </div>
 
   <ng-template pTemplate="footer">
