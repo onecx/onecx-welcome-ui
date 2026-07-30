@@ -44,7 +44,7 @@
         tooltipEvent="hover"
       ></p-fileUpload>
       <div class="w-12">
-        <p-floatlabel class="w-full p-input-icon-right">
+        <p-floatlabel variant="on" class="w-full p-input-icon-right">
           <a
             *ngIf="createUrl.value !== ''"
             id="wc_image_create_form_url_action_remove"
@@ -58,7 +58,7 @@
             id="wc_image_create_form_url"
             class="w-full text-responsive"
             formControlName="url"
-            [attr.aria-label]="'ACTIONS.CREATE.URL' | translate"
+            [ariaLabel]="'ACTIONS.CREATE.URL' | translate"
             [pTooltip]="'ACTIONS.CREATE.URL.TOOLTIP' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
@@ -70,7 +70,7 @@
             formGroup.controls['url'].errors?.hasOwnProperty('srcMissing') && formGroup.controls['url'].value === ''
           "
           for="wc_image_create_form_url"
-          class="control-error"
+          class="ocx-control-error"
         >
           {{ 'VALIDATION.ERRORS.MISSING_IMG_SRC' | translate }}
         </label>

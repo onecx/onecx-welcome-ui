@@ -1,7 +1,6 @@
 @import 'src/app/_wc-mixins.scss';
 
-@include displaying-text-responsive;
-@include dialog-footer-buttons;
+@include ocx-text-responsive;
 @include dropdown-zebra-rows;
 @include compact-dropdown-list-items;
 

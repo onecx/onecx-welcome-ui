@@ -32,7 +32,7 @@
         </ng-template>
         <div [formGroup]="formGroup" class="flex flex-wrap flex-column gap-4 justify-content-between">
           <div>
-            <span class="p-float-label">
+            <p-float-label variant="on">
               <p-select
                 id="wc_detail_form_object_fit"
                 styleClass="w-full"
@@ -45,23 +45,23 @@
               >
               </p-select>
               <label for="wc_detail_form_object_fit">{{ 'IMAGE.OBJECT_FIT' | translate }}</label>
-            </span>
+            </p-float-label>
           </div>
           <div class="flex flex-column row-gap-1">
-            <span class="p-float-label">
+            <p-float-label variant="on">
               <input
                 pInputText
                 type="text"
                 class="w-full"
                 id="wc_detail_form_object_position"
                 formControlName="objectPosition"
-                [attr.aria-label]="'IMAGE.OBJECT_POSITION' | translate"
+                [ariaLabel]="'IMAGE.OBJECT_POSITION' | translate"
                 [pTooltip]="'IMAGE.TOOLTIPS.OBJECT_POSITION' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               />
               <label for="wc_detail_form_object_position">{{ 'IMAGE.OBJECT_POSITION' | translate }}</label>
-            </span>
+            </p-float-label>
             <div class="text-xs">
               {{ 'IMAGE.FORMAT' | translate }}:
               <div style="max-width: 230px">
@@ -70,26 +70,26 @@
             </div>
           </div>
           <div class="flex flex-column row-gap-1">
-            <span class="p-float-label">
+            <p-float-label variant="on">
               <input
                 pInputText
                 type="text"
                 class="w-full"
                 id="wc_detail_form_background"
                 formControlName="backgroundColor"
-                [attr.aria-label]="'IMAGE.BACKGROUND_COLOR' | translate"
+                [ariaLabel]="'IMAGE.BACKGROUND_COLOR' | translate"
                 [pTooltip]="'IMAGE.TOOLTIPS.BACKGROUND_COLOR' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               />
               <label for="wc_detail_form_background">{{ 'IMAGE.BACKGROUND_COLOR' | translate }}</label>
-            </span>
+            </p-float-label>
             <div class="text-xs">{{ 'IMAGE.FORMAT' | translate }}: [ <b>unset</b> | color-name | color-value ]</div>
           </div>
         </div>
       </p-fieldset>
     </div>
-    <span *ngIf="imageIndex > -1 && imageInfos[imageIndex].url" class="p-float-label">
+    <p-float-label *ngIf="imageIndex > -1 && imageInfos[imageIndex].url" variant="on">
       <input
         pInputText
         type="text"
@@ -97,50 +97,50 @@
         id="wc_detail_url"
         [disabled]="true"
         [(ngModel)]="imageInfos[imageIndex].url"
-        [attr.aria-label]="'IMAGE.URL' | translate"
+        [ariaLabel]="'IMAGE.URL' | translate"
         [pTooltip]="'IMAGE.TOOLTIPS.URL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       />
       <label for="wc_detail_url">{{ 'IMAGE.URL' | translate }}</label>
-    </span>
+    </p-float-label>
   </div>
 
   <ng-template pTemplate="footer">
-    <div class="w-full flex flex-wrap align-items-center row-gap-2">
-      <div class="flex flex-wrap justify-content-start gap-2 mb-1">
+    <div class="w-full flex flex-wrap justify-content-between align-items-center row-gap-2">
+      <div class="flex flex-wrap justify-content-start align-items-center gap-4 mb-1">
         <p-button
           id="wc_image_detail_action_prev"
           icon="pi pi-caret-left"
           (onClick)="onNavigateToImage(imageIndex - 1)"
           [disabled]="imageInfos.length < 2"
           [label]="'ACTIONS.NAVIGATION.BACK' | translate"
-          [attr.aria-label]="'ACTIONS.NAVIGATION.BACK.IMAGE.TOOLTIP' | translate"
+          [ariaLabel]="'ACTIONS.NAVIGATION.BACK.IMAGE.TOOLTIP' | translate"
           [pTooltip]="'ACTIONS.NAVIGATION.BACK.IMAGE.TOOLTIP' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
         ></p-button>
+        <div class="font-bold">{{ imageIndex + 1 }} / {{ imageInfos.length }}</div>
         <p-button
           id="wc_image_detail_action_next"
           icon="pi pi-caret-right"
           (onClick)="onNavigateToImage(imageIndex + 1)"
           [disabled]="imageInfos.length < 2"
           [label]="'ACTIONS.NAVIGATION.NEXT' | translate"
-          [attr.aria-label]="'ACTIONS.NAVIGATION.NEXT.IMAGE.TOOLTIP' | translate"
+          [ariaLabel]="'ACTIONS.NAVIGATION.NEXT.IMAGE.TOOLTIP' | translate"
           [pTooltip]="'ACTIONS.NAVIGATION.NEXT.IMAGE.TOOLTIP' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
         ></p-button>
       </div>
-      <div class="ml-auto flex flex-wrap align-items-center justify-content-end gap-2 mb-1">
-        <div class="text-sm">{{ imageIndex + 1 }} / {{ imageInfos.length }}</div>
+      <div class="aml-auto flex flex-wrap align-items-center justify-content-end gap-2 mb-1">
         <div class="flex flex-wrap justify-content-end gap-2">
           <p-button
             id="wc_image_detail_action_close"
             icon="pi pi-times"
             (onClick)="onDialogHide()"
             [label]="'ACTIONS.CLOSE' | translate"
-            [attr.aria-label]="'ACTIONS.CLOSE' | translate"
+            [ariaLabel]="'ACTIONS.CLOSE' | translate"
             [pTooltip]="'ACTIONS.TOOLTIPS.CLOSE' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
@@ -150,7 +150,7 @@
             icon="pi pi-save"
             (onClick)="onSave()"
             [label]="'ACTIONS.SAVE.LABEL' | translate"
-            [attr.aria-label]="'ACTIONS.SAVE.LABEL' | translate"
+            [ariaLabel]="'ACTIONS.SAVE.LABEL' | translate"
             [pTooltip]="'ACTIONS.SAVE.TOOLTIP' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
