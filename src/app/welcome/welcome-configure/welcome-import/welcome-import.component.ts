@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
 import { HttpHeaders } from '@angular/common/http'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 
@@ -20,6 +20,10 @@ import { ConfigExportImportAPIService, WelcomeSnapshot } from 'src/app/shared/ge
   styleUrl: './welcome-import.component.scss'
 })
 export class WelcomeImportComponent implements OnInit {
+  private readonly eximApi = inject(ConfigExportImportAPIService)
+  private readonly translate = inject(TranslateService)
+  private readonly msgService = inject(PortalMessageService)
+
   @Input() workspaceName: string | undefined
   @Input() displayDialog = false
   @Output() public importEmitter = new EventEmitter<boolean>()
@@ -27,12 +31,6 @@ export class WelcomeImportComponent implements OnInit {
   public importError = false
   public httpHeaders!: HttpHeaders
   private config: WelcomeSnapshot | undefined
-
-  constructor(
-    private readonly eximApi: ConfigExportImportAPIService,
-    private readonly translate: TranslateService,
-    private readonly msgService: PortalMessageService
-  ) {}
 
   public ngOnInit(): void {
     this.httpHeaders = new HttpHeaders()

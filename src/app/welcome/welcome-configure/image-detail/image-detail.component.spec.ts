@@ -63,10 +63,13 @@ describe('ImageDetailComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideNoopAnimations(),
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: ImagesInternalAPIService, useValue: imageServiceSpy }
+        { provide: PortalMessageService, useValue: msgServiceSpy }
       ]
-    }).compileComponents()
+    })
+      .overrideComponent(ImageDetailComponent, {
+        add: { providers: [{ provide: ImagesInternalAPIService, useValue: imageServiceSpy }] }
+      })
+      .compileComponents()
   }))
 
   beforeEach(() => {

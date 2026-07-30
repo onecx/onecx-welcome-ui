@@ -9,7 +9,7 @@ import { DockModule } from 'primeng/dock'
 
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { AngularRemoteComponentsModule, SlotService } from '@onecx/angular-remote-components'
-import { UserProfile, Workspace } from '@onecx/integration-interface'
+import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { PortalPageComponent } from '@onecx/angular-utils'
 
@@ -38,6 +38,12 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
   ]
 })
 export class WelcomeOverviewComponent implements OnInit, OnDestroy {
+  private readonly userService = inject(UserService)
+  private readonly slotService = inject(SlotService)
+  private readonly translate = inject(TranslateService)
+  private readonly imageService = inject(ImagesInternalAPIService)
+  private readonly appStateService = inject(AppStateService)
+
   private readonly destroy$ = new Subject<void>()
   private readonly blobUrls = new Map<string, string>()
   // dialog
@@ -47,29 +53,16 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
   public currentDate = new Date()
   public dockItems$: Observable<MenuItem[]> = of([])
   // data
-  public user$: Observable<UserProfile>
+  public user$ = this.userService.profile$.asObservable()
   public workspace: Workspace | undefined
   public subscription: Subscription | undefined
   public images: ImageDataResponse[] = []
   public imageInfo$: Observable<ImageInfo[]> = of([])
   // slot
-  public isAnnouncementListComponentAvailable$: Observable<boolean>
-  public isBookmarkListComponentAvailable$: Observable<boolean>
   public bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public listActiveSlotName = 'onecx-welcome-list-active'
-
-  private readonly appStateService = inject(AppStateService)
-
-  constructor(
-    private readonly userService: UserService,
-    private readonly slotService: SlotService,
-    private readonly translate: TranslateService,
-    private readonly imageService: ImagesInternalAPIService
-  ) {
-    this.user$ = this.userService.profile$.asObservable()
-    this.isAnnouncementListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.listActiveSlotName)
-    this.isBookmarkListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.bookmarkListSlotName)
-  }
+  public isAnnouncementListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.listActiveSlotName)
+  public isBookmarkListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.bookmarkListSlotName)
 
   ngOnInit(): void {
     this.prepareDockItems()
