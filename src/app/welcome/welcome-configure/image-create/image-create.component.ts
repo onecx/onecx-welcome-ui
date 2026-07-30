@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, inject } from '@angular/core'
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms'
+import { AbstractControl, FormBuilder, FormControl, ReactiveFormsModule, ValidatorFn } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import { filter, take } from 'rxjs'
 
@@ -44,7 +44,7 @@ export class ImageCreateComponent implements OnInit, OnChanges {
   @ViewChild('fileUpload', { static: true }) fileUpload?: FileUpload
 
   public isLoading = false
-  formGroup = this.fb.nonNullable.group({
+  public formGroup = this.fb.nonNullable.group({
     url: new FormControl<string | null>(null, this.imageSrcValidator()),
     image: new FormControl(null)
   })

@@ -9,7 +9,7 @@ import { DockModule } from 'primeng/dock'
 
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { AngularRemoteComponentsModule, SlotService } from '@onecx/angular-remote-components'
-import { UserProfile, Workspace } from '@onecx/integration-interface'
+import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { PortalPageComponent } from '@onecx/angular-utils'
 
