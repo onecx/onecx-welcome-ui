@@ -9,7 +9,6 @@ import { AngularAuthModule } from '@onecx/angular-auth'
 import {
   createTranslateLoader,
   MultiLanguageMissingTranslationHandler,
-  provideAngularUtils,
   provideThemeConfig,
   provideTranslationPathFromMeta
 } from '@onecx/angular-utils'
@@ -49,16 +48,15 @@ const routes: Routes = [
     })
   ],
   providers: [
-    LabelResolver,
-    provideAngularUtils(),
     ConfigurationService,
-    { provide: Configuration, useFactory: apiConfigProvider, deps: [ConfigurationService, AppStateService] },
+    LabelResolver,
+    { provide: Configuration, useFactory: apiConfigProvider },
     provideAppInitializer(() => {
       const initializerFn = initializeRouter(inject(Router), inject(AppStateService))
       return initializerFn()
     }),
-    provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     provideHttpClient(withInterceptorsFromDi()),
+    provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     provideThemeConfig()
   ]
 })

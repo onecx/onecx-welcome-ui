@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core'
+import { Component, inject, OnDestroy, OnInit } from '@angular/core'
 import { AsyncPipe, NgStyle, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, filter, finalize, map, Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs'
@@ -60,13 +60,14 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   public imageInfos: ImageInfo[] = []
   public imageInfo$: Observable<ImageInfo[]> = of([])
 
+  private readonly appStateService = inject(AppStateService)
+
   constructor(
     private readonly imageService: ImagesInternalAPIService,
     private readonly eximService: ConfigExportImportAPIService,
     private readonly msgService: PortalMessageService,
     private readonly location: Location,
-    private readonly translate: TranslateService,
-    private readonly appStateService: AppStateService
+    private readonly translate: TranslateService
   ) {}
 
   public ngOnInit(): void {

@@ -2,15 +2,13 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { Location } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { ActivatedRoute } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
 import FileSaver from 'file-saver'
 
-import { BreadcrumbService } from '@onecx/angular-accelerator'
+import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import { PermissionService } from '@onecx/angular-utils'
-import { Workspace } from '@onecx/integration-interface'
 
 import {
   ImageDataResponse,
@@ -86,10 +84,9 @@ describe('WelcomeConfigureComponent', () => {
   let appStateSubject: BehaviorSubject<Workspace | undefined>
   let langSubject: BehaviorSubject<string>
 
-  const mockActivatedRoute = { snapshot: { data: {} } }
   const locationSpy = jasmine.createSpyObj<Location>('Location', ['back'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
-  const imageServiceSpy = {
+  const apiServiceSpy = {
     getAllImageInfosByWorkspaceName: jasmine.createSpy('getAllImageInfosByWorkspaceName').and.returnValue(of([])),
     getImageById: jasmine.createSpy('getImageById').and.returnValue(of({})),
     deleteImageInfoById: jasmine.createSpy('deleteImageInfoById').and.returnValue(of({})),
@@ -98,12 +95,6 @@ describe('WelcomeConfigureComponent', () => {
   }
   const eximServiceSpy = {
     exportConfiguration: jasmine.createSpy('exportConfiguration').and.returnValue(of({}))
-  }
-
-  function initializeTestComponent() {
-    fixture = TestBed.createComponent(WelcomeConfigureComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
   }
 
   beforeEach(waitForAsync(() => {
@@ -121,41 +112,38 @@ describe('WelcomeConfigureComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        BreadcrumbService,
-        { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: Location, useValue: locationSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: PermissionService, useValue: { hasPermission: () => of(true), getPermissions: () => of([]) } },
+        { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
+        { provide: ConfigExportImportAPIService, useValue: eximServiceSpy },
         { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } },
         { provide: UserService, useValue: { lang$: langSubject, profile$: new BehaviorSubject<any>({}) } }
       ]
     })
       .overrideComponent(WelcomeConfigureComponent, {
         set: {
-          providers: [
-            { provide: ImagesInternalAPIService, useValue: imageServiceSpy },
-            { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
-          ],
           template: '<div></div>'
         }
       })
       .compileComponents()
-  }))
-
-  beforeEach(() => {
-    initializeTestComponent()
     // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
-    imageServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
-    imageServiceSpy.getImageById.calls.reset()
-    imageServiceSpy.deleteImageInfoById.calls.reset()
-    imageServiceSpy.updateImageInfo.calls.reset()
-    imageServiceSpy.updateImageOrder.calls.reset()
+    apiServiceSpy.getAllImageInfosByWorkspaceName.calls.reset()
+    apiServiceSpy.getImageById.calls.reset()
+    apiServiceSpy.deleteImageInfoById.calls.reset()
+    apiServiceSpy.updateImageInfo.calls.reset()
     eximServiceSpy.exportConfiguration.calls.reset()
-    ;(component as any).imageService = imageServiceSpy
+  }))
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(WelcomeConfigureComponent)
+    component = fixture.componentInstance
+    ;(component as any).imageService = apiServiceSpy
     ;(component as any).eximService = eximServiceSpy
     ;(component as any).msgService = msgServiceSpy
+    fixture.detectChanges()
   })
 
   it('should create', () => {
@@ -163,7 +151,7 @@ describe('WelcomeConfigureComponent', () => {
   })
 
   it('should set workspace and reload when workspace becomes available', () => {
-    imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of([]))
+    apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of([]))
     spyOn(component, 'onReload')
 
     appStateSubject.next(ws)
@@ -189,7 +177,7 @@ describe('WelcomeConfigureComponent', () => {
     it('should revoke existing blob URLs before fetching new ones', () => {
       component['blobUrls'].set('id1', 'blob:old-url')
       spyOn(URL, 'revokeObjectURL')
-      imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of([]))
+      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of([]))
 
       component.fetchImageInfos()
 
@@ -197,7 +185,7 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should get infos for all images', (done) => {
-      imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
+      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
 
       component.fetchImageInfos()
 
@@ -212,7 +200,7 @@ describe('WelcomeConfigureComponent', () => {
 
     it('should handle error when fetching imageinfos', (done) => {
       const errorResponse = { status: 404, statusText: 'Not found' }
-      imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => errorResponse))
+      apiServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
       component.fetchImageInfos()
@@ -230,7 +218,7 @@ describe('WelcomeConfigureComponent', () => {
   describe('fetchImageData', () => {
     it('should get data for one image', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
-      imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
+      apiServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
 
       component.fetchImageData(imageInfos)
 
@@ -238,7 +226,7 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should handle error when fetching imageInfos', () => {
-      imageServiceSpy.getImageById.and.returnValue(throwError(() => new Error()))
+      apiServiceSpy.getImageById.and.returnValue(throwError(() => new Error()))
       const imageInfos = [{ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' }]
 
       component.fetchImageData(imageInfos)
@@ -313,7 +301,7 @@ describe('WelcomeConfigureComponent', () => {
    */
   describe('OnDeleteImage', () => {
     it('should delete an image', () => {
-      imageServiceSpy.deleteImageInfoById.and.returnValue(of({}))
+      apiServiceSpy.deleteImageInfoById.and.returnValue(of({}))
 
       component.onDeleteImage('123', 0, [...imageInfos])
 
@@ -322,7 +310,7 @@ describe('WelcomeConfigureComponent', () => {
 
     it('should handle error when deleting image', () => {
       const errorResponse = { status: 400, statusText: 'Error on image deletion' }
-      imageServiceSpy.deleteImageInfoById.and.returnValue(throwError(() => errorResponse))
+      apiServiceSpy.deleteImageInfoById.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
       component.onDeleteImage('123', 0, [...imageInfos])
@@ -334,7 +322,7 @@ describe('WelcomeConfigureComponent', () => {
 
   describe('onChangeVisibility', () => {
     it('should handle error when updating visiblity', () => {
-      imageServiceSpy.updateImageInfo.and.returnValue(of({}))
+      apiServiceSpy.updateImageInfo.and.returnValue(of({}))
 
       component.onChangeVisibility({ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' })
 
@@ -343,7 +331,7 @@ describe('WelcomeConfigureComponent', () => {
 
     it('should handle error when updating visiblity', () => {
       const errorResponse = { status: 400, statusText: 'Error on image updating' }
-      imageServiceSpy.updateImageInfo.and.returnValue(throwError(() => errorResponse))
+      apiServiceSpy.updateImageInfo.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
       component.onChangeVisibility({ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' })
@@ -430,7 +418,7 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should save positions', () => {
-      imageServiceSpy.updateImageOrder.and.returnValue(of({}))
+      apiServiceSpy.updateImageOrder.and.returnValue(of({}))
 
       component.onSaveOrder()
 
@@ -439,7 +427,7 @@ describe('WelcomeConfigureComponent', () => {
 
     it('should handle error when updating positions', () => {
       const errorResponse = { status: 400, statusText: 'Error on image updating' }
-      imageServiceSpy.updateImageOrder.and.returnValue(throwError(() => errorResponse))
+      apiServiceSpy.updateImageOrder.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
       component.onSaveOrder()

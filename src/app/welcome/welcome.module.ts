@@ -1,20 +1,12 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 
-import { PortalApiConfiguration, providePermissionService } from '@onecx/angular-utils'
-import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
+import { providePermissionService } from '@onecx/angular-utils'
 
 import { LabelResolver } from 'src/app/shared/label.resolver'
 
 import { WelcomeOverviewComponent } from './welcome-overview/welcome-overview.component'
 import { WelcomeConfigureComponent } from './welcome-configure/welcome-configure.component'
-
-import { Configuration } from '../shared/generated'
-import { environment } from 'src/environments/environment.prod'
-
-function apiConfigProvider() {
-  return new PortalApiConfiguration(Configuration, environment.apiPrefix)
-}
 
 const routes: Routes = [
   {
@@ -37,9 +29,6 @@ const routes: Routes = [
 ]
 @NgModule({
   imports: [[RouterModule.forChild(routes)], WelcomeOverviewComponent, WelcomeConfigureComponent],
-  providers: [
-    ...providePermissionService(),
-    { provide: Configuration, useFactory: apiConfigProvider, deps: [ConfigurationService, AppStateService] }
-  ]
+  providers: [...providePermissionService()]
 })
 export class WelcomeModule {}
