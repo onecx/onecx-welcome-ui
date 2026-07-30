@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnChanges, OnDestroy } from '@angular/core'
+import { Component, EventEmitter, Input, Output, OnChanges, OnDestroy, inject } from '@angular/core'
 import { NgStyle } from '@angular/common'
 import { FormsModule, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
@@ -41,6 +41,10 @@ export interface ImageCssForm {
   styleUrl: './image-detail.component.scss'
 })
 export class ImageDetailComponent implements OnChanges, OnDestroy {
+  private readonly imageApi = inject(ImagesInternalAPIService)
+  private readonly translate = inject(TranslateService)
+  private readonly msgService = inject(PortalMessageService)
+
   @Input() public displayDialog = false
   @Input() public images: ImageDataResponse[] = []
   @Input() public imageInfos: ImageInfo[] = []
@@ -49,21 +53,13 @@ export class ImageDetailComponent implements OnChanges, OnDestroy {
 
   public isLoading = false
   public isChanged = false
-  public formGroup: FormGroup
+  public formGroup = new FormGroup<ImageCssForm>({
+    objectFit: new FormControl(ObjectFit.ScaleDown),
+    objectPosition: new FormControl('center center', [Validators.minLength(2), Validators.maxLength(50)]),
+    backgroundColor: new FormControl('unset', [Validators.minLength(3), Validators.maxLength(100)])
+  })
   public objectFitOptions = [ObjectFit.None, ObjectFit.Contain, ObjectFit.Cover, ObjectFit.Fill, ObjectFit.ScaleDown]
   private readonly blobUrls = new Map<string, string>()
-
-  constructor(
-    private readonly imageApi: ImagesInternalAPIService,
-    private readonly translate: TranslateService,
-    private readonly msgService: PortalMessageService
-  ) {
-    this.formGroup = new FormGroup<ImageCssForm>({
-      objectFit: new FormControl(ObjectFit.ScaleDown),
-      objectPosition: new FormControl('center center', [Validators.minLength(2), Validators.maxLength(50)]),
-      backgroundColor: new FormControl('unset', [Validators.minLength(3), Validators.maxLength(100)])
-    })
-  }
 
   public ngOnChanges(): void {
     if (this.displayDialog && this.imageIndex > -1) this.fillForm()
@@ -108,18 +104,19 @@ export class ImageDetailComponent implements OnChanges, OnDestroy {
   }
 
   public onSave() {
-    const ii = { ...this.imageInfos[this.imageIndex], ...this.formGroup.value }
-    this.imageApi.updateImageInfo({ id: ii.id, imageInfo: ii }).subscribe({
-      next: (data) => {
-        this.imageInfos[this.imageIndex] = data
-        this.msgService.success({ summaryKey: 'ACTIONS.SAVE.MESSAGE_OK' })
-        this.isChanged = true
-      },
-      error: (err) => {
-        this.msgService.error({ summaryKey: 'ACTIONS.SAVE.MESSAGE_NOK' })
-        console.error('updateImageInfo', err)
-      }
-    })
+    const ii = { ...this.imageInfos[this.imageIndex], ...this.formGroup.value } as ImageInfo
+    if (ii.id)
+      this.imageApi.updateImageInfo({ id: ii.id, imageInfo: ii }).subscribe({
+        next: (data) => {
+          this.imageInfos[this.imageIndex] = data
+          this.msgService.success({ summaryKey: 'ACTIONS.SAVE.MESSAGE_OK' })
+          this.isChanged = true
+        },
+        error: (err) => {
+          this.msgService.error({ summaryKey: 'ACTIONS.SAVE.MESSAGE_NOK' })
+          console.error('updateImageInfo', err)
+        }
+      })
   }
 
   public onNavigateToImage(newIdx: number) {

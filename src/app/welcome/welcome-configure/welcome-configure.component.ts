@@ -43,6 +43,13 @@ import { WelcomeImportComponent } from './welcome-import/welcome-import.componen
   styleUrl: './welcome-configure.component.scss'
 })
 export class WelcomeConfigureComponent implements OnInit, OnDestroy {
+  private readonly imageService = inject(ImagesInternalAPIService)
+  private readonly eximService = inject(ConfigExportImportAPIService)
+  private readonly msgService = inject(PortalMessageService)
+  private readonly location = inject(Location)
+  private readonly translate = inject(TranslateService)
+  private readonly appStateService = inject(AppStateService)
+
   private readonly destroy$ = new Subject<void>()
   private readonly blobUrls = new Map<string, string>()
   // dialog
@@ -59,16 +66,6 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   public images: ImageDataResponse[] = []
   public imageInfos: ImageInfo[] = []
   public imageInfo$: Observable<ImageInfo[]> = of([])
-
-  private readonly appStateService = inject(AppStateService)
-
-  constructor(
-    private readonly imageService: ImagesInternalAPIService,
-    private readonly eximService: ConfigExportImportAPIService,
-    private readonly msgService: PortalMessageService,
-    private readonly location: Location,
-    private readonly translate: TranslateService
-  ) {}
 
   public ngOnInit(): void {
     this.preparePageAction()

@@ -61,13 +61,8 @@ describe('ImageCreateComponent', () => {
         { provide: AppStateService, useValue: appStateServiceSpy }
       ]
     })
-      .overrideProvider(ImagesInternalAPIService, { useValue: apiServiceSpy })
-      .overrideProvider(UserService, { useValue: mockUserService })
-      .overrideProvider(AppStateService, { useValue: appStateServiceSpy })
       .overrideComponent(ImageCreateComponent, {
-        set: {
-          providers: [{ provide: ImagesInternalAPIService, useValue: apiServiceSpy }]
-        }
+        add: { providers: [{ provide: ImagesInternalAPIService, useValue: apiServiceSpy }] }
       })
       .compileComponents()
   }))
@@ -84,7 +79,7 @@ describe('ImageCreateComponent', () => {
     lang$.next('de')
     ;(component as any).imageApiService = apiServiceSpy
     ;(component as any).msgService = msgServiceSpy
-    component.currentWorkspaceName = 'test-ws'
+    component['currentWorkspaceName'] = 'test-ws'
     component.displayCreateDialog = true
   })
 
@@ -185,7 +180,7 @@ describe('ImageCreateComponent', () => {
   })
 
   it('should show error if workspace name is empty when saving', () => {
-    component.currentWorkspaceName = ''
+    component['currentWorkspaceName'] = ''
     component.formGroup.controls['url'].setValue('someUrl')
 
     component.onSave()

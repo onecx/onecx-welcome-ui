@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, inject } from '@angular/core'
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import { filter, take } from 'rxjs'
@@ -32,6 +32,11 @@ import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
   styleUrls: ['./image-create.component.scss']
 })
 export class ImageCreateComponent implements OnInit, OnChanges {
+  private readonly imageApiService = inject(ImagesInternalAPIService)
+  private readonly fb = inject(FormBuilder)
+  private readonly msgService = inject(PortalMessageService)
+  private readonly appstateService = inject(AppStateService)
+
   @Input() public displayCreateDialog = false
   @Input() public imageInfoCount: number = 0
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
@@ -39,30 +44,21 @@ export class ImageCreateComponent implements OnInit, OnChanges {
   @ViewChild('fileUpload', { static: true }) fileUpload?: FileUpload
 
   public isLoading = false
-  formGroup: FormGroup
-  selectedFile?: Blob
-  uploadDisabled: boolean = false
-  currentWorkspaceName: string = ''
+  formGroup = this.fb.nonNullable.group({
+    url: new FormControl<string | null>(null, this.imageSrcValidator()),
+    image: new FormControl(null)
+  })
+  public selectedFile?: Blob
+  private currentWorkspaceName: string = ''
+  public uploadDisabled: boolean = false
 
-  constructor(
-    private readonly imageApiService: ImagesInternalAPIService,
-    private readonly fb: FormBuilder,
-    private readonly msgService: PortalMessageService,
-    private readonly appstateService: AppStateService
-  ) {
-    this.formGroup = fb.nonNullable.group({
-      url: new FormControl(null, this.imageSrcValidator()),
-      image: new FormControl(null)
-    })
+  ngOnInit(): void {
     this.appstateService.currentWorkspace$
       .pipe(
         filter((ws): ws is Workspace => !!ws?.workspaceName),
         take(1)
       )
       .subscribe((ws) => (this.currentWorkspaceName = ws.workspaceName))
-  }
-
-  ngOnInit(): void {
     this.formGroup.get('url')?.valueChanges.subscribe((v) => {
       this.uploadDisabled = v !== null && v !== ''
     })
@@ -167,7 +163,7 @@ export class ImageCreateComponent implements OnInit, OnChanges {
   }
 
   private submitFormValues(): any {
-    const imageInfo: ImageInfo = { ...this.formGroup.value }
+    const imageInfo: ImageInfo = { ...this.formGroup.value, workspaceName: this.currentWorkspaceName } as ImageInfo
     return imageInfo
   }
 }
