@@ -1,16 +1,20 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 
-import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
-import { PortalPageComponent } from '@onecx/angular-utils'
+import { PortalApiConfiguration, providePermissionService } from '@onecx/angular-utils'
+import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 
 import { LabelResolver } from 'src/app/shared/label.resolver'
 
 import { WelcomeOverviewComponent } from './welcome-overview/welcome-overview.component'
 import { WelcomeConfigureComponent } from './welcome-configure/welcome-configure.component'
-import { WelcomeImportComponent } from './welcome-configure/welcome-import/welcome-import.component'
-import { ImageDetailComponent } from './welcome-configure/image-detail/image-detail.component'
-import { ImageCreateComponent } from './welcome-configure/image-create/image-create.component'
+
+import { Configuration } from '../shared/generated'
+import { environment } from 'src/environments/environment.prod'
+
+function apiConfigProvider() {
+  return new PortalApiConfiguration(Configuration, environment.apiPrefix)
+}
 
 const routes: Routes = [
   {
@@ -32,19 +36,10 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  imports: [
-    AngularAcceleratorModule,
-    PortalPageComponent,
-    [RouterModule.forChild(routes)],
-    WelcomeOverviewComponent,
-    WelcomeConfigureComponent,
-    WelcomeImportComponent,
-    ImageCreateComponent,
-    ImageDetailComponent
+  imports: [[RouterModule.forChild(routes)], WelcomeOverviewComponent, WelcomeConfigureComponent],
+  providers: [
+    ...providePermissionService(),
+    { provide: Configuration, useFactory: apiConfigProvider, deps: [ConfigurationService, AppStateService] }
   ]
 })
-export class WelcomeModule {
-  constructor() {
-    console.info('Welcome Module constructor')
-  }
-}
+export class WelcomeModule {}

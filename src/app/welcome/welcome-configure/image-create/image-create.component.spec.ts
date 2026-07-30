@@ -34,6 +34,12 @@ describe('ImageCreateComponent', () => {
     currentWorkspace$: of({ workspaceName: 'test-ws' })
   }
 
+  function initializeTestComponent() {
+    fixture = TestBed.createComponent(ImageCreateComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  }
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -64,6 +70,10 @@ describe('ImageCreateComponent', () => {
         }
       })
       .compileComponents()
+  }))
+
+  beforeEach(() => {
+    initializeTestComponent()
     // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
@@ -72,16 +82,10 @@ describe('ImageCreateComponent', () => {
     apiServiceSpy.updateImageInfo.calls.reset()
     // default data
     lang$.next('de')
-  }))
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ImageCreateComponent)
-    component = fixture.componentInstance
     ;(component as any).imageApiService = apiServiceSpy
     ;(component as any).msgService = msgServiceSpy
     component.currentWorkspaceName = 'test-ws'
     component.displayCreateDialog = true
-    fixture.detectChanges()
   })
 
   it('should create', () => {

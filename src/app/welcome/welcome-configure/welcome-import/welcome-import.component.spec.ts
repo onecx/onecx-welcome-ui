@@ -55,6 +55,12 @@ describe('WelcomeImportComponent', () => {
     importConfiguration: jasmine.createSpy('importConfiguration').and.returnValue(of({}))
   }
 
+  function initializeTestComponent() {
+    fixture = TestBed.createComponent(WelcomeImportComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  }
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -68,29 +74,20 @@ describe('WelcomeImportComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([{ path: '', component: WelcomeImportComponent }]),
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
+        { provide: ConfigExportImportAPIService, useValue: eximServiceSpy },
+        { provide: PortalMessageService, useValue: msgServiceSpy }
       ]
-    })
-      .overrideProvider(ConfigExportImportAPIService, { useValue: eximServiceSpy })
-      .overrideComponent(WelcomeImportComponent, {
-        set: {
-          providers: [{ provide: ConfigExportImportAPIService, useValue: eximServiceSpy }]
-        }
-      })
-      .compileComponents()
+    }).compileComponents()
+  }))
+
+  beforeEach(() => {
+    initializeTestComponent()
     // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
     eximServiceSpy.importConfiguration.calls.reset()
-  }))
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(WelcomeImportComponent)
-    component = fixture.componentInstance
     ;(component as any).eximApi = eximServiceSpy
     ;(component as any).msgService = msgServiceSpy
-    fixture.detectChanges()
   })
 
   it('should create', () => {

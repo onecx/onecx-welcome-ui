@@ -10,6 +10,7 @@ import { PortalMessageService } from '@onecx/angular-integration-interface'
 import { ImageInfo, ImagesInternalAPIService, ImageDataResponse, ObjectFit } from 'src/app/shared/generated'
 
 import { ImageDetailComponent, ImageCssForm } from './image-detail.component'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 
 const imageCssForm = new FormGroup<ImageCssForm>({
   objectFit: new FormControl(ObjectFit.ScaleDown),
@@ -41,7 +42,13 @@ describe('ImageDetailComponent', () => {
   let fixture: ComponentFixture<ImageDetailComponent>
 
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
-  const apiServiceSpy = { updateImageInfo: jasmine.createSpy('updateImageInfo').and.returnValue(of({})) }
+  const imageServiceSpy = { updateImageInfo: jasmine.createSpy('updateImageInfo').and.returnValue(of({})) }
+
+  function initializeTestComponent() {
+    fixture = TestBed.createComponent(ImageDetailComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  }
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -55,33 +62,24 @@ describe('ImageDetailComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideNoopAnimations(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: ImagesInternalAPIService, useValue: apiServiceSpy }
+        { provide: ImagesInternalAPIService, useValue: imageServiceSpy }
       ]
-    })
-      .overrideProvider(ImagesInternalAPIService, { useValue: apiServiceSpy })
-      .overrideComponent(ImageDetailComponent, {
-        set: {
-          providers: [{ provide: ImagesInternalAPIService, useValue: apiServiceSpy }],
-          template: '<div></div>'
-        }
-      })
-      .compileComponents()
-    // reset
-    msgServiceSpy.success.calls.reset()
-    msgServiceSpy.error.calls.reset()
-    apiServiceSpy.updateImageInfo.calls.reset()
+    }).compileComponents()
   }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ImageDetailComponent)
-    component = fixture.componentInstance
-    ;(component as any).imageApi = apiServiceSpy
+    initializeTestComponent()
+    ;(component as any).imageApi = imageServiceSpy
     ;(component as any).msgService = msgServiceSpy
     // satisfy the displaying of the url in HTML
     component.imageInfos = [{ imageId: '1', url: 'http://example.com/image1.png', workspaceName: 'ws' }]
     component.displayDialog = true
-    fixture.detectChanges()
+    // reset
+    msgServiceSpy.success.calls.reset()
+    msgServiceSpy.error.calls.reset()
+    imageServiceSpy.updateImageInfo.calls.reset()
   })
 
   it('should create', () => {
@@ -248,7 +246,7 @@ describe('ImageDetailComponent', () => {
 
     it('should save image info - successful', () => {
       const responseData: ImageInfo = { ...imageInfos[0], modificationCount: 1 }
-      apiServiceSpy.updateImageInfo.and.returnValue(of(responseData))
+      imageServiceSpy.updateImageInfo.and.returnValue(of(responseData))
 
       component.onSave()
 
@@ -259,7 +257,7 @@ describe('ImageDetailComponent', () => {
 
     it('should save image info - failed', () => {
       const errorResponse = { status: 400, statusText: 'Error on saving image info' }
-      apiServiceSpy.updateImageInfo.and.returnValue(throwError(() => errorResponse))
+      imageServiceSpy.updateImageInfo.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
       component.onSave()

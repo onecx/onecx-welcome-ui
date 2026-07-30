@@ -1,31 +1,27 @@
 import { DoBootstrap, Injector, NgModule, inject, provideAppInitializer } from '@angular/core'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule, Routes, Router } from '@angular/router'
 import { TranslateLoader, TranslateModule, MissingTranslationHandler } from '@ngx-translate/core'
 
-import { AngularAcceleratorModule, AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-accelerator'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { AngularAuthModule } from '@onecx/angular-auth'
 import {
-  PortalApiConfiguration,
   createTranslateLoader,
+  MultiLanguageMissingTranslationHandler,
+  PortalApiConfiguration,
   provideAngularUtils,
-  provideTranslationConnectionService,
-  provideTranslationPathFromMeta,
-  provideThemeConfig
+  provideThemeConfig,
+  provideTranslationPathFromMeta
 } from '@onecx/angular-utils'
 import { createAppEntrypoint, initializeRouter, startsWith } from '@onecx/angular-webcomponents'
 import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
-import { provideTranslateServiceForRoot, SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 
 import { Configuration } from './shared/generated'
 import { LabelResolver } from './shared/label.resolver'
-import { environment } from 'src/environments/environment'
-import { AppEntrypointComponent } from './app-entrypoint.component'
+import { apiConfigProvider } from './shared/apiConfigProvider.utils'
 
-function apiConfigProvider() {
-  return new PortalApiConfiguration(Configuration, environment.apiPrefix)
-}
+import { AppEntrypointComponent } from './app-entrypoint.component'
 
 const routes: Routes = [
   {
@@ -40,28 +36,31 @@ const routes: Routes = [
     AngularAuthModule,
     BrowserAnimationsModule,
     RouterModule.forRoot(routes),
-    TranslateModule
+    TranslateModule.forRoot({
+      isolate: true,
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient]
+      },
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: MultiLanguageMissingTranslationHandler
+      }
+    })
   ],
   providers: [
     LabelResolver,
-    provideAnimations(),
     provideAngularUtils(),
-    provideTranslationConnectionService(),
     ConfigurationService,
-    { provide: Configuration, useFactory: apiConfigProvider },
-    { provide: SLOT_SERVICE, useExisting: SlotService },
-    provideAppInitializer(() => initializeRouter(inject(Router), inject(AppStateService))()),
-    provideThemeConfig(),
-    provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
-    provideTranslateServiceForRoot({
-      isolate: true,
-      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] },
-      missingTranslationHandler: {
-        provide: MissingTranslationHandler,
-        useClass: AngularAcceleratorMissingTranslationHandler
-      }
+    { provide: Configuration, useFactory: apiConfigProvider, deps: [ConfigurationService, AppStateService] },
+    provideAppInitializer(() => {
+      const initializerFn = initializeRouter(inject(Router), inject(AppStateService))
+      return initializerFn()
     }),
-    provideHttpClient(withInterceptorsFromDi())
+    provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
+    provideHttpClient(withInterceptorsFromDi()),
+    provideThemeConfig()
   ]
 })
 export class OneCXWelcomeModule implements DoBootstrap {
