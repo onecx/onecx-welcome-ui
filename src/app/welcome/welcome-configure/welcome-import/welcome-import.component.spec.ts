@@ -1,10 +1,9 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideRouter } from '@angular/router'
-import { of, throwError } from 'rxjs'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+import { of, throwError } from 'rxjs'
 import { FileSelectEvent } from 'primeng/fileupload'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
@@ -56,6 +55,12 @@ describe('WelcomeImportComponent', () => {
     importConfiguration: jasmine.createSpy('importConfiguration').and.returnValue(of({}))
   }
 
+  function initializeTestComponent() {
+    fixture = TestBed.createComponent(WelcomeImportComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  }
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -65,34 +70,24 @@ describe('WelcomeImportComponent', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
-      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([{ path: '', component: WelcomeImportComponent }]),
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
+        { provide: ConfigExportImportAPIService, useValue: eximServiceSpy },
+        { provide: PortalMessageService, useValue: msgServiceSpy }
       ]
-    })
-      .overrideProvider(ConfigExportImportAPIService, { useValue: eximServiceSpy })
-      .overrideComponent(WelcomeImportComponent, {
-        set: {
-          providers: [{ provide: ConfigExportImportAPIService, useValue: eximServiceSpy }]
-        }
-      })
-      .compileComponents()
+    }).compileComponents()
+  }))
+
+  beforeEach(() => {
+    initializeTestComponent()
     // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
     eximServiceSpy.importConfiguration.calls.reset()
-  }))
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(WelcomeImportComponent)
-    component = fixture.componentInstance
     ;(component as any).eximApi = eximServiceSpy
     ;(component as any).msgService = msgServiceSpy
-    fixture.detectChanges()
   })
 
   it('should create', () => {

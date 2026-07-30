@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core'
-import { AsyncPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common'
+import { Component, inject, OnDestroy, OnInit } from '@angular/core'
+import { AsyncPipe, NgClass, NgStyle } from '@angular/common'
 import { animate, style, transition, trigger } from '@angular/animations'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, filter, map, Observable, of, Subject, Subscription, take, takeUntil, timer } from 'rxjs'
@@ -21,8 +21,6 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
   imports: [
     AsyncPipe,
     NgClass,
-    NgFor,
-    NgIf,
     NgStyle,
     TranslateModule,
     DockModule,
@@ -60,11 +58,12 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
   public bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public listActiveSlotName = 'onecx-welcome-list-active'
 
+  private readonly appStateService = inject(AppStateService)
+
   constructor(
     private readonly userService: UserService,
     private readonly slotService: SlotService,
     private readonly translate: TranslateService,
-    private readonly appStateService: AppStateService,
     private readonly imageService: ImagesInternalAPIService
   ) {
     this.user$ = this.userService.profile$.asObservable()

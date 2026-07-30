@@ -45,13 +45,14 @@
       ></p-fileUpload>
       <div class="w-12">
         <p-floatlabel variant="on" class="w-full p-input-icon-right">
-          <a
-            *ngIf="createUrl.value !== ''"
-            id="wc_image_create_form_url_action_remove"
-            class="pi pi-times cursor-pointer"
-            (click)="formGroup.controls['url'].reset()"
-            [attr.aria-label]="'ACTIONS.CREATE.URL.REMOVE' | translate"
-          ></a>
+          @if (createUrl.value !== '') {
+            <a
+              id="wc_image_create_form_url_action_remove"
+              class="pi pi-times cursor-pointer"
+              (click)="formGroup.controls['url'].reset()"
+              [attr.aria-label]="'ACTIONS.CREATE.URL.REMOVE' | translate"
+            ></a>
+          }
           <input
             #createUrl
             pInputText
@@ -65,15 +66,11 @@
           />
           <label for="wc_image_create_form_url">{{ 'ACTIONS.CREATE.URL' | translate }}</label>
         </p-floatlabel>
-        <label
-          *ngIf="
-            formGroup.controls['url'].errors?.hasOwnProperty('srcMissing') && formGroup.controls['url'].value === ''
-          "
-          for="wc_image_create_form_url"
-          class="ocx-control-error"
-        >
-          {{ 'VALIDATION.ERRORS.MISSING_IMG_SRC' | translate }}
-        </label>
+        @if (formGroup.controls['url'].errors?.hasOwnProperty('srcMissing') && formGroup.controls['url'].value === '') {
+          <label for="wc_image_create_form_url" class="ocx-control-error">
+            {{ 'VALIDATION.ERRORS.MISSING_IMG_SRC' | translate }}
+          </label>
+        }
       </div>
     </div>
   </form>

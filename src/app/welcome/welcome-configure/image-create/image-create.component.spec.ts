@@ -1,7 +1,6 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
@@ -35,6 +34,12 @@ describe('ImageCreateComponent', () => {
     currentWorkspace$: of({ workspaceName: 'test-ws' })
   }
 
+  function initializeTestComponent() {
+    fixture = TestBed.createComponent(ImageCreateComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  }
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -47,7 +52,6 @@ describe('ImageCreateComponent', () => {
         DialogModule,
         ButtonModule
       ],
-      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -66,6 +70,10 @@ describe('ImageCreateComponent', () => {
         }
       })
       .compileComponents()
+  }))
+
+  beforeEach(() => {
+    initializeTestComponent()
     // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
@@ -74,16 +82,10 @@ describe('ImageCreateComponent', () => {
     apiServiceSpy.updateImageInfo.calls.reset()
     // default data
     lang$.next('de')
-  }))
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ImageCreateComponent)
-    component = fixture.componentInstance
     ;(component as any).imageApiService = apiServiceSpy
     ;(component as any).msgService = msgServiceSpy
     component.currentWorkspaceName = 'test-ws'
     component.displayCreateDialog = true
-    fixture.detectChanges()
   })
 
   it('should create', () => {

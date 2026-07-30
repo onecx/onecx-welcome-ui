@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { NgIf } from '@angular/common'
 import { HttpHeaders } from '@angular/common/http'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 
@@ -16,7 +15,7 @@ import { ConfigExportImportAPIService, WelcomeSnapshot } from 'src/app/shared/ge
 @Component({
   selector: 'app-welcome-import',
   standalone: true,
-  imports: [NgIf, TranslateModule, ButtonModule, DialogModule, FileUploadModule, MessageModule, TooltipModule],
+  imports: [TranslateModule, ButtonModule, DialogModule, FileUploadModule, MessageModule, TooltipModule],
   templateUrl: './welcome-import.component.html',
   styleUrl: './welcome-import.component.scss'
 })

@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core'
-import { AsyncPipe, NgFor, NgIf, NgStyle, Location } from '@angular/common'
+import { Component, inject, OnDestroy, OnInit } from '@angular/core'
+import { AsyncPipe, NgStyle, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { catchError, filter, finalize, map, Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs'
 import FileSaver from 'file-saver'
@@ -25,12 +25,10 @@ import { ImageDetailComponent } from './image-detail/image-detail.component'
 import { WelcomeImportComponent } from './welcome-import/welcome-import.component'
 
 @Component({
-  standalone: true,
   selector: 'app-welcome-configure',
+  standalone: true,
   imports: [
     AsyncPipe,
-    NgFor,
-    NgIf,
     NgStyle,
     AngularAcceleratorModule,
     ButtonModule,
@@ -42,7 +40,7 @@ import { WelcomeImportComponent } from './welcome-import/welcome-import.componen
     WelcomeImportComponent
   ],
   templateUrl: './welcome-configure.component.html',
-  styleUrls: ['./welcome-configure.component.scss']
+  styleUrl: './welcome-configure.component.scss'
 })
 export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>()
@@ -62,13 +60,14 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   public imageInfos: ImageInfo[] = []
   public imageInfo$: Observable<ImageInfo[]> = of([])
 
+  private readonly appStateService = inject(AppStateService)
+
   constructor(
     private readonly imageService: ImagesInternalAPIService,
     private readonly eximService: ConfigExportImportAPIService,
     private readonly msgService: PortalMessageService,
     private readonly location: Location,
-    private readonly translate: TranslateService,
-    private readonly appStateService: AppStateService
+    private readonly translate: TranslateService
   ) {}
 
   public ngOnInit(): void {

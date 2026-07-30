@@ -1,16 +1,12 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 
-import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
-import { PortalPageComponent } from '@onecx/angular-utils'
+import { providePermissionService } from '@onecx/angular-utils'
 
 import { LabelResolver } from 'src/app/shared/label.resolver'
 
 import { WelcomeOverviewComponent } from './welcome-overview/welcome-overview.component'
 import { WelcomeConfigureComponent } from './welcome-configure/welcome-configure.component'
-import { WelcomeImportComponent } from './welcome-configure/welcome-import/welcome-import.component'
-import { ImageDetailComponent } from './welcome-configure/image-detail/image-detail.component'
-import { ImageCreateComponent } from './welcome-configure/image-create/image-create.component'
 
 const routes: Routes = [
   {
@@ -32,19 +28,7 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  imports: [
-    AngularAcceleratorModule,
-    PortalPageComponent,
-    [RouterModule.forChild(routes)],
-    WelcomeOverviewComponent,
-    WelcomeConfigureComponent,
-    WelcomeImportComponent,
-    ImageCreateComponent,
-    ImageDetailComponent
-  ]
+  imports: [[RouterModule.forChild(routes)], WelcomeOverviewComponent, WelcomeConfigureComponent],
+  providers: [...providePermissionService()]
 })
-export class WelcomeModule {
-  constructor() {
-    console.info('Welcome Module constructor')
-  }
-}
+export class WelcomeModule {}

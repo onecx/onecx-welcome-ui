@@ -8,7 +8,6 @@ import { AngularAuthModule } from '@onecx/angular-auth'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import {
   createTranslateLoader,
-  provideAngularUtils,
   provideTranslationConnectionService,
   provideTranslationPathFromMeta
 } from '@onecx/angular-utils'
@@ -43,7 +42,6 @@ const routes: Routes = [
   providers: [
     { provide: APP_CONFIG, useValue: environment },
     provideAnimations(),
-    provideAngularUtils(),
     provideStandaloneProviders(),
     provideTranslationConnectionService(),
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
