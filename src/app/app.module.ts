@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { RouterModule, Routes } from '@angular/router'
-import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations'
+import { RouterModule, Routes } from '@angular/router'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 
 import { AngularAuthModule } from '@onecx/angular-auth'
@@ -26,35 +25,29 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  bootstrap: [AppComponent],
   imports: [
     AppComponent,
-    BrowserModule,
-    BrowserAnimationsModule,
-    AngularAuthModule,
     AngularAcceleratorModule,
-    StandaloneShellModule,
+    AngularAuthModule,
+    BrowserAnimationsModule,
     RouterModule.forRoot(routes, {
       initialNavigation: 'enabledBlocking',
-      enableTracing: true
+      enableTracing: false
     }),
+    StandaloneShellModule,
     TranslateModule.forRoot({
       isolate: true,
       loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] }
     })
   ],
   providers: [
+    { provide: APP_CONFIG, useValue: environment },
     provideAnimations(),
     provideAngularUtils(),
-    provideTranslationConnectionService(),
-    { provide: APP_CONFIG, useValue: environment },
     provideStandaloneProviders(),
+    provideTranslationConnectionService(),
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     provideHttpClient(withInterceptorsFromDi())
   ]
 })
-export class AppModule {
-  constructor() {
-    console.info('OneCX Welcome Module constructor')
-  }
-}
+export class AppModule {}
