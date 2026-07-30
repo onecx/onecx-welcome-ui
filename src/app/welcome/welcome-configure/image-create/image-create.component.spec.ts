@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { ComponentFixture, fakeAsync, flush, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { By } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { BrowserAnimationsModule, provideNoopAnimations } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
 
@@ -26,13 +26,8 @@ describe('ImageCreateComponent', () => {
   }
   const lang$ = new BehaviorSubject<string>('de')
   const profile$ = new BehaviorSubject<any>({})
-  const mockUserService = {
-    lang$,
-    profile$
-  }
-  const appStateServiceSpy = {
-    currentWorkspace$: of({ workspaceName: 'test-ws' })
-  }
+  const mockUserService = { lang$, profile$ }
+  const appStateServiceSpy = { currentWorkspace$: of({ workspaceName: 'test-ws' }) }
 
   function initializeTestComponent() {
     fixture = TestBed.createComponent(ImageCreateComponent)
@@ -47,14 +42,12 @@ describe('ImageCreateComponent', () => {
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en'),
-        BrowserAnimationsModule,
-        DialogModule,
-        ButtonModule
+        }).withDefaultLanguage('en')
       ],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideNoopAnimations(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: apiServiceSpy },
         { provide: UserService, useValue: mockUserService },
@@ -62,7 +55,9 @@ describe('ImageCreateComponent', () => {
       ]
     })
       .overrideComponent(ImageCreateComponent, {
-        add: { providers: [{ provide: ImagesInternalAPIService, useValue: apiServiceSpy }] }
+        add: {
+          providers: [{ provide: ImagesInternalAPIService, useValue: apiServiceSpy }]
+        }
       })
       .compileComponents()
   }))
@@ -80,7 +75,8 @@ describe('ImageCreateComponent', () => {
     ;(component as any).imageApiService = apiServiceSpy
     ;(component as any).msgService = msgServiceSpy
     component['currentWorkspaceName'] = 'test-ws'
-    component.displayCreateDialog = true
+    fixture.componentRef.setInput('displayCreateDialog', true) // open dialog
+    fixture.detectChanges()
   })
 
   it('should create', () => {
@@ -97,14 +93,18 @@ describe('ImageCreateComponent', () => {
       expect(uploadField).toBeTruthy()
     })
 
-    it('should reset form field url', () => {
-      component.ngOnInit()
-      component.ngOnChanges()
-      fixture.detectChanges()
+    it('should reset form field url when dialog is closed', async () => {
+      component.formGroup.controls['url'].setValue('someUrl')
       const dElement = fixture.debugElement
       const uploadField = dElement.query(By.css('p-fileupload'))
 
       expect(uploadField).toBeTruthy()
+
+      fixture.componentRef.setInput('displayCreateDialog', false) // close dialog
+      await fixture.whenStable()
+      fixture.detectChanges()
+
+      expect(component.formGroup.controls['url'].value).toBeNull()
     })
   })
 
@@ -118,6 +118,7 @@ describe('ImageCreateComponent', () => {
 
     expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
   })
+
   it('should save image with fileUpload', () => {
     component.ngOnInit()
     component.onFileSelected(new Blob())
@@ -180,7 +181,7 @@ describe('ImageCreateComponent', () => {
   })
 
   it('should show error if workspace name is empty when saving', () => {
-    component['currentWorkspaceName'] = ''
+    component['currentWorkspaceName'] = undefined
     component.formGroup.controls['url'].setValue('someUrl')
 
     component.onSave()

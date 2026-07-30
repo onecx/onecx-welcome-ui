@@ -21,7 +21,7 @@
             'object-position': formGroup.controls['objectPosition'].value,
             'background-color': formGroup.controls['backgroundColor'].value
           }"
-          [src]="buildImageSrc(imageInfos[imageIndex], images)"
+          [src]="buildImageSrc(imageInfos()[imageIndex()], images())"
           [alt]="'DIALOG.DETAIL.PIC' | translate"
         />
       </div>
@@ -89,7 +89,8 @@
         </div>
       </p-fieldset>
     </div>
-    @if (imageIndex > -1 && imageInfos[imageIndex].url) {
+    @if (imageIndex() > -1) {
+      @let info = imageInfos()[imageIndex()];
       <p-float-label variant="on">
         <input
           pInputText
@@ -97,7 +98,7 @@
           class="w-full"
           id="wc_detail_url"
           [disabled]="true"
-          [(ngModel)]="imageInfos[imageIndex].url"
+          [(ngModel)]="info.url"
           [ariaLabel]="'IMAGE.URL' | translate"
           [pTooltip]="'IMAGE.TOOLTIPS.URL' | translate"
           tooltipPosition="top"
@@ -114,19 +115,19 @@
         <p-button
           id="wc_image_detail_action_prev"
           icon="pi pi-caret-left"
-          (onClick)="onNavigateToImage(imageIndex - 1)"
-          [disabled]="imageInfos.length < 2"
+          (onClick)="onNavigateToImage(imageIndex() - 1)"
+          [disabled]="imageInfos().length < 2"
           [label]="'ACTIONS.NAVIGATION.BACK' | translate"
           [ariaLabel]="'ACTIONS.NAVIGATION.BACK.IMAGE.TOOLTIP' | translate"
           [pTooltip]="'ACTIONS.NAVIGATION.BACK.IMAGE.TOOLTIP' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
         ></p-button>
-        <div class="font-bold">{{ imageIndex + 1 }} / {{ imageInfos.length }}</div>
+        <div class="font-bold">{{ imageIndex() + 1 }} / {{ imageInfos().length }}</div>
         <p-button
           id="wc_image_detail_action_next"
           icon="pi pi-caret-right"
-          (onClick)="onNavigateToImage(imageIndex + 1)"
+          (onClick)="onNavigateToImage(imageIndex() + 1)"
           [disabled]="imageInfos.length < 2"
           [label]="'ACTIONS.NAVIGATION.NEXT' | translate"
           [ariaLabel]="'ACTIONS.NAVIGATION.NEXT.IMAGE.TOOLTIP' | translate"

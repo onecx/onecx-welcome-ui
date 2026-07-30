@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, inject } from '@angular/core'
+import { Component, OnInit, ViewChild, effect, inject, input, model, output, untracked } from '@angular/core'
 import { AbstractControl, FormBuilder, FormControl, ReactiveFormsModule, ValidatorFn } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import { filter, take } from 'rxjs'
@@ -31,43 +31,54 @@ import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
   templateUrl: './image-create.component.html',
   styleUrls: ['./image-create.component.scss']
 })
-export class ImageCreateComponent implements OnInit, OnChanges {
+export class ImageCreateComponent implements OnInit {
   private readonly imageApiService = inject(ImagesInternalAPIService)
   private readonly fb = inject(FormBuilder)
   private readonly msgService = inject(PortalMessageService)
   private readonly appstateService = inject(AppStateService)
 
-  @Input() public displayCreateDialog = false
-  @Input() public imageInfoCount: number = 0
-  @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
+  public readonly displayCreateDialog = model<boolean>(false)
+  public readonly imageInfoCount = input<number>(0)
+  public readonly hideDialogAndChanged = output<boolean>()
 
   @ViewChild('fileUpload', { static: true }) fileUpload?: FileUpload
 
+  private currentWorkspaceName: string | undefined = undefined
   public isLoading = false
+  public selectedFile: Blob | undefined = undefined
+  public uploadDisabled: boolean = false
   public formGroup = this.fb.nonNullable.group({
     url: new FormControl<string | null>(null, this.imageSrcValidator()),
     image: new FormControl(null)
   })
-  public selectedFile?: Blob
-  private currentWorkspaceName: string = ''
-  public uploadDisabled: boolean = false
+
+  constructor() {
+    effect(() => {
+      const isOpen = this.displayCreateDialog()
+      if (!isOpen) {
+        untracked(() => {
+          this.formGroup.get('url')?.reset()
+          this.uploadDisabled = false
+          this.onFileRemoval()
+        })
+      }
+    })
+  }
 
   ngOnInit(): void {
+    this.formGroup.get('url')?.valueChanges.subscribe((v) => {
+      this.uploadDisabled = v !== null && v !== ''
+    })
+    this.formGroup.disable() // default disabled, will be enabled when preconditions are ready
     this.appstateService.currentWorkspace$
       .pipe(
         filter((ws): ws is Workspace => !!ws?.workspaceName),
         take(1)
       )
-      .subscribe((ws) => (this.currentWorkspaceName = ws.workspaceName))
-    this.formGroup.get('url')?.valueChanges.subscribe((v) => {
-      this.uploadDisabled = v !== null && v !== ''
-    })
-  }
-
-  ngOnChanges(): void {
-    this.formGroup.get('url')?.reset()
-    this.uploadDisabled = false
-    this.onFileRemoval()
+      .subscribe((ws) => {
+        this.currentWorkspaceName = ws.workspaceName
+        this.formGroup.enable()
+      })
   }
 
   private imageSrcValidator(): ValidatorFn {
@@ -76,20 +87,19 @@ export class ImageCreateComponent implements OnInit, OnChanges {
   }
 
   public onDialogHide(): void {
-    this.displayCreateDialog = false
+    this.displayCreateDialog.set(false)
     this.hideDialogAndChanged.emit(false)
   }
 
   public onSave(): void {
+    if (!this.currentWorkspaceName) {
+      this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+      return
+    }
     if (this.formGroup.valid) {
-      if (!this.currentWorkspaceName) {
-        this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
-        return
-      }
-
       const imageInfo = this.submitFormValues() as ImageInfo
       imageInfo.modificationCount = 0
-      imageInfo.position = (this.imageInfoCount + 1).toString()
+      imageInfo.position = (this.imageInfoCount() + 1).toString()
       imageInfo.workspaceName = this.currentWorkspaceName
       this.imageApiService
         .createImageInfo({
@@ -97,7 +107,7 @@ export class ImageCreateComponent implements OnInit, OnChanges {
         })
         .subscribe({
           next: (data) => {
-            if (this.selectedFile == undefined) {
+            if (this.selectedFile === undefined) {
               this.msgService.success({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
               this.formGroup.controls['url'].reset()
               this.hideDialogAndChanged.emit(true)
@@ -111,9 +121,9 @@ export class ImageCreateComponent implements OnInit, OnChanges {
                     const imageInfo = this.submitFormValues() as ImageInfo
                     imageInfo.modificationCount = data.modificationCount
                     imageInfo.imageId = createdImage.imageId
-                    imageInfo.position = (this.imageInfoCount + 1).toString()
+                    imageInfo.position = (this.imageInfoCount() + 1).toString()
                     imageInfo.visible = true
-                    imageInfo.workspaceName = this.currentWorkspaceName
+                    if (this.currentWorkspaceName) imageInfo.workspaceName = this.currentWorkspaceName
                     this.imageApiService
                       .updateImageInfo({
                         id: data.id!,

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
+import { Component, OnInit, inject, input, model, output } from '@angular/core'
 import { HttpHeaders } from '@angular/common/http'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 
@@ -24,9 +24,9 @@ export class WelcomeImportComponent implements OnInit {
   private readonly translate = inject(TranslateService)
   private readonly msgService = inject(PortalMessageService)
 
-  @Input() workspaceName: string | undefined
-  @Input() displayDialog = false
-  @Output() public importEmitter = new EventEmitter<boolean>()
+  public readonly workspaceName = input<string | undefined>(undefined)
+  public readonly displayDialog = model<boolean>(false)
+  public readonly importEmitter = output<boolean>()
 
   public importError = false
   public httpHeaders!: HttpHeaders
@@ -69,11 +69,11 @@ export class WelcomeImportComponent implements OnInit {
   }
 
   public onImportConfirmation(): void {
-    this.importEmitter.emit()
-    if (this.workspaceName && this.config) {
+    this.importEmitter.emit(false)
+    if (this.workspaceName() && this.config) {
       this.eximApi
         .importConfiguration({
-          workspaceName: this.workspaceName,
+          workspaceName: this.workspaceName()!,
           welcomeSnapshot: this.config
         })
         .subscribe({
