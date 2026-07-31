@@ -1,3 +1,5 @@
+/* eslint-disable @angular-eslint/component-selector */
+/* eslint-disable @angular-eslint/directive-selector */
 import { Component, Directive, inject, input, TemplateRef, ViewContainerRef } from '@angular/core'
 import { ComponentFixture, fakeAsync, TestBed, tick, discardPeriodicTasks, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
@@ -41,7 +43,6 @@ const ws: Workspace = {
 describe('WelcomeOverviewComponent', () => {
   let component: WelcomeOverviewComponent
   let fixture: ComponentFixture<WelcomeOverviewComponent>
-  let slotServiceSpy: jasmine.SpyObj<SlotService>
   let appStateSubject: BehaviorSubject<Workspace | undefined>
 
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
@@ -115,7 +116,6 @@ describe('WelcomeOverviewComponent', () => {
         add: { imports: [MockPortalPageComponent, MockOcxIfPermissionDirective] }
       })
       .compileComponents()
-    slotServiceSpy = TestBed.inject(SlotService) as jasmine.SpyObj<SlotService>
   }))
 
   beforeEach(() => {
