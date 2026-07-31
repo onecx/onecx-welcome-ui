@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core'
 import { AsyncPipe, NgStyle, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { catchError, filter, finalize, map, Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs'
+import { catchError, filter, finalize, map, Observable, of, Subject, take, takeUntil } from 'rxjs'
 import FileSaver from 'file-saver'
 
 import { ButtonModule } from 'primeng/button'
@@ -62,7 +62,6 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   public maxImages = 20
   // data
   public workspace: Workspace | undefined
-  public subscription: Subscription | undefined
   public images: ImageDataResponse[] = []
   public imageInfos: ImageInfo[] = []
   public imageInfo$: Observable<ImageInfo[]> = of([])
@@ -193,9 +192,9 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
 
   public onDeleteImage(id: string | undefined, idx: number, ii: ImageInfo[]) {
     if (id) {
-      ii.splice(idx, 1) // remove locally
       this.imageService.deleteImageInfoById({ id: id }).subscribe({
         next: () => {
+          ii.splice(idx, 1)
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.SUCCESS' })
           this.updatePositions(ii)
         },

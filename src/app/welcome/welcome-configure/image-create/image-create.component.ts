@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, effect, inject, input, model, output, untracked } from '@angular/core'
-import { AbstractControl, FormBuilder, FormControl, ReactiveFormsModule, ValidatorFn } from '@angular/forms'
+import { AbstractControl, FormBuilder, FormControl, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
-import { filter, take } from 'rxjs'
+import { EMPTY, catchError, concatMap, filter, take, tap } from 'rxjs'
 
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
@@ -29,13 +29,13 @@ import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
     TranslateModule
   ],
   templateUrl: './image-create.component.html',
-  styleUrls: ['./image-create.component.scss']
+  styleUrl: './image-create.component.scss'
 })
 export class ImageCreateComponent implements OnInit {
-  private readonly imageApiService = inject(ImagesInternalAPIService)
   private readonly fb = inject(FormBuilder)
   private readonly msgService = inject(PortalMessageService)
   private readonly appstateService = inject(AppStateService)
+  private readonly imageApiService = inject(ImagesInternalAPIService)
 
   public readonly displayCreateDialog = model<boolean>(false)
   public readonly imageInfoCount = input<number>(0)
@@ -48,7 +48,12 @@ export class ImageCreateComponent implements OnInit {
   public selectedFile: Blob | undefined = undefined
   public uploadDisabled: boolean = false
   public formGroup = this.fb.nonNullable.group({
-    url: new FormControl<string | null>(null, this.imageSrcValidator()),
+    url: new FormControl<string | null>(null, [
+      Validators.minLength(7),
+      Validators.maxLength(255),
+      Validators.pattern('^(http|https)://.{6,245}'),
+      this.imageSrcValidator() // check loaded image src, if file was selected
+    ]),
     image: new FormControl(null)
   })
 
@@ -96,61 +101,57 @@ export class ImageCreateComponent implements OnInit {
       this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
       return
     }
-    if (this.formGroup.valid) {
-      const imageInfo = this.submitFormValues() as ImageInfo
-      imageInfo.modificationCount = 0
-      imageInfo.position = (this.imageInfoCount() + 1).toString()
-      imageInfo.workspaceName = this.currentWorkspaceName
-      this.imageApiService
-        .createImageInfo({
-          imageInfo: imageInfo
-        })
-        .subscribe({
-          next: (data) => {
-            if (this.selectedFile === undefined) {
+    if (!this.formGroup.valid) return
+
+    const imageInfo = this.submitFormValues() as ImageInfo
+    imageInfo.modificationCount = 0
+    imageInfo.position = (this.imageInfoCount() + 1).toString()
+    imageInfo.workspaceName = this.currentWorkspaceName
+
+    this.imageApiService
+      .createImageInfo({ imageInfo })
+      .pipe(
+        concatMap((data) => {
+          if (!this.selectedFile) {
+            this.msgService.success({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
+            this.formGroup.controls['url'].reset()
+            this.hideDialogAndChanged.emit(true)
+            return EMPTY
+          }
+          return this.imageApiService.createImage({ body: this.selectedFile }).pipe(
+            catchError((err) => {
+              this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+              console.error('createImage', err)
+              return EMPTY
+            }),
+            concatMap((createdImage) => {
+              const updateInfo = this.submitFormValues() as ImageInfo
+              updateInfo.modificationCount = data.modificationCount
+              updateInfo.imageId = createdImage.imageId
+              updateInfo.position = (this.imageInfoCount() + 1).toString()
+              updateInfo.visible = true
+              if (this.currentWorkspaceName) updateInfo.workspaceName = this.currentWorkspaceName
+              return this.imageApiService.updateImageInfo({ id: data.id!, imageInfo: updateInfo }).pipe(
+                catchError((err) => {
+                  this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+                  console.error('updateImageInfo', err)
+                  return EMPTY
+                })
+              )
+            }),
+            tap(() => {
               this.msgService.success({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
-              this.formGroup.controls['url'].reset()
               this.hideDialogAndChanged.emit(true)
-            } else {
-              this.imageApiService
-                .createImage({
-                  body: this.selectedFile
-                })
-                .subscribe({
-                  next: (createdImage) => {
-                    const imageInfo = this.submitFormValues() as ImageInfo
-                    imageInfo.modificationCount = data.modificationCount
-                    imageInfo.imageId = createdImage.imageId
-                    imageInfo.position = (this.imageInfoCount() + 1).toString()
-                    imageInfo.visible = true
-                    if (this.currentWorkspaceName) imageInfo.workspaceName = this.currentWorkspaceName
-                    this.imageApiService
-                      .updateImageInfo({
-                        id: data.id!,
-                        imageInfo: imageInfo
-                      })
-                      .subscribe({
-                        next: () => {
-                          this.msgService.success({ summaryKey: 'ACTIONS.CREATE.SUCCESS' })
-                          this.hideDialogAndChanged.emit(true)
-                          this.onFileRemoval()
-                        },
-                        error: (err) => {
-                          this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
-                          console.error('updateImageInfo', err)
-                        }
-                      })
-                  },
-                  error: (err) => {
-                    this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
-                    console.error('createImage', err)
-                  }
-                })
-            }
-          },
-          error: () => this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+              this.onFileRemoval()
+            })
+          )
+        }),
+        catchError(() => {
+          this.msgService.error({ summaryKey: 'ACTIONS.CREATE.ERROR' })
+          return EMPTY
         })
-    }
+      )
+      .subscribe()
   }
 
   public onFileSelected(selectedFile: Blob | undefined): void {

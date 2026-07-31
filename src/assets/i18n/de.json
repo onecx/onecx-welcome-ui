@@ -113,12 +113,16 @@
     "OBJECT_FIT": "Anpassung",
     "OBJECT_POSITION": "Position",
     "BACKGROUND_COLOR": "Hintergrundfarbe",
-    "FORMAT": "Format",
     "TOOLTIPS": {
       "URL": "Bild URL",
       "OBJECT_FIT": "Bestimmt wie das Bild an den Platz im Browserfenster angepasst werden soll. CSS: object-fit",
       "OBJECT_POSITION": "Bestimmt wo das Bild im Browserfenster erscheinen soll. CSS: object-position. Inhalt wird nicht validiert.",
       "BACKGROUND_COLOR": "Farbe des Hintergrunds im vom Bild nicht abgedeckten Bereich. Inhalt wird nicht validiert."
+    },
+    "FORMAT": "Format",
+    "HINTS": {
+      "FORMAT_URL": "Format: ",
+      "FORMAT_IMAGE_URL": "Format: http(s)://path-to-image"
     }
   },
   "VALIDATION": {

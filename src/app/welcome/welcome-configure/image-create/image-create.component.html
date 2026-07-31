@@ -57,7 +57,7 @@
             #createUrl
             pInputText
             id="wc_image_create_form_url"
-            class="w-full text-responsive"
+            class="w-full pr-5 overflow-hidden white-space-nowrap text-overflow-ellipsis"
             formControlName="url"
             [ariaLabel]="'ACTIONS.CREATE.URL' | translate"
             [pTooltip]="'ACTIONS.CREATE.URL.TOOLTIP' | translate"
@@ -66,6 +66,9 @@
           />
           <label for="wc_image_create_form_url">{{ 'ACTIONS.CREATE.URL' | translate }}</label>
         </p-floatlabel>
+        <label for="wc_image_create_form_url" class="ocx-control-hint">
+          {{ 'IMAGE.HINTS.FORMAT_IMAGE_URL' | translate }}
+        </label>
         @if (formGroup.controls['url'].errors?.hasOwnProperty('srcMissing') && formGroup.controls['url'].value === '') {
           <label for="wc_image_create_form_url" class="ocx-control-error">
             {{ 'VALIDATION.ERRORS.MISSING_IMG_SRC' | translate }}
