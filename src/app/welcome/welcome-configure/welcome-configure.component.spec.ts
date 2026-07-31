@@ -250,7 +250,7 @@ describe('WelcomeConfigureComponent', () => {
 
       component.fetchImageData(imageInfos)
 
-      expect(component.images).toContain(imgDataResponse)
+      expect(component.images()).toContain(imgDataResponse)
     })
 
     it('should handle error when fetching imageInfos', () => {
@@ -265,7 +265,7 @@ describe('WelcomeConfigureComponent', () => {
 
   describe('buildImageSrc', () => {
     it('should return blob URL if image is found and imageData is a Blob', () => {
-      component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
+      component.images.set([{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }])
 
       const result = component.buildImageSrc(imageInfos[0])
 
@@ -273,7 +273,7 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should return cached blob URL on second call', () => {
-      component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
+      component.images.set([{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }])
 
       const result1 = component.buildImageSrc(imageInfos[0])
       const result2 = component.buildImageSrc(imageInfos[0])
@@ -283,7 +283,7 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should return undefined if imageData is Blob but imageId is missing', () => {
-      component.images = [{ imageId: undefined, mimeType: 'image/png', imageData: new Blob() }]
+      component.images.set([{ imageId: undefined, mimeType: 'image/png', imageData: new Blob() }])
       const imageInfo = { id: 'x', imageId: undefined, visible: true, workspaceName: 'ws' }
 
       const result = component.buildImageSrc(imageInfo)
@@ -292,7 +292,7 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should return base64 string if image is found and imageData is a string', () => {
-      component.images = [{ imageId: '123', mimeType: 'image/png', imageData: 'abc123' as any }]
+      component.images.set([{ imageId: '123', mimeType: 'image/png', imageData: 'abc123' as any }])
 
       const result = component.buildImageSrc(imageInfos[0])
 
@@ -300,7 +300,7 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should return base64 string with empty data if image is found but imageData is undefined', () => {
-      component.images = [{ imageId: '123' }]
+      component.images.set([{ imageId: '123' }])
 
       const result = component.buildImageSrc(imageInfos[0])
 
@@ -316,7 +316,7 @@ describe('WelcomeConfigureComponent', () => {
         workspaceName: 'w1',
         url: 'http://example.com/image3.png'
       }
-      component.images = imageInfos
+      component.images.set(imageInfos)
 
       const result = component.buildImageSrc(imageInfo)
 

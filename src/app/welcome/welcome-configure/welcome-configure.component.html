@@ -28,7 +28,9 @@
               (keydown.enter)="onOpenDetailDialog(i)"
               (keydown.space)="onOpenDetailDialog(i)"
             >
-              <img
+              <app-image-item [index]="ii" [imageInfo]="info" [images]="images()" [blobUrls]="blobUrls" />
+              <!--
+              img
                 [id]="'wc_configure_card_item_' + i + '_image'"
                 class="border-round-sm w-13rem sm:w-14rem md:w-18rem h-7rem sm:h-9rem md:h-13rem"
                 [ngStyle]="{
@@ -43,6 +45,7 @@
                 tooltipPosition="top"
                 tooltipEvent="hover"
               />
+              -->
             </a>
             <!-- BUTTON bar - schema: (B B) .T. (B B) -->
             <div class="sm:mx-2 flex flex-row flex-nowrap justify-content-between align-items-center">
@@ -133,7 +136,7 @@
       <app-image-detail
         [displayDialog]="displayDetailDialog"
         (closeDialog)="onCloseDetailDialog(false)"
-        [images]="images"
+        [images]="images()"
         [imageInfos]="imageInfos"
         [imageIndex]="detailImageIndex"
       ></app-image-detail>

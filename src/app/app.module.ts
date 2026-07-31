@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations'
+import { provideAnimations } from '@angular/platform-browser/animations'
 import { RouterModule, Routes } from '@angular/router'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 
@@ -28,7 +28,6 @@ const routes: Routes = [
     AppComponent,
     AngularAcceleratorModule,
     AngularAuthModule,
-    BrowserAnimationsModule,
     RouterModule.forRoot(routes, {
       initialNavigation: 'enabledBlocking',
       enableTracing: false

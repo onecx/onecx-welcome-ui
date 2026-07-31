@@ -38,7 +38,7 @@
                 styleClass="w-full"
                 formControlName="objectFit"
                 [options]="objectFitOptions"
-                [attr.aria-label]="'IMAGE.OBJECT_FIT' | translate"
+                [ariaLabel]="'IMAGE.OBJECT_FIT' | translate"
                 [pTooltip]="'IMAGE.TOOLTIPS.OBJECT_FIT' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
@@ -52,8 +52,8 @@
               <input
                 pInputText
                 type="text"
-                class="w-full"
                 id="wc_detail_form_object_position"
+                class="w-full overflow-hidden white-space-nowrap text-overflow-ellipsis"
                 formControlName="objectPosition"
                 [ariaLabel]="'IMAGE.OBJECT_POSITION' | translate"
                 [pTooltip]="'IMAGE.TOOLTIPS.OBJECT_POSITION' | translate"
@@ -74,7 +74,7 @@
               <input
                 pInputText
                 type="text"
-                class="w-full"
+                class="w-full overflow-hidden white-space-nowrap text-overflow-ellipsis"
                 id="wc_detail_form_background"
                 formControlName="backgroundColor"
                 [ariaLabel]="'IMAGE.BACKGROUND_COLOR' | translate"
@@ -95,8 +95,8 @@
         <input
           pInputText
           type="text"
-          class="w-full"
           id="wc_detail_url"
+          class="w-full overflow-hidden white-space-nowrap text-overflow-ellipsis"
           [disabled]="true"
           [(ngModel)]="info.url"
           [ariaLabel]="'IMAGE.URL' | translate"
@@ -128,7 +128,7 @@
           id="wc_image_detail_action_next"
           icon="pi pi-caret-right"
           (onClick)="onNavigateToImage(imageIndex() + 1)"
-          [disabled]="imageInfos.length < 2"
+          [disabled]="imageInfos().length < 2"
           [label]="'ACTIONS.NAVIGATION.NEXT' | translate"
           [ariaLabel]="'ACTIONS.NAVIGATION.NEXT.IMAGE.TOOLTIP' | translate"
           [pTooltip]="'ACTIONS.NAVIGATION.NEXT.IMAGE.TOOLTIP' | translate"

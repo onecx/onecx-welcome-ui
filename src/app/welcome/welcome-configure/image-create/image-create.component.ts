@@ -1,4 +1,15 @@
-import { Component, OnInit, ViewChild, effect, inject, input, model, output, untracked } from '@angular/core'
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild,
+  effect,
+  inject,
+  input,
+  model,
+  output,
+  untracked
+} from '@angular/core'
 import { AbstractControl, FormBuilder, FormControl, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import { EMPTY, catchError, concatMap, filter, take, tap } from 'rxjs'
@@ -28,6 +39,7 @@ import { ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
     TooltipModule,
     TranslateModule
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './image-create.component.html',
   styleUrl: './image-create.component.scss'
 })

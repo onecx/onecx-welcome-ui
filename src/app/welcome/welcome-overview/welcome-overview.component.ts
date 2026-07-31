@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core'
 import { AsyncPipe, NgClass, NgStyle } from '@angular/common'
 import { animate, style, transition, trigger } from '@angular/animations'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
@@ -22,12 +22,14 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
     AsyncPipe,
     NgClass,
     NgStyle,
-    TranslateModule,
-    DockModule,
     AngularAcceleratorModule,
     AngularRemoteComponentsModule,
+    DockModule,
+    TranslateModule,
+    // components
     PortalPageComponent
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './welcome-overview.component.html',
   styleUrl: './welcome-overview.component.scss',
   animations: [

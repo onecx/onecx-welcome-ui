@@ -1,4 +1,4 @@
-import { Component, inject, input, model, output } from '@angular/core'
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, model, output } from '@angular/core'
 import { HttpHeaders } from '@angular/common/http'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 
@@ -16,10 +16,12 @@ import { ConfigExportImportAPIService, WelcomeSnapshot } from 'src/app/shared/ge
   selector: 'app-welcome-import',
   standalone: true,
   imports: [TranslateModule, ButtonModule, DialogModule, FileUploadModule, MessageModule, TooltipModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './welcome-import.component.html',
   styleUrl: './welcome-import.component.scss'
 })
 export class WelcomeImportComponent {
+  private readonly cdr = inject(ChangeDetectorRef)
   private readonly eximApi = inject(ConfigExportImportAPIService)
   private readonly translate = inject(TranslateService)
   private readonly msgService = inject(PortalMessageService)
@@ -55,6 +57,8 @@ export class WelcomeImportComponent {
       } catch (err) {
         console.error('imported welcome configuration parse error', err)
         this.importError = true
+      } finally {
+        this.cdr.detectChanges()
       }
     })
   }

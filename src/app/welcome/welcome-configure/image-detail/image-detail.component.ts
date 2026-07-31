@@ -1,4 +1,4 @@
-import { Component, OnDestroy, effect, inject, input, model, output } from '@angular/core'
+import { ChangeDetectionStrategy, Component, OnDestroy, effect, inject, input, model, output } from '@angular/core'
 import { NgStyle } from '@angular/common'
 import { FormsModule, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
@@ -37,6 +37,7 @@ export interface ImageCssForm {
     TooltipModule,
     TranslateModule
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './image-detail.component.html',
   styleUrl: './image-detail.component.scss'
 })
