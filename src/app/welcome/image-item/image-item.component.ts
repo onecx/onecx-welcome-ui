@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, computed, input, effect } from '@angular/core'
+import { Component, ChangeDetectionStrategy, computed, input } from '@angular/core'
 import { NgStyle } from '@angular/common'
 import { TranslateModule } from '@ngx-translate/core'
 
