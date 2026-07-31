@@ -20,9 +20,9 @@ import {
   ConfigExportImportAPIService
 } from 'src/app/shared/generated'
 
-import { WelcomeImportComponent } from './welcome-import/welcome-import.component'
-import { ImageCreateComponent } from './image-create/image-create.component'
-import { ImageDetailComponent } from './image-detail/image-detail.component'
+import { WelcomeImportComponent } from '../welcome-import/welcome-import.component'
+import { ImageCreateComponent } from '../image-create/image-create.component'
+import { ImageDetailComponent } from '../image-detail/image-detail.component'
 import { ImageItemComponent } from '../image-item/image-item.component'
 
 @Component({
