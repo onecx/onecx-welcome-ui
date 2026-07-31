@@ -163,7 +163,7 @@ describe('WelcomeConfigureComponent', () => {
     })
       // replace problematic components with mocks to avoid errors during testing
       .overrideComponent(WelcomeConfigureComponent, {
-        remove: { imports: [PageHeaderComponent, AngularAcceleratorModule, PortalPageComponent] },
+        remove: { imports: [AngularAcceleratorModule, PortalPageComponent, PageHeaderComponent] },
         add: { imports: [MockPageHeaderComponent, MockOcxContentComponent, MockPortalPageComponent] }
       })
       .compileComponents()
