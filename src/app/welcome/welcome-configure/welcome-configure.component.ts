@@ -69,8 +69,6 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.preparePageAction()
-    // Render page actions/content immediately, then reload once workspace is available.
-    this.onReload()
     this.appStateService.currentWorkspace$
       .pipe(
         filter((ws): ws is Workspace => !!ws?.workspaceName),
