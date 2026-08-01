@@ -2,11 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  ViewChild,
   effect,
   inject,
   input,
-  model,
   output,
   untracked,
   viewChild

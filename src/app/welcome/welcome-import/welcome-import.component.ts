@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, model, output } from '@angular/core'
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, output } from '@angular/core'
 import { HttpHeaders } from '@angular/common/http'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 
