@@ -89,7 +89,8 @@
   "DIALOG": {
     "OVERVIEW": {
       "PIC": "Background Image",
-      "TITLE": "Hello"
+      "TITLE": "Hello",
+      "WORKSPACE": "Workspace"
     },
     "CONFIGURE": {
       "HEADER": "Configure Workspace Start page",
@@ -113,12 +114,16 @@
     "OBJECT_FIT": "Object Fit",
     "OBJECT_POSITION": "Object Position",
     "BACKGROUND_COLOR": "Background Color",
-    "FORMAT": "Format",
     "TOOLTIPS": {
       "URL": "Image URL",
       "OBJECT_FIT": "Determines how the image should be adjusted to the space in the browser window. CSS: object-fit",
       "OBJECT_POSITION": "Determines where the image should appear in the browser window. CSS: object-position. Content is not validated.",
       "BACKGROUND_COLOR": "Color of the background in the area not covered by the image. Content is not validated."
+    },
+    "FORMAT": "Format",
+    "HINTS": {
+      "FORMAT_URL": "Format: ",
+      "FORMAT_IMAGE_URL": "Format: http(s)://path-to-image"
     }
   },
   "VALIDATION": {

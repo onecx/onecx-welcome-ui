@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnChanges, OnDestroy, inject } from '@angular/core'
+import { ChangeDetectionStrategy, Component, OnDestroy, effect, inject, input, model, output } from '@angular/core'
 import { NgStyle } from '@angular/common'
 import { FormsModule, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
@@ -37,19 +37,20 @@ export interface ImageCssForm {
     TooltipModule,
     TranslateModule
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './image-detail.component.html',
   styleUrl: './image-detail.component.scss'
 })
-export class ImageDetailComponent implements OnChanges, OnDestroy {
+export class ImageDetailComponent implements OnDestroy {
   private readonly imageApi = inject(ImagesInternalAPIService)
   private readonly translate = inject(TranslateService)
   private readonly msgService = inject(PortalMessageService)
 
-  @Input() public displayDialog = false
-  @Input() public images: ImageDataResponse[] = []
-  @Input() public imageInfos: ImageInfo[] = []
-  @Input() public imageIndex = -1
-  @Output() public closeDialog = new EventEmitter<boolean>() // true on image changes
+  public readonly visible = input<boolean>(false)
+  public readonly images = input<ImageDataResponse[]>([])
+  public readonly imageInfos = input<ImageInfo[]>([])
+  public readonly imageIndex = model<number>(-1)
+  public readonly closeDialog = output<boolean>() // true on image changes
 
   public isLoading = false
   public isChanged = false
@@ -61,8 +62,10 @@ export class ImageDetailComponent implements OnChanges, OnDestroy {
   public objectFitOptions = [ObjectFit.None, ObjectFit.Contain, ObjectFit.Cover, ObjectFit.Fill, ObjectFit.ScaleDown]
   private readonly blobUrls = new Map<string, string>()
 
-  public ngOnChanges(): void {
-    if (this.displayDialog && this.imageIndex > -1) this.fillForm()
+  constructor() {
+    effect(() => {
+      if (this.visible() && this.imageIndex() > -1) this.fillForm()
+    })
   }
 
   public ngOnDestroy(): void {
@@ -73,16 +76,16 @@ export class ImageDetailComponent implements OnChanges, OnDestroy {
   // fill form - use default values if values are not yet set
   private fillForm(): void {
     this.formGroup.patchValue({
-      objectFit: this.imageInfos[this.imageIndex].objectFit ?? 'scale-down',
-      objectPosition: this.imageInfos[this.imageIndex].objectPosition ?? 'center center',
-      backgroundColor: this.imageInfos[this.imageIndex].backgroundColor ?? 'unset'
+      objectFit: this.imageInfos()[this.imageIndex()].objectFit ?? 'scale-down',
+      objectPosition: this.imageInfos()[this.imageIndex()].objectPosition ?? 'center center',
+      backgroundColor: this.imageInfos()[this.imageIndex()].backgroundColor ?? 'unset'
     })
   }
 
   // if image data was captured before then use this data
   // otherwise use the image url
   public buildImageSrc(imageInfo: ImageInfo, images: ImageDataResponse[]): string | undefined {
-    if (this.imageIndex < 0) return
+    if (this.imageIndex() < 0) return
     if (imageInfo.url) return imageInfo.url
     const currentImage = images.find((image) => {
       return image.imageId === imageInfo.imageId
@@ -104,11 +107,11 @@ export class ImageDetailComponent implements OnChanges, OnDestroy {
   }
 
   public onSave() {
-    const ii = { ...this.imageInfos[this.imageIndex], ...this.formGroup.value } as ImageInfo
+    const ii = { ...this.imageInfos()[this.imageIndex()], ...this.formGroup.value } as ImageInfo
     if (ii.id)
       this.imageApi.updateImageInfo({ id: ii.id, imageInfo: ii }).subscribe({
         next: (data) => {
-          this.imageInfos[this.imageIndex] = data
+          this.imageInfos()[this.imageIndex()] = data
           this.msgService.success({ summaryKey: 'ACTIONS.SAVE.MESSAGE_OK' })
           this.isChanged = true
         },
@@ -120,9 +123,9 @@ export class ImageDetailComponent implements OnChanges, OnDestroy {
   }
 
   public onNavigateToImage(newIdx: number) {
-    if (newIdx === this.imageInfos.length) this.imageIndex = 0
-    else if (newIdx === -1) this.imageIndex = this.imageInfos.length - 1
-    else this.imageIndex = newIdx
+    if (newIdx === this.imageInfos().length) this.imageIndex.set(0)
+    else if (newIdx === -1) this.imageIndex.set(this.imageInfos().length - 1)
+    else this.imageIndex.set(newIdx)
     this.fillForm()
   }
 }

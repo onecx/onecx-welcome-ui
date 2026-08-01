@@ -63,13 +63,10 @@ describe('ImageDetailComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideNoopAnimations(),
-        { provide: PortalMessageService, useValue: msgServiceSpy }
+        { provide: PortalMessageService, useValue: msgServiceSpy },
+        { provide: ImagesInternalAPIService, useValue: imageServiceSpy }
       ]
-    })
-      .overrideComponent(ImageDetailComponent, {
-        add: { providers: [{ provide: ImagesInternalAPIService, useValue: imageServiceSpy }] }
-      })
-      .compileComponents()
+    }).compileComponents()
   }))
 
   beforeEach(() => {
@@ -77,8 +74,10 @@ describe('ImageDetailComponent', () => {
     ;(component as any).imageApi = imageServiceSpy
     ;(component as any).msgService = msgServiceSpy
     // satisfy the displaying of the url in HTML
-    component.imageInfos = [{ imageId: '1', url: 'http://example.com/image1.png', workspaceName: 'ws' }]
-    component.displayDialog = true
+    fixture.componentRef.setInput('imageInfos', [
+      { imageId: '1', url: 'http://example.com/image1.png', workspaceName: 'ws' }
+    ])
+    fixture.componentRef.setInput('visible', true)
     // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
@@ -94,33 +93,26 @@ describe('ImageDetailComponent', () => {
       fixture.componentRef.setInput('imageInfos', imageInfos)
     })
 
-    it('should fill the form with image values', () => {
-      spyOn(component, 'ngOnChanges').and.callThrough()
+    it('should not fill the form when imageIndex is invalid', () => {
       fixture.componentRef.setInput('imageIndex', -1)
 
-      fixture.detectChanges() // trigger lifecycle hook: ngOnChanges()
+      fixture.detectChanges()
 
-      expect(component.ngOnChanges).toHaveBeenCalled()
+      expect(component.formGroup.value.objectFit).toBe(ObjectFit.ScaleDown)
     })
 
     it('should fill the form with image values', () => {
-      spyOn(component, 'ngOnChanges').and.callThrough()
       fixture.componentRef.setInput('imageIndex', 0)
 
-      fixture.detectChanges() // trigger lifecycle hook: ngOnChanges()
-
-      expect(component.ngOnChanges).toHaveBeenCalled()
+      fixture.detectChanges()
 
       expect(component.formGroup.value).toEqual(imageCssForm.value)
     })
 
     it('should fill the form with default values', () => {
-      spyOn(component, 'ngOnChanges').and.callThrough()
       fixture.componentRef.setInput('imageIndex', 1)
 
-      fixture.detectChanges() // trigger lifecycle hook: ngOnChanges()
-
-      expect(component.ngOnChanges).toHaveBeenCalled()
+      fixture.detectChanges()
 
       expect(component.formGroup.value).toEqual(imageCssForm.value)
     })
@@ -217,7 +209,7 @@ describe('ImageDetailComponent', () => {
 
       component.onNavigateToImage(imageInfos.length) // last + 1
 
-      expect(component.imageIndex).toBe(0)
+      expect(component.imageIndex()).toBe(0)
     })
 
     it('should go to last image if on first', () => {
@@ -225,7 +217,7 @@ describe('ImageDetailComponent', () => {
 
       component.onNavigateToImage(-1)
 
-      expect(component.imageIndex).toBe(imageInfos.length - 1)
+      expect(component.imageIndex()).toBe(imageInfos.length - 1)
     })
 
     it('should go to next image', () => {
@@ -233,7 +225,7 @@ describe('ImageDetailComponent', () => {
 
       component.onNavigateToImage(2)
 
-      expect(component.imageIndex).toBe(2)
+      expect(component.imageIndex()).toBe(2)
     })
   })
 
@@ -253,7 +245,7 @@ describe('ImageDetailComponent', () => {
 
       component.onSave()
 
-      expect(component.imageInfos[0]).toEqual(responseData)
+      expect(component.imageInfos()[0]).toEqual(responseData)
       expect(component.isChanged).toBeTrue()
       expect(msgServiceSpy.success).toHaveBeenCalledOnceWith({ summaryKey: 'ACTIONS.SAVE.MESSAGE_OK' })
     })

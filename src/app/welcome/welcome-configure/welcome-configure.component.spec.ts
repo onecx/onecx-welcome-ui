@@ -1,14 +1,24 @@
+/* eslint-disable @angular-eslint/component-selector */
+import { Component, input } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { Location } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
+import { ActivatedRoute } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { BehaviorSubject, of, throwError } from 'rxjs'
+import { BehaviorSubject, firstValueFrom, of, throwError } from 'rxjs'
 import FileSaver from 'file-saver'
 
 import { Workspace } from '@onecx/integration-interface'
-import { AppStateService, PortalMessageService, UserService } from '@onecx/angular-integration-interface'
-import { PermissionService } from '@onecx/angular-utils'
+import { AngularAcceleratorModule, BreadcrumbService, PageHeaderComponent } from '@onecx/angular-accelerator'
+import {
+  AppStateService,
+  ConfigurationService,
+  PortalMessageService,
+  UserService
+} from '@onecx/angular-integration-interface'
+import { PermissionService, PortalPageComponent } from '@onecx/angular-utils'
 
 import {
   ImageDataResponse,
@@ -19,15 +29,14 @@ import {
   ObjectFit
 } from 'src/app/shared/generated'
 import { WelcomeConfigureComponent } from './welcome-configure.component'
-import { ImageCreateComponent } from './image-create/image-create.component'
 
+// Test data: do not use AppStateServiceMock
 const ws: Workspace = {
-  workspaceName: 'wsName',
-  portalName: 'wsName',
+  workspaceName: 'workspace',
+  portalName: 'workspace',
   baseUrl: 'url',
   microfrontendRegistrations: []
 }
-
 const imageInfos: ImageInfo[] = [
   {
     id: '123',
@@ -42,7 +51,6 @@ const imageInfos: ImageInfo[] = [
   { id: '123456', imageId: '123456', visible: true, position: '3', workspaceName: 'ws' },
   { id: '1234567', imageId: '1234567', visible: true, position: '3', workspaceName: 'ws' }
 ]
-
 const imageDTO: WelcomeSnapshot = {
   id: 'export-id',
   created: '2025-02-03T15:30:53.122632Z',
@@ -77,7 +85,24 @@ const imageDTO: WelcomeSnapshot = {
     ]
   }
 }
+/*
+ *  Fake (empty) components
+ *  This is necessary because the real components uses stuff which is not available.
+ *  See overrideComponent() below, where the Mock components are used instead of the real ones.
+ */
+@Component({ selector: 'ocx-portal-page', standalone: true, template: '<ng-content></ng-content>' })
+class MockPortalPageComponent {}
+@Component({ selector: 'ocx-page-header', standalone: true, template: '<ng-content></ng-content>' })
+class MockPageHeaderComponent {
+  header = input<string>()
+  subheader = input<string>()
+  actions = input<any[]>()
+  manualBreadcrumbs = input<boolean>()
+}
+@Component({ selector: 'ocx-content', standalone: true, template: '<ng-content></ng-content>' })
+class MockOcxContentComponent {}
 
+// Lets go testing:
 describe('WelcomeConfigureComponent', () => {
   let component: WelcomeConfigureComponent
   let fixture: ComponentFixture<WelcomeConfigureComponent>
@@ -86,6 +111,8 @@ describe('WelcomeConfigureComponent', () => {
 
   const locationSpy = jasmine.createSpyObj<Location>('Location', ['back'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
+  const configServiceSpy = jasmine.createSpyObj('ConfigurationService', ['getConfig', 'getProperty', 'config$'])
+  configServiceSpy.getConfig.and.returnValue({ baseUrl: 'http://localhost/api', production: false })
   const imageServiceSpy = {
     getAllImageInfosByWorkspaceName: jasmine.createSpy('getAllImageInfosByWorkspaceName').and.returnValue(of([])),
     getImageById: jasmine.createSpy('getImageById').and.returnValue(of({})),
@@ -96,6 +123,11 @@ describe('WelcomeConfigureComponent', () => {
   const eximServiceSpy = {
     exportConfiguration: jasmine.createSpy('exportConfiguration').and.returnValue(of({}))
   }
+  const mockActivatedRoute = { snapshot: { data: {} } }
+  const mockPermissionService = jasmine.createSpyObj('PermissionService', ['hasPermission', 'getPermissions'])
+  mockPermissionService.hasPermission.and.returnValue(of(true))
+  mockPermissionService.getPermissions.and.returnValue(of([]))
+
   function initTestComponent(): void {
     fixture = TestBed.createComponent(WelcomeConfigureComponent)
     component = fixture.componentInstance
@@ -108,28 +140,31 @@ describe('WelcomeConfigureComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         WelcomeConfigureComponent,
-        ImageCreateComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
       providers: [
+        BreadcrumbService,
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideNoopAnimations(),
         { provide: Location, useValue: locationSpy },
-        { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } },
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: PermissionService, useValue: { hasPermission: () => of(true), getPermissions: () => of([]) } },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject } },
+        { provide: ConfigurationService, useValue: configServiceSpy },
         { provide: UserService, useValue: { lang$: langSubject, profile$: new BehaviorSubject<any>({}) } },
+        { provide: PermissionService, useValue: { hasPermission: () => of(true), getPermissions: () => of([]) } },
+        { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: ImagesInternalAPIService, useValue: imageServiceSpy },
         { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
       ]
     })
+      // replace problematic components with mocks to avoid errors during testing
       .overrideComponent(WelcomeConfigureComponent, {
-        set: {
-          template: '<div></div>'
-        }
+        remove: { imports: [AngularAcceleratorModule, PortalPageComponent, PageHeaderComponent] },
+        add: { imports: [MockPageHeaderComponent, MockOcxContentComponent, MockPortalPageComponent] }
       })
       .compileComponents()
   }))
@@ -143,6 +178,7 @@ describe('WelcomeConfigureComponent', () => {
     imageServiceSpy.getImageById.calls.reset()
     imageServiceSpy.deleteImageInfoById.calls.reset()
     imageServiceSpy.updateImageInfo.calls.reset()
+    imageServiceSpy.updateImageOrder.calls.reset()
     eximServiceSpy.exportConfiguration.calls.reset()
     ;(component as any).imageService = imageServiceSpy
     ;(component as any).eximService = eximServiceSpy
@@ -187,34 +223,23 @@ describe('WelcomeConfigureComponent', () => {
       expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:old-url')
     })
 
-    it('should get infos for all images', (done) => {
+    it('should get infos for all images', async () => {
       imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
 
       component.fetchImageInfos()
-
-      component.imageInfo$?.subscribe({
-        next: (images) => {
-          expect(images.length).toBe(5)
-          done()
-        },
-        error: done.fail
-      })
+      const images = await firstValueFrom(component.imageInfo$)
+      expect(images).toHaveSize(5)
     })
 
-    it('should handle error when fetching imageinfos', (done) => {
+    it('should handle error when fetching imageinfos', async () => {
       const errorResponse = { status: 404, statusText: 'Not found' }
       imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
       component.fetchImageInfos()
+      await firstValueFrom(component.imageInfo$)
 
-      component.imageInfo$?.subscribe({
-        next: () => {
-          expect(console.error).toHaveBeenCalledWith('getAllImageInfosByWorkspaceName', errorResponse)
-          done()
-        },
-        error: done.fail
-      })
+      expect(console.error).toHaveBeenCalledWith('getAllImageInfosByWorkspaceName', errorResponse)
     })
   })
 
@@ -225,7 +250,7 @@ describe('WelcomeConfigureComponent', () => {
 
       component.fetchImageData(imageInfos)
 
-      expect(component.images).toContain(imgDataResponse)
+      expect(component.images()).toContain(imgDataResponse)
     })
 
     it('should handle error when fetching imageInfos', () => {
@@ -240,7 +265,7 @@ describe('WelcomeConfigureComponent', () => {
 
   describe('buildImageSrc', () => {
     it('should return blob URL if image is found and imageData is a Blob', () => {
-      component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
+      component.images.set([{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }])
 
       const result = component.buildImageSrc(imageInfos[0])
 
@@ -248,7 +273,7 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should return cached blob URL on second call', () => {
-      component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
+      component.images.set([{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }])
 
       const result1 = component.buildImageSrc(imageInfos[0])
       const result2 = component.buildImageSrc(imageInfos[0])
@@ -258,7 +283,7 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should return undefined if imageData is Blob but imageId is missing', () => {
-      component.images = [{ imageId: undefined, mimeType: 'image/png', imageData: new Blob() }]
+      component.images.set([{ imageId: undefined, mimeType: 'image/png', imageData: new Blob() }])
       const imageInfo = { id: 'x', imageId: undefined, visible: true, workspaceName: 'ws' }
 
       const result = component.buildImageSrc(imageInfo)
@@ -267,7 +292,7 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should return base64 string if image is found and imageData is a string', () => {
-      component.images = [{ imageId: '123', mimeType: 'image/png', imageData: 'abc123' as any }]
+      component.images.set([{ imageId: '123', mimeType: 'image/png', imageData: 'abc123' as any }])
 
       const result = component.buildImageSrc(imageInfos[0])
 
@@ -275,7 +300,7 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should return base64 string with empty data if image is found but imageData is undefined', () => {
-      component.images = [{ imageId: '123' }]
+      component.images.set([{ imageId: '123' }])
 
       const result = component.buildImageSrc(imageInfos[0])
 
@@ -291,7 +316,7 @@ describe('WelcomeConfigureComponent', () => {
         workspaceName: 'w1',
         url: 'http://example.com/image3.png'
       }
-      component.images = imageInfos
+      component.images.set(imageInfos)
 
       const result = component.buildImageSrc(imageInfo)
 

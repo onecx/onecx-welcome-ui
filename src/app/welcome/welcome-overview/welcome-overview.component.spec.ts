@@ -1,12 +1,17 @@
+/* eslint-disable @angular-eslint/component-selector */
+/* eslint-disable @angular-eslint/directive-selector */
+import { Component, Directive, inject, input, TemplateRef, ViewContainerRef } from '@angular/core'
 import { ComponentFixture, fakeAsync, TestBed, tick, discardPeriodicTasks, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { ActivatedRoute } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, PortalMessageService, UserService } from '@onecx/angular-integration-interface'
-import { PermissionService } from '@onecx/angular-utils'
+import { PermissionService, PortalPageComponent } from '@onecx/angular-utils'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { SlotService } from '@onecx/angular-remote-components'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
@@ -39,6 +44,7 @@ describe('WelcomeOverviewComponent', () => {
   let component: WelcomeOverviewComponent
   let fixture: ComponentFixture<WelcomeOverviewComponent>
   let appStateSubject: BehaviorSubject<Workspace | undefined>
+
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const imageServiceSpy = {
     getAllImageInfosByWorkspaceName: jasmine.createSpy('getAllImageInfosByWorkspaceName').and.returnValue(of({})),
@@ -46,9 +52,34 @@ describe('WelcomeOverviewComponent', () => {
   }
   const lang$ = new BehaviorSubject<string>('de')
   const profile$ = new BehaviorSubject<any>({})
+  const mockActivatedRoute = { snapshot: { data: {} } }
   const mockUserService = { lang$, profile$ }
-  const slotServiceSpy = {
-    isSomeComponentDefinedForSlot: jasmine.createSpy('isSomeComponentDefinedForSlot').and.returnValue(of(true))
+  const mockSlotService = jasmine.createSpyObj('SlotService', [
+    'init',
+    'isSomeComponentDefinedForSlot',
+    'getComponentsForSlot'
+  ])
+  mockSlotService.isSomeComponentDefinedForSlot.and.returnValue(of(true))
+  mockSlotService.getComponentsForSlot.and.returnValue(of([]))
+  /*
+   *  Fake (empty) components
+   *  This is necessary because the real components uses stuff which is not available.
+   *  See overrideComponent() below, where the Mock components are used instead of the real ones.
+   */
+  @Component({ selector: 'ocx-portal-page', standalone: true, template: '<ng-content></ng-content>' })
+  class MockPortalPageComponent {}
+  @Directive({
+    selector: '[ocxIfPermission]',
+    standalone: true
+  })
+  class MockOcxIfPermissionDirective {
+    ocxIfPermission = input<any>()
+    private templateRef = inject(TemplateRef)
+    private viewContainer = inject(ViewContainerRef)
+
+    constructor() {
+      this.viewContainer.createEmbeddedView(this.templateRef)
+    }
   }
 
   function initTestComponent(): void {
@@ -70,29 +101,20 @@ describe('WelcomeOverviewComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: SlotService, useValue: slotServiceSpy },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: SlotService, useValue: mockSlotService },
         { provide: UserService, useValue: mockUserService },
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: ImagesInternalAPIService, useValue: imageServiceSpy },
+        { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } },
         { provide: PermissionService, useValue: { hasPermission: () => of(true), getPermissions: () => of([]) } },
-        { provide: AppStateService, useValue: { currentWorkspace$: appStateSubject.asObservable() } }
+        { provide: PortalMessageService, useValue: msgServiceSpy },
+        { provide: ImagesInternalAPIService, useValue: imageServiceSpy }
       ]
     })
+      // replace problematic components with mocks to avoid errors during testing
       .overrideComponent(WelcomeOverviewComponent, {
-        set: {
-          template: '<div></div>'
-        }
+        remove: { imports: [AngularAcceleratorModule, PortalPageComponent] },
+        add: { imports: [MockPortalPageComponent, MockOcxIfPermissionDirective] }
       })
-      /*
-      .overrideComponent(WelcomeOverviewComponent, {
-        add: {
-          providers: [
-            { provide: UserService, useValue: mockUserService },
-            { provide: PortalMessageService, useValue: msgServiceSpy },
-            { provide: ImagesInternalAPIService, useValue: imageServiceSpy }
-          ]
-        }
-      }) */
       .compileComponents()
   }))
 
@@ -202,7 +224,7 @@ describe('WelcomeOverviewComponent', () => {
       expect(component['setCarousel']).toHaveBeenCalled()
     })
 
-    it('should get data for one image', () => {
+    it('should get data for one image: position -1', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
       imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
       component.currentImage = -1
@@ -212,7 +234,7 @@ describe('WelcomeOverviewComponent', () => {
       expect(component.images).toContain(imgDataResponse)
     })
 
-    it('should get data for one image', () => {
+    it('should get data for one image: position 0', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
       imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
       component.currentImage = 0

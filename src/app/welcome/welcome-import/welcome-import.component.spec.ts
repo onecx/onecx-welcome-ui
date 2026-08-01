@@ -74,13 +74,10 @@ describe('WelcomeImportComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([{ path: '', component: WelcomeImportComponent }]),
-        { provide: PortalMessageService, useValue: msgServiceSpy }
+        { provide: PortalMessageService, useValue: msgServiceSpy },
+        { provide: ConfigExportImportAPIService, useValue: eximServiceSpy }
       ]
-    })
-      .overrideComponent(WelcomeImportComponent, {
-        add: { providers: [{ provide: ConfigExportImportAPIService, useValue: eximServiceSpy }] }
-      })
-      .compileComponents()
+    }).compileComponents()
   }))
 
   beforeEach(() => {
@@ -172,7 +169,8 @@ describe('WelcomeImportComponent', () => {
       eximServiceSpy.importConfiguration.and.returnValue(of({}))
       spyOn(component.importEmitter, 'emit')
       spyOn(component, 'onClose')
-      component.workspaceName = 'wsName'
+      fixture.componentRef.setInput('workspaceName', 'wsName')
+      fixture.detectChanges()
       component['config'] = imageDTO
 
       component.onImportConfirmation()
@@ -187,7 +185,8 @@ describe('WelcomeImportComponent', () => {
       eximServiceSpy.importConfiguration.and.returnValue(throwError(() => errorResponse))
       spyOn(component.importEmitter, 'emit')
       spyOn(console, 'error')
-      component.workspaceName = 'wsName'
+      fixture.componentRef.setInput('workspaceName', 'wsName')
+      fixture.detectChanges()
       component['config'] = imageDTO
 
       component.onImportConfirmation()

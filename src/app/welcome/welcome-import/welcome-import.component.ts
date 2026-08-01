@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, output } from '@angular/core'
 import { HttpHeaders } from '@angular/common/http'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 
@@ -16,26 +16,23 @@ import { ConfigExportImportAPIService, WelcomeSnapshot } from 'src/app/shared/ge
   selector: 'app-welcome-import',
   standalone: true,
   imports: [TranslateModule, ButtonModule, DialogModule, FileUploadModule, MessageModule, TooltipModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './welcome-import.component.html',
   styleUrl: './welcome-import.component.scss'
 })
-export class WelcomeImportComponent implements OnInit {
+export class WelcomeImportComponent {
+  private readonly cdr = inject(ChangeDetectorRef)
   private readonly eximApi = inject(ConfigExportImportAPIService)
   private readonly translate = inject(TranslateService)
   private readonly msgService = inject(PortalMessageService)
 
-  @Input() workspaceName: string | undefined
-  @Input() displayDialog = false
-  @Output() public importEmitter = new EventEmitter<boolean>()
+  public readonly visible = input<boolean>(false)
+  public readonly workspaceName = input<string | undefined>(undefined)
+  public readonly importEmitter = output<boolean>()
 
   public importError = false
-  public httpHeaders!: HttpHeaders
+  public httpHeaders = new HttpHeaders({ 'Content-Type': 'application/json' })
   private config: WelcomeSnapshot | undefined
-
-  public ngOnInit(): void {
-    this.httpHeaders = new HttpHeaders()
-    this.httpHeaders.set('Content-Type', 'application/json')
-  }
 
   public onClose(imported: boolean): void {
     this.importEmitter.emit(imported)
@@ -60,6 +57,8 @@ export class WelcomeImportComponent implements OnInit {
       } catch (err) {
         console.error('imported welcome configuration parse error', err)
         this.importError = true
+      } finally {
+        this.cdr.detectChanges()
       }
     })
   }
@@ -69,11 +68,11 @@ export class WelcomeImportComponent implements OnInit {
   }
 
   public onImportConfirmation(): void {
-    this.importEmitter.emit()
-    if (this.workspaceName && this.config) {
+    this.importEmitter.emit(false)
+    if (this.workspaceName() && this.config) {
       this.eximApi
         .importConfiguration({
-          workspaceName: this.workspaceName,
+          workspaceName: this.workspaceName()!,
           welcomeSnapshot: this.config
         })
         .subscribe({

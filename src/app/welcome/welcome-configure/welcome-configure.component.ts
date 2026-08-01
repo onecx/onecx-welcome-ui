@@ -1,7 +1,7 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core'
-import { AsyncPipe, NgStyle, Location } from '@angular/common'
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core'
+import { AsyncPipe, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { catchError, filter, finalize, map, Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs'
+import { catchError, filter, finalize, map, Observable, of, Subject, take, takeUntil } from 'rxjs'
 import FileSaver from 'file-saver'
 
 import { ButtonModule } from 'primeng/button'
@@ -20,16 +20,16 @@ import {
   ConfigExportImportAPIService
 } from 'src/app/shared/generated'
 
-import { ImageCreateComponent } from './image-create/image-create.component'
-import { ImageDetailComponent } from './image-detail/image-detail.component'
-import { WelcomeImportComponent } from './welcome-import/welcome-import.component'
+import { WelcomeImportComponent } from '../welcome-import/welcome-import.component'
+import { ImageCreateComponent } from '../image-create/image-create.component'
+import { ImageDetailComponent } from '../image-detail/image-detail.component'
+import { ImageItemComponent } from '../image-item/image-item.component'
 
 @Component({
   selector: 'app-welcome-configure',
   standalone: true,
   imports: [
     AsyncPipe,
-    NgStyle,
     AngularAcceleratorModule,
     ButtonModule,
     TooltipModule,
@@ -37,8 +37,10 @@ import { WelcomeImportComponent } from './welcome-import/welcome-import.componen
     PortalPageComponent,
     ImageCreateComponent,
     ImageDetailComponent,
-    WelcomeImportComponent
+    WelcomeImportComponent,
+    ImageItemComponent
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './welcome-configure.component.html',
   styleUrl: './welcome-configure.component.scss'
 })
@@ -51,7 +53,7 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   private readonly appStateService = inject(AppStateService)
 
   private readonly destroy$ = new Subject<void>()
-  private readonly blobUrls = new Map<string, string>()
+  public readonly blobUrls = new Map<string, string>()
   // dialog
   public actions$: Observable<Action[]> = of([])
   public displayCreateDialog = false
@@ -62,14 +64,12 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   public maxImages = 20
   // data
   public workspace: Workspace | undefined
-  public subscription: Subscription | undefined
-  public images: ImageDataResponse[] = []
+  public images = signal<ImageDataResponse[]>([])
   public imageInfos: ImageInfo[] = []
   public imageInfo$: Observable<ImageInfo[]> = of([])
 
   public ngOnInit(): void {
     this.preparePageAction()
-    // Render page actions/content immediately, then reload once workspace is available.
     this.onReload()
     this.appStateService.currentWorkspace$
       .pipe(
@@ -91,7 +91,7 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
 
   public fetchImageInfos() {
     if (!this.workspace?.workspaceName) {
-      this.images = []
+      this.images.set([])
       this.imageInfos = []
       this.imageInfo$ = of([])
       this.preparePageAction()
@@ -100,7 +100,7 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
 
     this.blobUrls.forEach((url) => URL.revokeObjectURL(url))
     this.blobUrls.clear()
-    this.images = []
+    this.images.set([])
     this.imageInfo$ = this.imageService
       .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
       .pipe(
@@ -108,15 +108,15 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
           this.imageInfos = images
           this.imageInfos.sort(this.sortImagesByPosition)
           this.fetchImageData(images)
-          return images.sort((a, b) => Number(a.position) - Number(b.position))
+          return images
         }),
         catchError((err) => {
           console.error('getAllImageInfosByWorkspaceName', err)
           return of([] as ImageInfo[])
         }),
-        finalize(() => this.preparePageAction())
+        finalize(() => this.preparePageAction()),
+        takeUntil(this.destroy$)
       )
-      .pipe(takeUntil(this.destroy$))
   }
 
   private sortImagesByPosition(a: ImageInfo, b: ImageInfo): number {
@@ -129,7 +129,7 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
       if (info.imageId) {
         this.imageService.getImageById({ id: info.imageId }).subscribe({
           next: (idr: ImageDataResponse) => {
-            this.images.push(idr)
+            this.images.update((images) => [...images, idr])
           },
           error: () => this.msgService.error({ summaryKey: 'VALIDATION.ERRORS.IMAGES.NOT_FOUND' })
         })
@@ -138,7 +138,7 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   }
 
   public buildImageSrc(ii: ImageInfo) {
-    const image = this.images.find((image) => {
+    const image = this.images().find((image) => {
       return image.imageId === ii.imageId
     })
     if (image) {
@@ -195,9 +195,9 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
 
   public onDeleteImage(id: string | undefined, idx: number, ii: ImageInfo[]) {
     if (id) {
-      ii.splice(idx, 1) // remove locally
       this.imageService.deleteImageInfoById({ id: id }).subscribe({
         next: () => {
+          ii.splice(idx, 1)
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.SUCCESS' })
           this.updatePositions(ii)
         },
