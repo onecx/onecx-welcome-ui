@@ -38,7 +38,7 @@
         {{ 'DIALOG.OVERVIEW.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
       </h1>
       <div id="wc_overview_info_workspace" class="m-0 line-height-1 font-normal text-sm sm:text-base">
-        Workspace: {{ workspace?.displayName }}
+        {{ 'DIALOG.OVERVIEW.WORKSPACE' | translate }}: {{ workspace?.displayName }}
       </div>
     </div>
   </div>

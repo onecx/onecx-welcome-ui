@@ -89,7 +89,8 @@
   "DIALOG": {
     "OVERVIEW": {
       "PIC": "Hintergrundbild",
-      "TITLE": "Hallo"
+      "TITLE": "Hallo",
+      "WORKSPACE": "Workspace"
     },
     "CONFIGURE": {
       "HEADER": "Startseite konfigurieren",

@@ -77,15 +77,6 @@ describe('ImageCreateComponent', () => {
   })
 
   describe('on init/change', () => {
-    it('should display form', () => {
-      component.ngOnInit()
-      fixture.detectChanges()
-      //const dElement = fixture.debugElement
-      //const uploadField = dElement.query(By.css('p-fileupload'))
-
-      //expect(uploadField).toBeTruthy()
-    })
-
     it('should reset form field url when dialog is closed', async () => {
       component.formGroup.controls['url'].setValue('someUrl')
 
