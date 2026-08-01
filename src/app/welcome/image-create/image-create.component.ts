@@ -8,7 +8,8 @@ import {
   input,
   model,
   output,
-  untracked
+  untracked,
+  viewChild
 } from '@angular/core'
 import { AbstractControl, FormBuilder, FormControl, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
@@ -49,11 +50,11 @@ export class ImageCreateComponent implements OnInit {
   private readonly appstateService = inject(AppStateService)
   private readonly imageApiService = inject(ImagesInternalAPIService)
 
-  public readonly displayCreateDialog = model<boolean>(false)
+  public readonly visible = input<boolean>(false)
   public readonly imageInfoCount = input<number>(0)
   public readonly hideDialogAndChanged = output<boolean>()
 
-  @ViewChild('fileUpload', { static: true }) fileUpload?: FileUpload
+  public fileUpload = viewChild(FileUpload)
 
   private currentWorkspaceName: string | undefined = undefined
   public isLoading = false
@@ -71,7 +72,7 @@ export class ImageCreateComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      const isOpen = this.displayCreateDialog()
+      const isOpen = this.visible()
       if (!isOpen) {
         untracked(() => {
           this.formGroup.get('url')?.reset()
@@ -104,7 +105,6 @@ export class ImageCreateComponent implements OnInit {
   }
 
   public onDialogHide(): void {
-    this.displayCreateDialog.set(false)
     this.hideDialogAndChanged.emit(false)
   }
 
@@ -180,8 +180,8 @@ export class ImageCreateComponent implements OnInit {
     this.formGroup.controls['url'].enable()
     this.selectedFile = undefined
 
-    if (this.fileUpload?.files?.length && typeof this.fileUpload.clear === 'function') {
-      this.fileUpload.clear()
+    if (this.fileUpload()?.files?.length && typeof this.fileUpload()?.clear === 'function') {
+      this.fileUpload()?.clear()
     }
   }
 

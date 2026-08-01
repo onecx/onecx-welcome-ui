@@ -29,23 +29,6 @@
               (keydown.space)="onOpenDetailDialog(i)"
             >
               <app-image-item [index]="ii" [imageInfo]="info" [images]="images()" [blobUrls]="blobUrls" />
-              <!--
-              img
-                [id]="'wc_configure_card_item_' + i + '_image'"
-                class="border-round-sm w-13rem sm:w-14rem md:w-18rem h-7rem sm:h-9rem md:h-13rem"
-                [ngStyle]="{
-                  'object-fit': info.objectFit ?? 'scale-down',
-                  'object-position': info.objectPosition ?? 'center center',
-                  'background-color': info.backgroundColor ?? 'unset'
-                }"
-                [alt]="('DIALOG.DETAIL.PIC' | translate) + '_' + ii"
-                [src]="buildImageSrc(info)"
-                [ariaLabel]="'DIALOG.DETAIL.TOOLTIP' | translate"
-                [pTooltip]="'DIALOG.DETAIL.TOOLTIP' | translate"
-                tooltipPosition="top"
-                tooltipEvent="hover"
-              />
-              -->
             </a>
             <!-- BUTTON bar - schema: (B B) .T. (B B) -->
             <div class="sm:mx-2 flex flex-row flex-nowrap justify-content-between align-items-center">
@@ -127,14 +110,14 @@
 
       <!-- CREATE -->
       <app-image-create
-        [displayCreateDialog]="displayCreateDialog"
+        [visible]="displayCreateDialog"
         (hideDialogAndChanged)="onCloseDetailDialog($event)"
         [imageInfoCount]="imageInfos.length"
       ></app-image-create>
 
       <!-- DETAIL -->
       <app-image-detail
-        [displayDialog]="displayDetailDialog"
+        [visible]="displayDetailDialog"
         (closeDialog)="onCloseDetailDialog(false)"
         [images]="images()"
         [imageInfos]="imageInfos"
@@ -143,7 +126,7 @@
 
       <!-- IMPORT -->
       <app-welcome-import
-        [displayDialog]="displayImportDialog"
+        [visible]="displayImportDialog"
         (importEmitter)="onCloseDetailDialog($event)"
         [workspaceName]="workspace?.workspaceName"
       ></app-welcome-import>

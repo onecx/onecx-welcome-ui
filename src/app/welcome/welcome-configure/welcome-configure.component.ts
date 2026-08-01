@@ -108,15 +108,15 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
           this.imageInfos = images
           this.imageInfos.sort(this.sortImagesByPosition)
           this.fetchImageData(images)
-          return images.sort((a, b) => Number(a.position) - Number(b.position))
+          return images
         }),
         catchError((err) => {
           console.error('getAllImageInfosByWorkspaceName', err)
           return of([] as ImageInfo[])
         }),
-        finalize(() => this.preparePageAction())
+        finalize(() => this.preparePageAction()),
+        takeUntil(this.destroy$)
       )
-      .pipe(takeUntil(this.destroy$))
   }
 
   private sortImagesByPosition(a: ImageInfo, b: ImageInfo): number {

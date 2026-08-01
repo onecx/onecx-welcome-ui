@@ -46,7 +46,7 @@ export class ImageDetailComponent implements OnDestroy {
   private readonly translate = inject(TranslateService)
   private readonly msgService = inject(PortalMessageService)
 
-  public readonly displayDialog = model<boolean>(false)
+  public readonly visible = input<boolean>(false)
   public readonly images = input<ImageDataResponse[]>([])
   public readonly imageInfos = input<ImageInfo[]>([])
   public readonly imageIndex = model<number>(-1)
@@ -64,7 +64,7 @@ export class ImageDetailComponent implements OnDestroy {
 
   constructor() {
     effect(() => {
-      if (this.displayDialog() && this.imageIndex() > -1) this.fillForm()
+      if (this.visible() && this.imageIndex() > -1) this.fillForm()
     })
   }
 

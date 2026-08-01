@@ -26,8 +26,8 @@ export class WelcomeImportComponent {
   private readonly translate = inject(TranslateService)
   private readonly msgService = inject(PortalMessageService)
 
+  public readonly visible = input<boolean>(false)
   public readonly workspaceName = input<string | undefined>(undefined)
-  public readonly displayDialog = model<boolean>(false)
   public readonly importEmitter = output<boolean>()
 
   public importError = false

@@ -106,9 +106,9 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
           console.error('getAllImageInfosByWorkspaceName', err)
           this.loading = false
           return of([] as ImageInfo[])
-        })
+        }),
+        takeUntil(this.destroy$)
       )
-      .pipe(takeUntil(this.destroy$))
   }
 
   // load all stored image data, exclude invisible and images with URLs

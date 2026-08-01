@@ -224,7 +224,7 @@ describe('WelcomeOverviewComponent', () => {
       expect(component['setCarousel']).toHaveBeenCalled()
     })
 
-    it('should get data for one image', () => {
+    it('should get data for one image: position -1', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
       imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
       component.currentImage = -1
@@ -234,7 +234,7 @@ describe('WelcomeOverviewComponent', () => {
       expect(component.images).toContain(imgDataResponse)
     })
 
-    it('should get data for one image', () => {
+    it('should get data for one image: position 0', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
       imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
       component.currentImage = 0

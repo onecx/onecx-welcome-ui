@@ -77,7 +77,7 @@ describe('ImageDetailComponent', () => {
     fixture.componentRef.setInput('imageInfos', [
       { imageId: '1', url: 'http://example.com/image1.png', workspaceName: 'ws' }
     ])
-    fixture.componentRef.setInput('displayDialog', true)
+    fixture.componentRef.setInput('visible', true)
     // reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
