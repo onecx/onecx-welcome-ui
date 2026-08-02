@@ -53,7 +53,6 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   private readonly appStateService = inject(AppStateService)
 
   private readonly destroy$ = new Subject<void>()
-  public readonly blobUrls = new Map<string, string>()
   // dialog
   public actions$: Observable<Action[]> = of([])
   public displayCreateDialog = false
@@ -64,9 +63,10 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   public maxImages = 20
   // data
   public workspace: Workspace | undefined
-  public images = signal<ImageDataResponse[]>([])
-  public imageInfos: ImageInfo[] = []
+  private imageInfos: ImageInfo[] = []
   public imageInfo$: Observable<ImageInfo[]> = of([])
+  public readonly images = signal<ImageDataResponse[]>([])
+  public readonly blobUrls = new Map<string, string>()
 
   public ngOnInit(): void {
     this.preparePageAction()
@@ -90,13 +90,7 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   }
 
   public fetchImageInfos() {
-    if (!this.workspace?.workspaceName) {
-      this.images.set([])
-      this.imageInfos = []
-      this.imageInfo$ = of([])
-      this.preparePageAction()
-      return
-    }
+    if (!this.workspace?.workspaceName) return
 
     this.blobUrls.forEach((url) => URL.revokeObjectURL(url))
     this.blobUrls.clear()
@@ -135,26 +129,6 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
         })
       }
     })
-  }
-
-  public buildImageSrc(ii: ImageInfo) {
-    const image = this.images().find((image) => {
-      return image.imageId === ii.imageId
-    })
-    if (image) {
-      const imageData = image?.imageData
-      if (imageData instanceof Blob) {
-        if (!image.imageId) return undefined
-        const cachedBlobUrl = this.blobUrls.get(image.imageId)
-        if (cachedBlobUrl) return cachedBlobUrl
-        const blobUrl = URL.createObjectURL(imageData)
-        this.blobUrls.set(image.imageId, blobUrl)
-        return blobUrl
-      }
-      return 'data:' + image?.mimeType + ';base64,' + (imageData ?? '')
-    } else {
-      return ii.url
-    }
   }
 
   // reorder action

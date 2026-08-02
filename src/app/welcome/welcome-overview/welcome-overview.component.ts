@@ -47,24 +47,27 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
   private readonly appStateService = inject(AppStateService)
 
   private readonly destroy$ = new Subject<void>()
-  private readonly blobUrls = new Map<string, string>()
   // dialog
-  public readonly CAROUSEL_SPEED: number = 15000 // ms
+  private readonly CAROUSEL_SPEED: number = 15000 // ms
   public loading = true
   public currentImage = -1
-  public currentDate = new Date()
   public dockItems$: Observable<MenuItem[]> = of([])
   // data
   public user$ = this.userService.profile$.asObservable()
   public workspace: Workspace | undefined
-  public subscription: Subscription | undefined
-  public images: ImageDataResponse[] = []
+  private subscription: Subscription | undefined
+  private images: ImageDataResponse[] = []
   public imageInfo$: Observable<ImageInfo[]> = of([])
+  private readonly blobUrls = new Map<string, string>()
   // slot
-  public bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
-  public listActiveSlotName = 'onecx-welcome-list-active'
-  public isAnnouncementListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.listActiveSlotName)
-  public isBookmarkListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(this.bookmarkListSlotName)
+  public readonly bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
+  public readonly listActiveSlotName = 'onecx-welcome-list-active'
+  public readonly isAnnouncementListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(
+    this.listActiveSlotName
+  )
+  public readonly isBookmarkListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(
+    this.bookmarkListSlotName
+  )
 
   ngOnInit(): void {
     this.prepareDockItems()
