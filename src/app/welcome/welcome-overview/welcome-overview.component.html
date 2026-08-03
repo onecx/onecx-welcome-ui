@@ -2,16 +2,17 @@
   <!-- BACKGROUND -->
   <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
     @for (info of (imageInfo$ | async) ?? []; track info.id; let i = $index) {
-      @if (!loading && i === currentImage) {
+      @if (i === currentImagePos()) {
         <img
           #backgroundImage
-          @carouselAnimation
+          [@carouselAnimation]
           class="w-full h-full wc-overview-image"
           [ngStyle]="{
             'object-fit': info.objectFit ?? 'scale-down',
             'object-position': info.objectPosition ?? 'center center',
             'background-color': info.backgroundColor ?? 'unset'
           }"
+          (error)="onImageLoadError(i)"
           [src]="buildImageSrc(info)"
           [alt]="'DIALOG.OVERVIEW.PIC' | translate"
           [attr.aria-label]="'DIALOG.OVERVIEW.PIC' | translate"
