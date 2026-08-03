@@ -176,13 +176,20 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
     this.currentImagePos.set(this.getNextAvailableImagePos(currentPos))
   }
 
+  // build a data URL from imageData or return the URL from imageInfo
   public buildImageSrc(ii: ImageInfo): string | undefined {
     if (this.loading) return undefined
     if (ii.url) return ii.url
     if (this.imageData.length === 0) return undefined
 
+    // prepare data URL from imageData
     const iiData = this.imageData.find((img) => img.imageId === ii.imageId)
-    return 'data:' + iiData?.mimeType + ';base64,' + (iiData?.imageData ?? '')
+    if (!iiData?.imageData) return undefined
+    if (iiData.imageData instanceof Blob) {
+      return URL.createObjectURL(iiData.imageData)
+    } else {
+      return 'data:' + iiData?.mimeType + ';base64,' + iiData.imageData
+    }
   }
 
   private prepareDockItems(): void {

@@ -332,13 +332,22 @@ describe('WelcomeOverviewComponent', () => {
       expect(result).toBe('data:image/png;base64,abc123')
     })
 
+    it('should return data string if image is found', () => {
+      componentTypeLess['imageData'] = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
+      component.loading = false
+
+      const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
+
+      expect(result).toContain('blob:http')
+    })
+
     it('should return data URI with empty base64 when imageData field is undefined', () => {
       componentTypeLess['imageData'] = [{ imageId: '1234', mimeType: 'image/png', imageData: undefined }]
       component.loading = false
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
-      expect(result).toBe('data:image/png;base64,')
+      expect(result).toBeUndefined()
     })
 
     it('should return base64 string with empty data if image is not matched in loaded imageData', () => {
@@ -347,7 +356,7 @@ describe('WelcomeOverviewComponent', () => {
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
-      expect(result).toBe('data:undefined;base64,')
+      expect(result).toBeUndefined()
     })
   })
 })
