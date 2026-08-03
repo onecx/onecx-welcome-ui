@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core'
 import { AsyncPipe, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { BehaviorSubject, catchError, filter, finalize, map, Observable, of, Subject, take, takeUntil } from 'rxjs'
+import { BehaviorSubject, catchError, filter, map, Observable, of, Subject, take, takeUntil } from 'rxjs'
 import FileSaver from 'file-saver'
 
 import { ButtonModule } from 'primeng/button'
