@@ -137,7 +137,7 @@ describe('WelcomeOverviewComponent', () => {
     expect(component).toBeTruthy()
     component.dockItems$.subscribe({
       next: (items) => {
-        expect(items.length).toBe(1)
+        expect(items).toHaveSize(1)
         done()
       },
       error: done.fail
@@ -176,7 +176,7 @@ describe('WelcomeOverviewComponent', () => {
 
         component.imageInfo$?.subscribe({
           next: (imgs) => {
-            expect(imgs.length).toBe(5)
+            expect(imgs).toHaveSize(5)
             done()
           },
           error: done.fail
