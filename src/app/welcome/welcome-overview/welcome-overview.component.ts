@@ -48,7 +48,7 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
 
   private readonly destroy$ = new Subject<void>()
   // dialog
-  private readonly CAROUSEL_SPEED: number = 15000 // ms
+  private readonly CAROUSEL_SPEED: number = 5000 // ms
   public loading = true
   public currentImage = -1
   public dockItems$: Observable<MenuItem[]> = of([])
@@ -56,10 +56,10 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
   public user$ = this.userService.profile$.asObservable()
   public workspace: Workspace | undefined
   private subscription: Subscription | undefined
-  private imageData: ImageDataResponse[] = []
   public imageInfo$: Observable<ImageInfo[]> = of([])
+  private readonly imageData: ImageDataResponse[] = []
   private readonly blobUrls = new Map<string, string>()
-  // slot
+  // slots
   public readonly bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public readonly listActiveSlotName = 'onecx-welcome-list-active'
   public readonly isAnnouncementListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(
@@ -115,31 +115,31 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
   }
 
   // load all stored image data, exclude invisible and images with URLs
-  private fetchImages(infos: ImageInfo[]): void {
+  private fetchImages(iis: ImageInfo[]): void {
     // do not twice
     if (this.imageData.length > 0) return
-    const visibleInfoLength = infos.filter((i) => i.visible).length
+    const visibleInfoLength = iis.filter((i) => i.visible).length
     // nothing to do
-    if (infos.length === 0 || visibleInfoLength === 0) {
+    if (iis.length === 0 || visibleInfoLength === 0) {
       this.loading = false
       return
     }
 
     // images with URL
-    const urlImageLength = infos.filter((i) => i.visible && i.url).length
+    const urlImageLength = iis.filter((i) => i.visible && i.url).length
     // images uploaded
-    const toBeLoadLength = infos.filter((i) => i.visible && !i.url).length
+    const toBeLoadLength = iis.filter((i) => i.visible && !i.url).length
 
     if (toBeLoadLength === 0) {
       this.loading = false // finish loading
       this.setCarousel(urlImageLength) // init carousel with sum of URL images only
     } else {
       // get images from BFF and init carousel with sum of images
-      infos
+      iis
         .filter((i) => i.visible && !i.url)
-        .forEach((info) => {
-          if (info.imageId) {
-            this.imageService.getImageById({ id: info.imageId }).subscribe({
+        .forEach((ii) => {
+          if (ii.imageId) {
+            this.imageService.getImageById({ id: ii.imageId }).subscribe({
               next: (img) => {
                 this.imageData.push(img)
                 // if all images loaded then start carousel
@@ -167,16 +167,16 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
     if (ii.url) return ii.url
     if (this.imageData.length === 0) return undefined
     const existingImage = this.imageData.find((img) => img.imageId === ii.imageId)
-    const imageData = existingImage?.imageData
-    if (imageData instanceof Blob) {
+    const id = existingImage?.imageData
+    if (id instanceof Blob) {
       if (!existingImage?.imageId) return undefined
       const cachedBlobUrl = this.blobUrls.get(existingImage.imageId)
       if (cachedBlobUrl) return cachedBlobUrl
-      const blobUrl = URL.createObjectURL(imageData)
+      const blobUrl = URL.createObjectURL(id)
       this.blobUrls.set(existingImage.imageId, blobUrl)
       return blobUrl
     }
-    return 'data:' + existingImage?.mimeType + ';base64,' + (imageData ?? '')
+    return 'data:' + existingImage?.mimeType + ';base64,' + (id ?? '')
   }
 
   private prepareDockItems(): void {
