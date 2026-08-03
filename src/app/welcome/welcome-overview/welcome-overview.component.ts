@@ -102,7 +102,8 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
       .pipe(
         map((ii: ImageInfo[]) => {
           const iis = ii.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
-          iis.map((_, index) => this.imageAvailableNumbers.push(index))
+          iis.forEach((ii, index) => this.imageAvailableNumbers.push(index))
+          console.log('Available image positions:', this.imageAvailableNumbers)
           this.fetchImageData(iis) // get real (visible) image data, init carousel for all visible images
           return iis
         }),
