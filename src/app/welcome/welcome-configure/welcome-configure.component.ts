@@ -255,6 +255,7 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
     this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: imagesToReorder } }).subscribe({
       next: () => {
         this.preOrderList = [] // reset, to be renewed on next ordering
+        this.isReordered = false
         this.msgService.success({ summaryKey: 'ACTIONS.REORDER.SUCCESS' })
       },
       error: (err) => {
