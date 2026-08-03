@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core'
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal } from '@angular/core'
 import { AsyncPipe, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, catchError, filter, map, Observable, of, Subject, take, takeUntil } from 'rxjs'
@@ -45,12 +45,13 @@ import { ImageItemComponent } from '../image-item/image-item.component'
   styleUrl: './welcome-configure.component.scss'
 })
 export class WelcomeConfigureComponent implements OnInit, OnDestroy {
-  private readonly imageService = inject(ImagesInternalAPIService)
-  private readonly eximService = inject(ConfigExportImportAPIService)
-  private readonly msgService = inject(PortalMessageService)
+  private readonly cdr = inject(ChangeDetectorRef)
   private readonly location = inject(Location)
   private readonly translate = inject(TranslateService)
+  private readonly msgService = inject(PortalMessageService)
   private readonly appStateService = inject(AppStateService)
+  private readonly imageService = inject(ImagesInternalAPIService)
+  private readonly eximService = inject(ConfigExportImportAPIService)
 
   private readonly destroy$ = new Subject<void>()
   // dialog
@@ -103,19 +104,19 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
       .pipe(
         map((imageInfos) => {
           imageInfos.sort(this.sortImagesByPosition)
-          this.imageInfosSubject.next(imageInfos)
           this.fetchImageData(imageInfos)
-          this.preparePageAction(imageInfos)
           return imageInfos
         }),
         catchError((err) => {
-          this.preparePageAction([])
           console.error('getAllImageInfosByWorkspaceName', err)
           return of([] as ImageInfo[])
         }),
         takeUntil(this.destroy$)
       )
-      .subscribe()
+      .subscribe((iis) => {
+        this.imageInfosSubject.next(iis)
+        this.preparePageAction()
+      })
   }
 
   private sortImagesByPosition(a: ImageInfo, b: ImageInfo): number {
@@ -150,7 +151,7 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
    * UI ACTIONS
    */
   public onReload() {
-    this.isReordered = false
+    this.resetReorderState()
     this.fetchImageInfos()
   }
   public onClose(): void {
@@ -254,20 +255,24 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
     const imagesToReorder = this.imageInfosSubject.value
     this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: imagesToReorder } }).subscribe({
       next: () => {
-        this.preOrderList = [] // reset, to be renewed on next ordering
-        this.isReordered = false
+        this.resetReorderState()
         this.msgService.success({ summaryKey: 'ACTIONS.REORDER.SUCCESS' })
       },
       error: (err) => {
-        this.msgService.error({ summaryKey: 'ACTIONS.REORDER.ERROR' })
         console.error('updateImageOrder', err)
+        this.msgService.error({ summaryKey: 'ACTIONS.REORDER.ERROR' })
       }
     })
   }
-  public onCancelOrder() {
-    if (this.preOrderList.length > 0) this.imageInfosSubject.next(this.preOrderList)
+  private resetReorderState() {
     this.preOrderList = []
     this.isReordered = false
+    this.preparePageAction()
+    this.cdr.detectChanges()
+  }
+  public onCancelOrder() {
+    if (this.preOrderList.length > 0) this.imageInfosSubject.next(this.preOrderList) // restoring
+    this.resetReorderState()
   }
 
   public onSwapElement(ii: ImageInfo[], indexA: number, indexB: number) {
@@ -294,12 +299,13 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
       ii[indexA] = ii[indexB]
       ii[indexB] = tmp
     }
-    if (!this.isReordered) this.preparePageAction(ii) // first time only
+    if (!this.isReordered) this.preparePageAction() // first time only: enable buttons
     this.isReordered = true
     this.imageInfosSubject.next([...ii]) // update the list in the UI
   }
 
-  private preparePageAction(ii: ImageInfo[]): void {
+  private preparePageAction(): void {
+    const ii = this.imageInfosSubject.value
     this.actions$ = this.translate
       .get([
         'ACTIONS.NAVIGATION.BACK',
