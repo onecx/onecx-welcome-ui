@@ -173,8 +173,8 @@ describe('WelcomeOverviewComponent', () => {
         component['getImages']()
 
         component.imageInfo$?.subscribe({
-          next: (images) => {
-            expect(images.length).toBe(5)
+          next: (imgs) => {
+            expect(imgs.length).toBe(5)
             done()
           },
           error: done.fail
@@ -201,7 +201,7 @@ describe('WelcomeOverviewComponent', () => {
 
   describe('fetchImages', () => {
     it('should not fetch images if they are already loaded', () => {
-      component['images'] = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
+      component['imageData'] = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
 
       component['fetchImages'](imageInfos)
 
@@ -231,7 +231,7 @@ describe('WelcomeOverviewComponent', () => {
 
       component['fetchImages'](imageInfos)
 
-      expect(component['images']).toContain(imgDataResponse)
+      expect(component['imageData']).toContain(imgDataResponse)
     })
 
     it('should get data for one image: position 0', () => {
@@ -241,7 +241,7 @@ describe('WelcomeOverviewComponent', () => {
 
       component['fetchImages'](imageInfos)
 
-      expect(component['images']).toContain(imgDataResponse)
+      expect(component['imageData']).toContain(imgDataResponse)
     })
   })
 
@@ -260,7 +260,7 @@ describe('WelcomeOverviewComponent', () => {
   describe('buildImageSrc', () => {
     it('should return data string if image is found', () => {
       component.loading = false
-      component['images'] = []
+      component['imageData'] = []
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
@@ -268,7 +268,7 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should not build source if page is loading', () => {
-      component['images'] = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
+      component['imageData'] = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
 
       const result = component.buildImageSrc(imageInfos[0])
 
@@ -276,7 +276,7 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should return the URL if image is based on', () => {
-      component['images'] = [{ imageId: '123' }]
+      component['imageData'] = [{ imageId: '123' }]
       component.loading = false
       const info = imageInfos.find((i) => i.imageId === '123')!
 
@@ -286,7 +286,7 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should return data string if image is found', () => {
-      component['images'] = [{ imageId: '1234', mimeType: 'image/png', imageData: 'abc123' as any }]
+      component['imageData'] = [{ imageId: '1234', mimeType: 'image/png', imageData: 'abc123' as any }]
       component.loading = false
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
@@ -295,7 +295,7 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should return blob URL if image is found and imageData is a Blob', () => {
-      component['images'] = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
+      component['imageData'] = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
       component.loading = false
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
@@ -304,7 +304,7 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should return cached blob URL on second call', () => {
-      component['images'] = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
+      component['imageData'] = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
       component.loading = false
       const info = imageInfos.find((i) => i.imageId === '1234')!
 
@@ -316,7 +316,7 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should return undefined if imageData is Blob but imageId is missing', () => {
-      component['images'] = [{ imageId: undefined, mimeType: 'image/png', imageData: new Blob() }]
+      component['imageData'] = [{ imageId: undefined, mimeType: 'image/png', imageData: new Blob() }]
       component.loading = false
       const info: ImageInfo = { imageId: undefined, workspaceName: 'ws' }
 
@@ -325,8 +325,8 @@ describe('WelcomeOverviewComponent', () => {
       expect(result).toBeUndefined()
     })
 
-    it('should return base64 string with empty data if image is not matched in loaded images', () => {
-      component['images'] = [{ imageId: 'other', mimeType: 'image/png' }]
+    it('should return base64 string with empty data if image is not matched in loaded imageData', () => {
+      component['imageData'] = [{ imageId: 'other', mimeType: 'image/png' }]
       component.loading = false
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)

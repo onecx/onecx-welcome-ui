@@ -56,7 +56,7 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
   public user$ = this.userService.profile$.asObservable()
   public workspace: Workspace | undefined
   private subscription: Subscription | undefined
-  private images: ImageDataResponse[] = []
+  private imageData: ImageDataResponse[] = []
   public imageInfo$: Observable<ImageInfo[]> = of([])
   private readonly blobUrls = new Map<string, string>()
   // slot
@@ -101,9 +101,9 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
     this.imageInfo$ = this.imageService
       .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
       .pipe(
-        map((images: ImageInfo[]) => {
-          this.fetchImages(images) // get images
-          return images.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
+        map((ii: ImageInfo[]) => {
+          this.fetchImages(ii) // get images
+          return ii.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
         }),
         catchError((err) => {
           console.error('getAllImageInfosByWorkspaceName', err)
@@ -117,7 +117,7 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
   // load all stored image data, exclude invisible and images with URLs
   private fetchImages(infos: ImageInfo[]): void {
     // do not twice
-    if (this.images.length > 0) return
+    if (this.imageData.length > 0) return
     const visibleInfoLength = infos.filter((i) => i.visible).length
     // nothing to do
     if (infos.length === 0 || visibleInfoLength === 0) {
@@ -141,9 +141,9 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
           if (info.imageId) {
             this.imageService.getImageById({ id: info.imageId }).subscribe({
               next: (img) => {
-                this.images.push(img)
+                this.imageData.push(img)
                 // if all images loaded then start carousel
-                if (this.images.length === toBeLoadLength) {
+                if (this.imageData.length === toBeLoadLength) {
                   this.setCarousel(toBeLoadLength + urlImageLength)
                   this.loading = false
                 }
@@ -162,11 +162,11 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
     })
   }
 
-  public buildImageSrc(imageInfo: ImageInfo): string | undefined {
+  public buildImageSrc(ii: ImageInfo): string | undefined {
     if (this.loading) return undefined
-    if (imageInfo.url) return imageInfo.url
-    if (this.images.length === 0) return undefined
-    const existingImage = this.images.find((image) => image.imageId === imageInfo.imageId)
+    if (ii.url) return ii.url
+    if (this.imageData.length === 0) return undefined
+    const existingImage = this.imageData.find((img) => img.imageId === ii.imageId)
     const imageData = existingImage?.imageData
     if (imageData instanceof Blob) {
       if (!existingImage?.imageId) return undefined

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core'
 import { AsyncPipe, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { catchError, filter, finalize, map, Observable, of, Subject, take, takeUntil } from 'rxjs'
+import { BehaviorSubject, catchError, filter, finalize, map, Observable, of, Subject, take, takeUntil } from 'rxjs'
 import FileSaver from 'file-saver'
 
 import { ButtonModule } from 'primeng/button'
@@ -63,13 +63,13 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   public maxImages = 20
   // data
   public workspace: Workspace | undefined
-  private imageInfos: ImageInfo[] = []
-  public imageInfo$: Observable<ImageInfo[]> = of([])
-  public readonly images = signal<ImageDataResponse[]>([])
+  private preOrderList: ImageInfo[] = []
+  private readonly imageInfosSubject = new BehaviorSubject<ImageInfo[]>([])
+  public imageInfo$ = this.imageInfosSubject.asObservable()
+  public readonly imageData = signal<ImageDataResponse[]>([])
   public readonly blobUrls = new Map<string, string>()
 
   public ngOnInit(): void {
-    this.preparePageAction()
     this.onReload()
     this.appStateService.currentWorkspace$
       .pipe(
@@ -89,28 +89,33 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
     this.blobUrls.clear()
   }
 
+  /**
+   * 1. Step: GET the meta data of stored images
+   * 2. Step: GET the image data for each image meta data
+   */
   public fetchImageInfos() {
     if (!this.workspace?.workspaceName) return
-
     this.blobUrls.forEach((url) => URL.revokeObjectURL(url))
     this.blobUrls.clear()
-    this.images.set([])
-    this.imageInfo$ = this.imageService
+    this.imageData.set([])
+    this.imageService
       .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
       .pipe(
-        map((images) => {
-          this.imageInfos = images
-          this.imageInfos.sort(this.sortImagesByPosition)
-          this.fetchImageData(images)
-          return images
+        map((imageInfos) => {
+          imageInfos.sort(this.sortImagesByPosition)
+          this.imageInfosSubject.next(imageInfos)
+          this.fetchImageData(imageInfos)
+          this.preparePageAction(imageInfos)
+          return imageInfos
         }),
         catchError((err) => {
+          this.preparePageAction([])
           console.error('getAllImageInfosByWorkspaceName', err)
           return of([] as ImageInfo[])
         }),
-        finalize(() => this.preparePageAction()),
         takeUntil(this.destroy$)
       )
+      .subscribe()
   }
 
   private sortImagesByPosition(a: ImageInfo, b: ImageInfo): number {
@@ -123,7 +128,7 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
       if (info.imageId) {
         this.imageService.getImageById({ id: info.imageId }).subscribe({
           next: (idr: ImageDataResponse) => {
-            this.images.update((images) => [...images, idr])
+            this.imageData.update((imgs) => [...imgs, idr])
           },
           error: () => this.msgService.error({ summaryKey: 'VALIDATION.ERRORS.IMAGES.NOT_FOUND' })
         })
@@ -171,8 +176,8 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
     if (id) {
       this.imageService.deleteImageInfoById({ id: id }).subscribe({
         next: () => {
-          ii.splice(idx, 1)
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.SUCCESS' })
+          ii.splice(idx, 1)
           this.updatePositions(ii)
         },
         error: (err) => {
@@ -224,8 +229,10 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
           }
         })
         .subscribe({
-          next: () => {
-            this.fetchImageInfos()
+          next: (data) => {
+            const currentList = this.imageInfosSubject.value
+            const updatedList = currentList.map((item) => (item.id === info.id ? data : item))
+            this.imageInfosSubject.next(updatedList)
             this.msgService.success({ summaryKey: 'ACTIONS.VISIBILITY.SUCCESS' })
           },
           error: (err) => {
@@ -236,11 +243,18 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Reorder Images
+   * 1. User reorders items in the UI => onSwapElement is called
+   * 2. User clicks on SAVE => onSaveOrder is called
+   * 3. onSaveOrder calls the API to update the order in the backend
+   * Imporant: imageInfosSubject contains always the current state
+   */
   public onSaveOrder() {
-    const imagesToReorder = this.imageInfos
+    const imagesToReorder = this.imageInfosSubject.value
     this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: imagesToReorder } }).subscribe({
       next: () => {
-        this.onReload()
+        this.preOrderList = [] // reset, to be renewed on next ordering
         this.msgService.success({ summaryKey: 'ACTIONS.REORDER.SUCCESS' })
       },
       error: (err) => {
@@ -249,8 +263,15 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
       }
     })
   }
+  public onCancelOrder() {
+    if (this.preOrderList.length > 0) this.imageInfosSubject.next(this.preOrderList)
+    this.preOrderList = []
+    this.isReordered = false
+  }
 
   public onSwapElement(ii: ImageInfo[], indexA: number, indexB: number) {
+    // store the original order of the list (clone!), to be restoreable
+    if (this.preOrderList.length === 0) this.preOrderList = [...ii]
     const tmp = ii[indexA]
     // switch start => end
     if (indexA === 0 && indexB === -1) {
@@ -272,11 +293,12 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
       ii[indexA] = ii[indexB]
       ii[indexB] = tmp
     }
-    if (!this.isReordered) this.preparePageAction()
+    if (!this.isReordered) this.preparePageAction(ii) // first time only
     this.isReordered = true
+    this.imageInfosSubject.next([...ii]) // update the list in the UI
   }
 
-  private preparePageAction(): void {
+  private preparePageAction(ii: ImageInfo[]): void {
     this.actions$ = this.translate
       .get([
         'ACTIONS.NAVIGATION.BACK',
@@ -311,7 +333,7 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
               icon: 'pi pi-download',
               show: 'asOverflow',
               conditional: true,
-              showCondition: !this.isReordered && this.imageInfos.length > 0
+              showCondition: !this.isReordered && ii.length > 0
             },
             {
               label: data['ACTIONS.IMPORT.LABEL'],
@@ -329,12 +351,12 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
               icon: 'pi pi-plus',
               show: 'always',
               conditional: true,
-              showCondition: !this.isReordered && this.imageInfos.length < this.maxImages
+              showCondition: !this.isReordered && ii.length < this.maxImages
             },
             {
               label: data['ACTIONS.REORDER.CANCEL'],
               title: data['ACTIONS.REORDER.CANCEL.TOOLTIP'],
-              actionCallback: () => this.onReload(),
+              actionCallback: () => this.onCancelOrder(),
               icon: 'pi pi-times',
               show: 'always',
               conditional: true,
