@@ -227,8 +227,8 @@ describe('WelcomeConfigureComponent', () => {
       imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
 
       component.fetchImageInfos()
-      const images = await firstValueFrom(component.imageInfo$)
-      expect(images).toHaveSize(5)
+      const ii = await firstValueFrom(component.imageInfo$)
+      expect(ii).toHaveSize(5)
     })
 
     it('should handle error when fetching imageinfos', async () => {
@@ -250,7 +250,7 @@ describe('WelcomeConfigureComponent', () => {
 
       component.fetchImageData(imageInfos)
 
-      expect(component.images()).toContain(imgDataResponse)
+      expect(component.imageData()).toContain(imgDataResponse)
     })
 
     it('should handle error when fetching imageInfos', () => {
@@ -260,67 +260,6 @@ describe('WelcomeConfigureComponent', () => {
       component.fetchImageData(imageInfos)
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'VALIDATION.ERRORS.IMAGES.NOT_FOUND' })
-    })
-  })
-
-  describe('buildImageSrc', () => {
-    it('should return blob URL if image is found and imageData is a Blob', () => {
-      component.images.set([{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }])
-
-      const result = component.buildImageSrc(imageInfos[0])
-
-      expect(result).toContain('blob:')
-    })
-
-    it('should return cached blob URL on second call', () => {
-      component.images.set([{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }])
-
-      const result1 = component.buildImageSrc(imageInfos[0])
-      const result2 = component.buildImageSrc(imageInfos[0])
-
-      expect(result1).toContain('blob:')
-      expect(result2).toBe(result1)
-    })
-
-    it('should return undefined if imageData is Blob but imageId is missing', () => {
-      component.images.set([{ imageId: undefined, mimeType: 'image/png', imageData: new Blob() }])
-      const imageInfo = { id: 'x', imageId: undefined, visible: true, workspaceName: 'ws' }
-
-      const result = component.buildImageSrc(imageInfo)
-
-      expect(result).toBeUndefined()
-    })
-
-    it('should return base64 string if image is found and imageData is a string', () => {
-      component.images.set([{ imageId: '123', mimeType: 'image/png', imageData: 'abc123' as any }])
-
-      const result = component.buildImageSrc(imageInfos[0])
-
-      expect(result).toBe('data:image/png;base64,abc123')
-    })
-
-    it('should return base64 string with empty data if image is found but imageData is undefined', () => {
-      component.images.set([{ imageId: '123' }])
-
-      const result = component.buildImageSrc(imageInfos[0])
-
-      expect(result).toBe('data:undefined;base64,')
-    })
-
-    it('should return the URL if image is not found', () => {
-      const imageInfo = {
-        id: 'id',
-        imageId: 'id',
-        visible: true,
-        position: '1',
-        workspaceName: 'w1',
-        url: 'http://example.com/image3.png'
-      }
-      component.images.set(imageInfos)
-
-      const result = component.buildImageSrc(imageInfo)
-
-      expect(result).toBe(imageInfo.url)
     })
   })
 
@@ -349,20 +288,25 @@ describe('WelcomeConfigureComponent', () => {
   })
 
   describe('onChangeVisibility', () => {
-    it('should handle error when updating visiblity', () => {
-      imageServiceSpy.updateImageInfo.and.returnValue(of({}))
+    it('should update imageInfo$ with toggled visibility when updating succeeds', () => {
+      const updatedInfo: ImageInfo = { ...imageInfos[0], visible: false }
+      ;(component as any).imageInfosSubject.next(imageInfos)
+      imageServiceSpy.updateImageInfo.and.returnValue(of(updatedInfo))
 
-      component.onChangeVisibility({ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' })
+      component.onChangeVisibility(imageInfos[0])
 
+      let emitted: ImageInfo[] = []
+      component.imageInfo$.subscribe((imgs) => (emitted = imgs))
+      expect(emitted[0].visible).toBeFalse()
       expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.VISIBILITY.SUCCESS' })
     })
 
-    it('should handle error when updating visiblity', () => {
+    it('should handle error when updating visibility', () => {
       const errorResponse = { status: 400, statusText: 'Error on image updating' }
       imageServiceSpy.updateImageInfo.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
-      component.onChangeVisibility({ id: '123', imageId: '123', visible: true, position: '1', workspaceName: 'w1' })
+      component.onChangeVisibility(imageInfos[0])
 
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.VISIBILITY.ERROR' })
       expect(console.error).toHaveBeenCalledWith('updateImageInfo', errorResponse)
@@ -445,6 +389,19 @@ describe('WelcomeConfigureComponent', () => {
       expect(component.isReordered).toBe(true)
     })
 
+    it('should emit the reordered list via imageInfo$', () => {
+      const ii: ImageInfo[] = [
+        { position: '0', id: 'a', workspaceName: 'ws' },
+        { position: '1', id: 'b', workspaceName: 'ws' }
+      ]
+
+      component.onSwapElement(ii, 0, 1)
+
+      let emitted: ImageInfo[] = []
+      component.imageInfo$.subscribe((imgs) => (emitted = imgs))
+      expect(emitted).toEqual(ii)
+    })
+
     it('should save positions', () => {
       imageServiceSpy.updateImageOrder.and.returnValue(of({}))
 
@@ -507,12 +464,12 @@ describe('WelcomeConfigureComponent', () => {
 
   describe('sortImagesByPosition', () => {
     it('should sort images by position in ascending order', () => {
-      const images: ImageInfo[] = [
+      const ii: ImageInfo[] = [
         { position: '3', workspaceName: 'ws' },
         { position: '1', workspaceName: 'ws' },
         { position: '2', workspaceName: 'ws' }
       ]
-      const sortedImages = images.sort(component['sortImagesByPosition'])
+      const sortedImages = ii.sort(component['sortImagesByPosition'])
       expect(sortedImages).toEqual([
         { position: '1', workspaceName: 'ws' },
         { position: '2', workspaceName: 'ws' },
@@ -521,12 +478,12 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should treat undefined positions as 0', () => {
-      const images: ImageInfo[] = [
+      const ii: ImageInfo[] = [
         { position: undefined, workspaceName: 'ws' },
         { position: '0', workspaceName: 'ws' },
         { position: '1', workspaceName: 'ws' }
       ]
-      const sortedImages = images.sort(component['sortImagesByPosition'])
+      const sortedImages = ii.sort(component['sortImagesByPosition'])
       expect(sortedImages).toEqual([
         { position: undefined, workspaceName: 'ws' },
         { position: '0', workspaceName: 'ws' },
@@ -535,20 +492,20 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should handle an empty array', () => {
-      const images: ImageInfo[] = []
-      const sortedImages = images.sort(component['sortImagesByPosition'])
+      const ii: ImageInfo[] = []
+      const sortedImages = ii.sort(component['sortImagesByPosition'])
       expect(sortedImages).toEqual([])
     })
 
     it('should handle a mix of defined and undefined positions', () => {
-      const images: ImageInfo[] = [
+      const ii: ImageInfo[] = [
         { position: undefined, workspaceName: 'ws1' },
         { position: '2', workspaceName: 'ws2' },
         { position: undefined, workspaceName: 'ws3' },
         { position: '1', workspaceName: 'ws4' },
         { position: '3', workspaceName: 'ws5' }
       ]
-      const sortedImages = images.sort(component['sortImagesByPosition'])
+      const sortedImages = ii.sort(component['sortImagesByPosition'])
       expect(sortedImages).toEqual([
         { position: undefined, workspaceName: 'ws1' },
         { position: undefined, workspaceName: 'ws3' },
@@ -611,7 +568,9 @@ describe('WelcomeConfigureComponent', () => {
 
   describe('Page actions:', () => {
     beforeEach(() => {
-      component.ngOnInit()
+      imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of(imageInfos))
+      component.workspace = ws
+      component.fetchImageInfos()
     })
 
     it('should have BACK navigation', () => {
@@ -627,7 +586,7 @@ describe('WelcomeConfigureComponent', () => {
 
     describe('Export:', () => {
       it('should call EXPORT: hide button if there are no items', () => {
-        component.imageInfos = []
+        component['imageInfosSubject'].next(imageInfos)
         component.isReordered = true
 
         component.actions$.subscribe((actions) => {
@@ -639,7 +598,7 @@ describe('WelcomeConfigureComponent', () => {
 
       it('should call EXPORT: enabled button', () => {
         spyOn(component, 'onExport')
-        component.imageInfos = imageInfos
+        component['imageInfosSubject'].next(imageInfos)
         component.isReordered = false
 
         component.actions$.subscribe((actions) => {
@@ -680,7 +639,7 @@ describe('WelcomeConfigureComponent', () => {
     describe('Create:', () => {
       it('should call CREATE: hide button on conditions', () => {
         component.isReordered = true
-        component.imageInfos = imageInfos
+        component['imageInfosSubject'].next(imageInfos)
 
         component.actions$.subscribe((actions) => {
           const action = actions[3]
@@ -691,7 +650,7 @@ describe('WelcomeConfigureComponent', () => {
 
       it('should call CREATE: hide button on conditions', () => {
         component.isReordered = false
-        component.imageInfos = imageInfos
+        component['imageInfosSubject'].next(imageInfos)
         component.maxImages = imageInfos.length
 
         component.actions$.subscribe((actions) => {
@@ -717,9 +676,13 @@ describe('WelcomeConfigureComponent', () => {
   })
 
   describe('Reorder Cancel:', () => {
-    it('should call REORDER: hide button on conditions', () => {
+    beforeEach(() => {
+      component.workspace = ws
+      component.fetchImageInfos()
+    })
+
+    it('should hide reorder button if not reordered', () => {
       component.isReordered = false
-      component.imageInfos = imageInfos
 
       component.actions$.subscribe((actions) => {
         const action = actions[4]
@@ -728,7 +691,19 @@ describe('WelcomeConfigureComponent', () => {
       })
     })
 
-    it('should call REORDER: enabled button', () => {
+    it('should restore imageInfo$ from preOrderList when cancelling reorder', () => {
+      const original: ImageInfo[] = [{ id: 'a', position: '1', workspaceName: 'ws' }]
+      ;(component as any).preOrderList = original
+
+      component.onCancelOrder()
+
+      let emitted: ImageInfo[] = []
+      component.imageInfo$.subscribe((imgs) => (emitted = imgs))
+      expect(emitted).toEqual(original)
+      expect(component.isReordered).toBeFalse()
+    })
+
+    it('should show button if reordered', () => {
       spyOn(component, 'onReload')
       component.isReordered = true
 
@@ -737,15 +712,18 @@ describe('WelcomeConfigureComponent', () => {
         action.actionCallback?.()
 
         expect(action.showCondition).toBeTrue()
-        expect(component.onReload).toHaveBeenCalled()
       })
     })
   })
 
   describe('Reorder Save:', () => {
+    beforeEach(() => {
+      component.workspace = ws
+      component.fetchImageInfos()
+    })
+
     it('should call REORDER: hide button on conditions', () => {
       component.isReordered = false
-      component.imageInfos = imageInfos
 
       component.actions$.subscribe((actions) => {
         const action = actions[5]

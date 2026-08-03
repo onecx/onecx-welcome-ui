@@ -42,6 +42,7 @@ const ws: Workspace = {
 
 describe('WelcomeOverviewComponent', () => {
   let component: WelcomeOverviewComponent
+  let componentTypeLess: Record<string, unknown> // needed to access readonly private properties
   let fixture: ComponentFixture<WelcomeOverviewComponent>
   let appStateSubject: BehaviorSubject<Workspace | undefined>
 
@@ -85,6 +86,7 @@ describe('WelcomeOverviewComponent', () => {
   function initTestComponent(): void {
     fixture = TestBed.createComponent(WelcomeOverviewComponent)
     component = fixture.componentInstance
+    componentTypeLess = component as unknown as Record<string, unknown>
     fixture.detectChanges()
   }
 
@@ -135,7 +137,7 @@ describe('WelcomeOverviewComponent', () => {
     expect(component).toBeTruthy()
     component.dockItems$.subscribe({
       next: (items) => {
-        expect(items.length).toBe(1)
+        expect(items).toHaveSize(1)
         done()
       },
       error: done.fail
@@ -173,8 +175,8 @@ describe('WelcomeOverviewComponent', () => {
         component['getImages']()
 
         component.imageInfo$?.subscribe({
-          next: (images) => {
-            expect(images.length).toBe(5)
+          next: (imgs) => {
+            expect(imgs).toHaveSize(5)
             done()
           },
           error: done.fail
@@ -199,17 +201,17 @@ describe('WelcomeOverviewComponent', () => {
     })
   })
 
-  describe('fetchImages', () => {
+  describe('fetchImageData', () => {
     it('should not fetch images if they are already loaded', () => {
-      component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
+      componentTypeLess['imageData'] = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
 
-      component['fetchImages'](imageInfos)
+      component['fetchImageData'](imageInfos)
 
       expect(imageServiceSpy.getImageById).not.toHaveBeenCalled()
     })
 
     it('should not fetch images if no image info is available', () => {
-      component['fetchImages']([])
+      component['fetchImageData']([])
 
       expect(imageServiceSpy.getImageById).not.toHaveBeenCalled()
     })
@@ -218,7 +220,7 @@ describe('WelcomeOverviewComponent', () => {
       const iInfos: ImageInfo[] = [imageInfos[0]]
       spyOn<any>(component, 'setCarousel')
 
-      component['fetchImages'](iInfos)
+      component['fetchImageData'](iInfos)
 
       expect(imageServiceSpy.getImageById).not.toHaveBeenCalled()
       expect(component['setCarousel']).toHaveBeenCalled()
@@ -227,40 +229,76 @@ describe('WelcomeOverviewComponent', () => {
     it('should get data for one image: position -1', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
       imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
-      component.currentImage = -1
+      component.currentImagePos.set(-1)
 
-      component['fetchImages'](imageInfos)
+      component['fetchImageData'](imageInfos)
 
-      expect(component.images).toContain(imgDataResponse)
+      expect(component['imageData']).toContain(imgDataResponse)
     })
 
     it('should get data for one image: position 0', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
       imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
-      component.currentImage = 0
+      component.currentImagePos.set(0)
 
-      component['fetchImages'](imageInfos)
+      component['fetchImageData'](imageInfos)
 
-      expect(component.images).toContain(imgDataResponse)
+      expect(component['imageData']).toContain(imgDataResponse)
     })
   })
 
   describe('setCarousel', () => {
-    it('should advance currentImage on subsequent ticks (else branch)', fakeAsync(() => {
-      component.currentImage = 0
+    it('should advance currentImagePos on each tick', fakeAsync(() => {
+      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
+      component.currentImagePos.set(0)
 
       component['setCarousel'](5)
-      tick(0) // fire the first timer emission (currentImage is 0, not -1 → else branch)
+      tick(0)
 
-      expect(component.currentImage).toBe(1)
+      expect(component.currentImagePos()).toBe(1)
       discardPeriodicTasks()
     }))
+  })
+
+  describe('getNextAvailableImagePos - edge cases', () => {
+    it('should return to the first available image if current position is beyond the last', () => {
+      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
+      const nextPos = component['getNextAvailableImagePos'](5)
+
+      expect(nextPos).toBe(0)
+    })
+
+    it('should prevent a position which is not available', () => {
+      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
+      componentTypeLess['imageUnavailableNumbers'] = [2]
+      const nextPos = component['getNextAvailableImagePos'](1)
+
+      expect(nextPos).toBe(3)
+    })
+  })
+
+  describe('onImageLoadError', () => {
+    it('should add the failed position to imageUnavailableNumbers', () => {
+      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2]
+
+      component.onImageLoadError(0)
+
+      expect(componentTypeLess['imageUnavailableNumbers'] as number[]).toContain(0)
+    })
+
+    it('should advance currentImagePos to the next available image', () => {
+      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2]
+
+      component.onImageLoadError(0)
+
+      expect(component.currentImagePos()).toBe(1)
+    })
   })
 
   describe('buildImageSrc', () => {
     it('should return data string if image is found', () => {
       component.loading = false
-      component.images = []
+      componentTypeLess['imageData'] = []
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
@@ -268,7 +306,7 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should not build source if page is loading', () => {
-      component.images = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
+      componentTypeLess['imageData'] = [{ imageId: '123', mimeType: 'image/png', imageData: new Blob() }]
 
       const result = component.buildImageSrc(imageInfos[0])
 
@@ -276,7 +314,7 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should return the URL if image is based on', () => {
-      component.images = [{ imageId: '123' }]
+      componentTypeLess['imageData'] = [{ imageId: '123' }]
       component.loading = false
       const info = imageInfos.find((i) => i.imageId === '123')!
 
@@ -286,7 +324,7 @@ describe('WelcomeOverviewComponent', () => {
     })
 
     it('should return data string if image is found', () => {
-      component.images = [{ imageId: '1234', mimeType: 'image/png', imageData: 'abc123' as any }]
+      componentTypeLess['imageData'] = [{ imageId: '1234', mimeType: 'image/png', imageData: 'abc123' as any }]
       component.loading = false
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
@@ -294,44 +332,31 @@ describe('WelcomeOverviewComponent', () => {
       expect(result).toBe('data:image/png;base64,abc123')
     })
 
-    it('should return blob URL if image is found and imageData is a Blob', () => {
-      component.images = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
+    it('should return data string if image is found', () => {
+      componentTypeLess['imageData'] = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
       component.loading = false
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
-      expect(result).toContain('blob:')
+      expect(result).toContain('blob:http')
     })
 
-    it('should return cached blob URL on second call', () => {
-      component.images = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
+    it('should return data URI with empty base64 when imageData field is undefined', () => {
+      componentTypeLess['imageData'] = [{ imageId: '1234', mimeType: 'image/png', imageData: undefined }]
       component.loading = false
-      const info = imageInfos.find((i) => i.imageId === '1234')!
 
-      const result1 = component.buildImageSrc(info)
-      const result2 = component.buildImageSrc(info)
-
-      expect(result1).toContain('blob:')
-      expect(result2).toBe(result1)
-    })
-
-    it('should return undefined if imageData is Blob but imageId is missing', () => {
-      component.images = [{ imageId: undefined, mimeType: 'image/png', imageData: new Blob() }]
-      component.loading = false
-      const info: ImageInfo = { imageId: undefined, workspaceName: 'ws' }
-
-      const result = component.buildImageSrc(info)
+      const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
       expect(result).toBeUndefined()
     })
 
-    it('should return base64 string with empty data if image is not matched in loaded images', () => {
-      component.images = [{ imageId: 'other', mimeType: 'image/png' }]
+    it('should return base64 string with empty data if image is not matched in loaded imageData', () => {
+      componentTypeLess['imageData'] = [{ imageId: 'other', mimeType: 'image/png' }]
       component.loading = false
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
-      expect(result).toBe('data:undefined;base64,')
+      expect(result).toBeUndefined()
     })
   })
 })

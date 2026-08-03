@@ -28,7 +28,7 @@
               (keydown.enter)="onOpenDetailDialog(i)"
               (keydown.space)="onOpenDetailDialog(i)"
             >
-              <app-image-item [index]="ii" [imageInfo]="info" [images]="images()" [blobUrls]="blobUrls" />
+              <app-image-item [index]="ii" [imageInfo]="info" [imageData]="imageData()" [blobUrls]="blobUrls" />
             </a>
             <!-- BUTTON bar - schema: (B B) .T. (B B) -->
             <div class="sm:mx-2 flex flex-row flex-nowrap justify-content-between align-items-center">
@@ -119,7 +119,7 @@
       <app-image-detail
         [visible]="displayDetailDialog"
         (closeDialog)="onCloseDetailDialog(false)"
-        [images]="images()"
+        [images]="imageData()"
         [imageInfos]="imageInfos"
         [imageIndex]="detailImageIndex"
       ></app-image-detail>

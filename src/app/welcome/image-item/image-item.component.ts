@@ -24,11 +24,11 @@ import type { ImageDataResponse, ImageInfo } from 'src/app/shared/generated'
 export class ImageItemComponent {
   public readonly index = input.required<any>()
   public readonly imageInfo = input.required<ImageInfo>()
-  public readonly images = input.required<ImageDataResponse[]>()
+  public readonly imageData = input.required<ImageDataResponse[]>()
   public readonly blobUrls = input.required<Map<string, string>>()
 
   public imageSrc = computed(() => {
-    const images = this.images()
+    const images = this.imageData()
     const blobUrls = this.blobUrls()
     const imageInfo = this.imageInfo()
 
@@ -36,9 +36,8 @@ export class ImageItemComponent {
     return this.buildImageSrc(imageInfo, images, blobUrls)
   })
 
-  private buildImageSrc(ii: ImageInfo, images: ImageDataResponse[], blobUrls: Map<string, string>): string | undefined {
-    const image = images.find((img) => img.imageId === ii.imageId)
-
+  private buildImageSrc(ii: ImageInfo, ids: ImageDataResponse[], blobUrls: Map<string, string>): string | undefined {
+    const image = ids.find((img) => img.imageId === ii.imageId)
     if (image) {
       const imageData = image?.imageData
       if (!imageData || !image.imageId) return undefined

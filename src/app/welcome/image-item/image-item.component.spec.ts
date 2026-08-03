@@ -42,7 +42,7 @@ describe('ImageItemComponent', () => {
 
     fixture.componentRef.setInput('index', 1)
     fixture.componentRef.setInput('imageInfo', mockImageInfo)
-    fixture.componentRef.setInput('images', [] as ImageDataResponse[])
+    fixture.componentRef.setInput('imageData', [] as ImageDataResponse[])
     fixture.componentRef.setInput('blobUrls', blobUrlsMap)
 
     fixture.detectChanges()
@@ -53,7 +53,7 @@ describe('ImageItemComponent', () => {
   })
 
   it('should return undefined if images array is empty', async () => {
-    fixture.componentRef.setInput('images', [])
+    fixture.componentRef.setInput('imageData', [])
     fixture.detectChanges()
     await fixture.whenStable()
 
@@ -68,7 +68,7 @@ describe('ImageItemComponent', () => {
       }
     ]
 
-    fixture.componentRef.setInput('images', dummyImages)
+    fixture.componentRef.setInput('imageData', dummyImages)
     fixture.detectChanges()
     await fixture.whenStable()
 
@@ -83,7 +83,7 @@ describe('ImageItemComponent', () => {
       }
     ]
 
-    fixture.componentRef.setInput('images', blobImages)
+    fixture.componentRef.setInput('imageData', blobImages)
     fixture.detectChanges()
     await fixture.whenStable()
 
@@ -103,7 +103,7 @@ describe('ImageItemComponent', () => {
 
     blobUrlsMap.set('img-123', 'blob:http://localhost/already-cached-url')
 
-    fixture.componentRef.setInput('images', blobImages)
+    fixture.componentRef.setInput('imageData', blobImages)
     fixture.detectChanges()
     await fixture.whenStable()
 
@@ -118,7 +118,7 @@ describe('ImageItemComponent', () => {
       imageData: 'iVBORw0KGgoAAAANSU...' as unknown as Blob
     }
 
-    fixture.componentRef.setInput('images', [fakeBase64Image])
+    fixture.componentRef.setInput('imageData', [fakeBase64Image])
     fixture.detectChanges()
     await fixture.whenStable()
 
@@ -134,7 +134,7 @@ describe('ImageItemComponent', () => {
     ]
 
     fixture.componentRef.setInput('imageInfo', { imageId: undefined })
-    fixture.componentRef.setInput('images', corruptedImages)
+    fixture.componentRef.setInput('imageData', corruptedImages)
     fixture.detectChanges()
     await fixture.whenStable()
 
