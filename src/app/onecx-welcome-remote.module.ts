@@ -29,10 +29,10 @@ const routes: Routes = [
 ]
 @NgModule({
   imports: [
-    BrowserAnimationsModule,
     AppEntrypointComponent,
     AngularAcceleratorModule,
     AngularAuthModule,
+    BrowserAnimationsModule,
     RouterModule.forRoot(routes),
     TranslateModule.forRoot({
       isolate: true,
