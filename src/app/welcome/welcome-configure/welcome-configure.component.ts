@@ -12,7 +12,7 @@ import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, PortalMessageService } from '@onecx/angular-integration-interface'
 import { PortalPageComponent } from '@onecx/angular-utils'
 
-import { getCurrentDateTime } from 'src/app/shared/utils'
+import { Utils } from 'src/app/shared/utils'
 import {
   ImageDataResponse,
   ImageInfo,
@@ -198,7 +198,7 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
             const workspaceJson = JSON.stringify(snapshot, null, 2)
             FileSaver.saveAs(
               new Blob([workspaceJson], { type: 'text/json' }),
-              `onecx-welcome_${this.workspace?.workspaceName}_${getCurrentDateTime()}.json`
+              `onecx-welcome_${this.workspace?.workspaceName}_${Utils.getCurrentDateTime()}.json`
             )
           },
           error: (err) => {

@@ -20,6 +20,7 @@
       }
     }
   </div>
+
   <!-- DOCK -->
   <div class="absolute z-3 dock-top-right-minimized">
     <p-dock *ocxIfPermission="'IMAGE#EDIT'" [model]="dockItems$ | async" [position]="'top'" styleClass="z-2">
@@ -32,16 +33,26 @@
       </ng-template>
     </p-dock>
   </div>
+
   <!-- INFO -->
-  <div class="absolute top-0 left-0 w-full z-1 wc-overview-info">
-    <div class="py-3 sm:py-4 px-3 sm:px-4 md:px-5 flex flex-column gap-2 sm:gap-3 forced">
-      <h1 id="wc_overview_info_title" class="m-0 line-height-1 font-normal text-xl sm:text-2xl md:text-4xl fon">
-        {{ 'DIALOG.OVERVIEW.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
-      </h1>
-      <div id="wc_overview_info_workspace" class="m-0 line-height-1 font-normal text-sm sm:text-base">
-        {{ 'DIALOG.OVERVIEW.WORKSPACE' | translate }}: {{ workspace?.displayName }}
+  <div class="absolute top-0 left-0 w-full z-1" [class]="exceptionKey || loading() ? '' : 'wc-overview-info'">
+    @if (exceptionKey) {
+      <p-message
+        id="ws_search_message_error"
+        severity="error"
+        styleClass="m-3 bg-white"
+        [text]="exceptionKey | translate"
+      ></p-message>
+    } @else {
+      <div class="py-3 sm:py-4 px-3 sm:px-4 md:px-5 flex flex-column gap-2 sm:gap-3 forced">
+        <h1 id="wc_overview_info_title" class="m-0 line-height-1 font-normal text-xl sm:text-2xl md:text-4xl fon">
+          {{ 'DIALOG.OVERVIEW.TITLE' | translate }} {{ (user$ | async)?.person?.firstName }}
+        </h1>
+        <div id="wc_overview_info_workspace" class="m-0 line-height-1 font-normal text-sm sm:text-base">
+          {{ 'DIALOG.OVERVIEW.WORKSPACE' | translate }}: {{ workspace?.displayName }}
+        </div>
       </div>
-    </div>
+    }
   </div>
 
   <!-- SLOTs => this is a normal block -->

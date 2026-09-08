@@ -73,9 +73,10 @@
     "CLOSE": "Schließen",
     "CANCEL": "Abbrechen",
     "CHOOSE": "Auswählen",
-    "VIEW": "Ansehen",
     "CONFIGURE": "Konfigurieren",
+    "LOADING": "...wird geladen",
     "UPLOAD": "Hochladen",
+    "VIEW": "Ansehen",
     "TOOLTIPS": {
       "CLOSE": "Dialog verlassen",
       "CANCEL": "Aktion abbrechen",
@@ -131,6 +132,29 @@
       "IMAGES.NOT_FOUND": "Bilder konnten nicht geladen werden",
       "MISSING_IMG_SRC": "Laden Sie ein Bild hoch oder geben sie eine externe Bild-URL an",
       "PARSE_ERROR": "Parserfehler: Die enthaltene Struktur entspricht nicht dem erwarteten Format."
+    }
+  },
+  "EXCEPTIONS": {
+    "HTTP_STATUS_undefined": {
+      "IMAGES": "Unbekanntes Problem beim Abrufen der Bilder - bitte versuchen Sie es noch einmal."
+    },
+    "HTTP_STATUS_0": {
+      "IMAGES": "Unbekanntes Problem beim Abrufen der Bilder - bitte versuchen Sie es noch einmal."
+    },
+    "HTTP_STATUS_400": {
+      "IMAGES": "Ihre Anfrage konnte nicht bearbeitet werden."
+    },
+    "HTTP_STATUS_401": {
+      "IMAGES": "Sie sind nicht autorisiert, um Bilder zu sehen."
+    },
+    "HTTP_STATUS_403": {
+      "IMAGES": "Sie haben keine Rechte, um Workspaces und Applikationen zu sehen, die Ankündigungen zugeordnet sind."
+    },
+    "HTTP_STATUS_404": {
+      "IMAGES": "Bilder nicht gefunden."
+    },
+    "HTTP_STATUS_500": {
+      "IMAGES": "Unbekanntes Problem beim Abrufen der Bilder - bitte versuchen Sie es noch einmal."
     }
   }
 }
