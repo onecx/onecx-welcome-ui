@@ -1,14 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  effect,
-  inject,
-  Injector,
-  OnInit,
-  signal,
-  untracked
-} from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { AsyncPipe, NgClass, NgStyle } from '@angular/common'
 import { animate, style, transition, trigger } from '@angular/animations'
@@ -61,19 +51,23 @@ export class WelcomeOverviewComponent implements OnInit {
   private readonly imageService = inject(ImagesInternalAPIService)
   private readonly appStateService = inject(AppStateService)
   // dialog
-  private injector = inject(Injector)
-  private readonly CAROUSEL_SPEED: number = 15000 // ms
+  private readonly CAROUSEL_SPEED: number = 5000 // ms
   public loading = signal(true)
   public exceptionKey: string | undefined = undefined
-  public currentImagePos = signal<number>(-1)
   public dockItems$: Observable<MenuItem[]> = of([])
   // data
   public user$ = this.userService.profile$.asObservable()
   public workspace: Workspace | undefined
   public imageInfo$: Observable<ImageInfo[]> = of([])
   private readonly imageData: ImageDataResponse[] = []
-  private readonly imageUnavailableNumbers: number[] = [] // positions of images that failed to load
-  private readonly imageAvailableNumbers: number[] = [] // positions of visible images
+  private readonly imageAvailableNumbers = signal<string[]>([]) // positions of visible images
+  private carouselIndex = signal<number>(0)
+  public currentImagePos = computed(() => {
+    const images = this.imageAvailableNumbers()
+    if (images.length === 0) return -1 // initial, no images yet
+    return this.carouselIndex() % images.length
+  })
+
   // slots
   public readonly bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public readonly listActiveSlotName = 'onecx-welcome-list-active'
@@ -110,7 +104,11 @@ export class WelcomeOverviewComponent implements OnInit {
       .pipe(
         map((ii: ImageInfo[]) => {
           const iis = ii.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
-          iis.forEach((_, index) => this.imageAvailableNumbers.push(index))
+          if (iis.length > 0) {
+            const ids: string[] = []
+            iis.forEach((ii) => ids.push(ii.id!))
+            this.imageAvailableNumbers.set(ids)
+          }
           this.fetchImageData(iis) // get real (visible) image data, init carousel for all visible images
           return iis
         }),
@@ -166,36 +164,27 @@ export class WelcomeOverviewComponent implements OnInit {
   }
 
   private setCarousel() {
-    // initial: display the first image immediately, do not wait on carousel interval
-    if (this.imageAvailableNumbers.length > 0 && this.currentImagePos() === -1) {
-      const nextPos = this.getNextAvailableImagePos(this.currentImagePos())
-      this.currentImagePos.set(nextPos)
-    }
-    effect(
-      (onCleanup) => {
-        const intervalId = setInterval(() => {
-          const nextPos = untracked(() => this.getNextAvailableImagePos(this.currentImagePos()))
-          this.currentImagePos.set(nextPos)
-        }, this.CAROUSEL_SPEED)
-        onCleanup(() => clearInterval(intervalId)) // on destroy component
-      },
-      { injector: this.injector }
-    )
+    const intervalId = setInterval(() => {
+      this.nextImage()
+    }, this.CAROUSEL_SPEED)
+
+    this.destroyRef.onDestroy(() => {
+      clearInterval(intervalId)
+    })
   }
 
-  // find next image position of available images
-  private getNextAvailableImagePos(pos: number): number {
-    let nextPos = pos + 1 // next image, normally the following one
-    // restart
-    if (this.imageAvailableNumbers.length <= nextPos) nextPos = this.getNextAvailableImagePos(-1)
-    else if (this.imageUnavailableNumbers.includes(nextPos)) nextPos = this.getNextAvailableImagePos(nextPos)
-    return nextPos
+  private nextImage() {
+    this.carouselIndex.update((current) => {
+      const length = this.imageAvailableNumbers().length
+      if (length === 0) return 0
+      return (current + 1) % length
+    })
   }
 
-  // On image load error (e.g. url is not available) => find the next available image
-  public onImageLoadError(currentPos: number): void {
-    this.imageUnavailableNumbers.push(currentPos)
-    this.currentImagePos.set(this.getNextAvailableImagePos(currentPos))
+  // On image load error (e.g. url is not available) => exclude this from list
+  public onImageLoadError(failedImgId: string) {
+    this.imageAvailableNumbers.update((images) => images.filter((id) => id !== failedImgId))
+    this.nextImage()
   }
 
   // build a data URL from imageData or return the URL from imageInfo

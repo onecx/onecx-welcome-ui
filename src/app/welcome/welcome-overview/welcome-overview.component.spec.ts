@@ -229,99 +229,41 @@ describe('WelcomeOverviewComponent', () => {
     it('should get data for one image: position -1', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
       imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
-      component.currentImagePos.set(-1)
 
       component['fetchImageData'](imageInfos)
 
       expect(component['imageData']).toContain(imgDataResponse)
     })
-
-    it('should get data for one image: position 0', () => {
-      const imgDataResponse: ImageDataResponse = { imageId: 'id' }
-      imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
-      component.currentImagePos.set(0)
-
-      component['fetchImageData'](imageInfos)
-
-      expect(component['imageData']).toContain(imgDataResponse)
-    })
-  })
-
-  xdescribe('setCarousel', () => {
-    it('should not change currentImagePos on registration when position is already set', fakeAsync(() => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
-      component.currentImagePos.set(0)
-
-      component['setCarousel']()
-      tick(0)
-
-      expect(component.currentImagePos()).toBe(0)
-      discardPeriodicTasks()
-    }))
-
-    it('should set currentImagePos to the first available image when position is -1 and images are available', fakeAsync(() => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2]
-      component.currentImagePos.set(-1)
-
-      component['setCarousel']()
-      tick(0)
-
-      expect(component.currentImagePos()).toBe(0)
-      discardPeriodicTasks()
-    }))
-
-    it('should keep currentImagePos at -1 when no images are available', fakeAsync(() => {
-      componentTypeLess['imageAvailableNumbers'] = []
-      component.currentImagePos.set(-1)
-
-      component['setCarousel']()
-      tick(0)
-
-      expect(component.currentImagePos()).toBe(-1)
-      discardPeriodicTasks()
-    }))
-
-    it('should advance currentImagePos after the carousel interval elapses', fakeAsync(() => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
-      component.currentImagePos.set(0)
-
-      component['setCarousel']()
-      tick(15000)
-
-      expect(component.currentImagePos()).toBe(1)
-      discardPeriodicTasks()
-    }))
-
-    it('should clear the interval when the component is destroyed', fakeAsync(() => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
-      component.currentImagePos.set(0)
-
-      component['setCarousel']()
-      tick(0) // flush the effect so the interval gets registered
-
-      fixture.destroy()
-      tick(15000)
-
-      expect(component.currentImagePos()).toBe(0)
-    }))
   })
 
   describe('setCarousel', () => {
-    it('should advance the currentImagePos according to the carousel interval', fakeAsync(() => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
+    it('should initialize the currentImagePos', fakeAsync(() => {
+      component['imageAvailableNumbers'].set([])
+
+      component['setCarousel']()
+
+      fixture.detectChanges()
+
       expect(component.currentImagePos()).toBe(-1)
+
+      discardPeriodicTasks()
+    }))
+
+    it('should advance the currentImagePos according to the carousel interval', fakeAsync(() => {
+      component['imageAvailableNumbers'].set(['0', '1', '2'])
 
       component['setCarousel']()
 
       fixture.detectChanges()
 
       // initial
-      expect(component.currentImagePos()).toBe(0)
+      expect(component['carouselIndex']()).toBe(0)
 
       // simulate the passage of time for one carousel interval
       tick(component['CAROUSEL_SPEED'])
       fixture.detectChanges() // update the UI after the tick
 
+      expect(component['carouselIndex']()).toBe(1)
       expect(component.currentImagePos()).toBe(1)
 
       // next interval
@@ -329,20 +271,26 @@ describe('WelcomeOverviewComponent', () => {
       fixture.detectChanges()
 
       // check progress
-      expect(component.currentImagePos()).toBe(2)
+      expect(component['carouselIndex']()).toBe(2)
+
+      tick(component['CAROUSEL_SPEED'])
+      fixture.detectChanges()
+
+      // check progress
+      expect(component['carouselIndex']()).toBe(0)
 
       discardPeriodicTasks()
     }))
 
     it('should stop the timer via onCleanup when the component is destroyed', fakeAsync(() => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
+      component['imageAvailableNumbers'].set(['0', '1', '2', '3', '4'])
       component['setCarousel']()
       fixture.detectChanges()
 
       // tick once to see that it is running
       tick(component['CAROUSEL_SPEED'])
       fixture.detectChanges()
-      expect(component.currentImagePos()).toBe(1)
+      expect(component['carouselIndex']()).toBe(1)
 
       // destroy the component -> triggers the onCleanup() in the effect!
       fixture.destroy()
@@ -352,42 +300,17 @@ describe('WelcomeOverviewComponent', () => {
       tick(component['CAROUSEL_SPEED'])
 
       // remains at 1, as the timer has been stopped, no extra destroy needed
-      expect(component.currentImagePos()).toBe(1)
+      expect(component['carouselIndex']()).toBe(1)
     }))
   })
 
-  describe('getNextAvailableImagePos - edge cases', () => {
-    it('should return to the first available image if current position is beyond the last', () => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
-      const nextPos = component['getNextAvailableImagePos'](5)
-
-      expect(nextPos).toBe(0)
-    })
-
-    it('should prevent a position which is not available', () => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
-      componentTypeLess['imageUnavailableNumbers'] = [2]
-      const nextPos = component['getNextAvailableImagePos'](1)
-
-      expect(nextPos).toBe(3)
-    })
-  })
-
   describe('onImageLoadError', () => {
-    it('should add the failed position to imageUnavailableNumbers', () => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2]
+    it('should filter images', () => {
+      component['imageAvailableNumbers'].set(['11', '22', '33'])
 
-      component.onImageLoadError(0)
+      component.onImageLoadError('22')
 
-      expect(componentTypeLess['imageUnavailableNumbers'] as number[]).toContain(0)
-    })
-
-    it('should advance currentImagePos to the next available image', () => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2]
-
-      component.onImageLoadError(0)
-
-      expect(component.currentImagePos()).toBe(1)
+      expect(component['imageAvailableNumbers']()).toHaveSize(2)
     })
   })
 

@@ -2,7 +2,7 @@
   <!-- BACKGROUND -->
   <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
     @for (info of (imageInfo$ | async) ?? []; track info.id; let i = $index) {
-      @if (i === currentImagePos()) {
+      @if (info.id && i === currentImagePos()) {
         <img
           #backgroundImage
           [@carouselAnimation]
@@ -12,7 +12,7 @@
             'object-position': info.objectPosition ?? 'center center',
             'background-color': info.backgroundColor ?? 'unset'
           }"
-          (error)="onImageLoadError(i)"
+          (error)="onImageLoadError(info.id)"
           [src]="buildImageSrc(info)"
           [alt]="'DIALOG.OVERVIEW.PIC' | translate"
           [attr.aria-label]="'DIALOG.OVERVIEW.PIC' | translate"
