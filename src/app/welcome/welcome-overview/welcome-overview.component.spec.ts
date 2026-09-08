@@ -157,11 +157,11 @@ describe('WelcomeOverviewComponent', () => {
   describe('getImages', () => {
     it('should return early and reset loading when workspace has no name', () => {
       component.workspace = undefined
-      component.loading = true
+      component.loading.set(true)
 
       component['getImages']()
 
-      expect(component.loading).toBeFalse()
+      expect(component.loading()).toBeFalse()
     })
 
     describe('with workspace', () => {
@@ -229,17 +229,6 @@ describe('WelcomeOverviewComponent', () => {
     it('should get data for one image: position -1', () => {
       const imgDataResponse: ImageDataResponse = { imageId: 'id' }
       imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
-      component.currentImagePos.set(-1)
-
-      component['fetchImageData'](imageInfos)
-
-      expect(component['imageData']).toContain(imgDataResponse)
-    })
-
-    it('should get data for one image: position 0', () => {
-      const imgDataResponse: ImageDataResponse = { imageId: 'id' }
-      imageServiceSpy.getImageById.and.returnValue(of(imgDataResponse))
-      component.currentImagePos.set(0)
 
       component['fetchImageData'](imageInfos)
 
@@ -248,56 +237,86 @@ describe('WelcomeOverviewComponent', () => {
   })
 
   describe('setCarousel', () => {
-    it('should advance currentImagePos on each tick', fakeAsync(() => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
-      component.currentImagePos.set(0)
+    it('should initialize the currentImagePos', fakeAsync(() => {
+      component['imageAvailableIds'].set([])
 
-      component['setCarousel'](5)
-      tick(0)
+      component['setCarousel']()
 
-      expect(component.currentImagePos()).toBe(1)
+      fixture.detectChanges()
+
+      expect(component.currentImagePos()).toBe(-1)
+
       discardPeriodicTasks()
+    }))
+
+    it('should advance the currentImagePos according to the carousel interval', fakeAsync(() => {
+      component['imageAvailableIds'].set(['0', '1', '2'])
+
+      component['setCarousel']()
+
+      fixture.detectChanges()
+
+      // initial
+      expect(component['carouselIndex']()).toBe(0)
+
+      // simulate the passage of time for one carousel interval
+      tick(component['CAROUSEL_SPEED'])
+      fixture.detectChanges() // update the UI after the tick
+
+      expect(component['carouselIndex']()).toBe(1)
+      expect(component.currentImagePos()).toBe(1)
+
+      // next interval
+      tick(component['CAROUSEL_SPEED'])
+      fixture.detectChanges()
+
+      // check progress
+      expect(component['carouselIndex']()).toBe(2)
+
+      tick(component['CAROUSEL_SPEED'])
+      fixture.detectChanges()
+
+      // check progress
+      expect(component['carouselIndex']()).toBe(0)
+
+      discardPeriodicTasks()
+    }))
+
+    it('should stop the timer via onCleanup when the component is destroyed', fakeAsync(() => {
+      component['imageAvailableIds'].set(['0', '1', '2', '3', '4'])
+      component['setCarousel']()
+      fixture.detectChanges()
+
+      // tick once to see that it is running
+      tick(component['CAROUSEL_SPEED'])
+      fixture.detectChanges()
+      expect(component['carouselIndex']()).toBe(1)
+
+      // destroy the component -> triggers the onCleanup() in the effect!
+      fixture.destroy()
+
+      // if we now fast-forward the time, the signal should NOT change anymore,
+      // because clearInterval has been called.
+      tick(component['CAROUSEL_SPEED'])
+
+      // remains at 1, as the timer has been stopped, no extra destroy needed
+      expect(component['carouselIndex']()).toBe(1)
     }))
   })
 
-  describe('getNextAvailableImagePos - edge cases', () => {
-    it('should return to the first available image if current position is beyond the last', () => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
-      const nextPos = component['getNextAvailableImagePos'](5)
-
-      expect(nextPos).toBe(0)
-    })
-
-    it('should prevent a position which is not available', () => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2, 3, 4]
-      componentTypeLess['imageUnavailableNumbers'] = [2]
-      const nextPos = component['getNextAvailableImagePos'](1)
-
-      expect(nextPos).toBe(3)
-    })
-  })
-
   describe('onImageLoadError', () => {
-    it('should add the failed position to imageUnavailableNumbers', () => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2]
+    it('should filter images', () => {
+      component['imageAvailableIds'].set(['11', '22', '33'])
 
-      component.onImageLoadError(0)
+      component.onImageLoadError('22')
 
-      expect(componentTypeLess['imageUnavailableNumbers'] as number[]).toContain(0)
-    })
-
-    it('should advance currentImagePos to the next available image', () => {
-      componentTypeLess['imageAvailableNumbers'] = [0, 1, 2]
-
-      component.onImageLoadError(0)
-
-      expect(component.currentImagePos()).toBe(1)
+      expect(component['imageAvailableIds']()).toHaveSize(2)
     })
   })
 
   describe('buildImageSrc', () => {
     it('should return data string if image is found', () => {
-      component.loading = false
+      component.loading.set(false)
       componentTypeLess['imageData'] = []
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
@@ -315,7 +334,7 @@ describe('WelcomeOverviewComponent', () => {
 
     it('should return the URL if image is based on', () => {
       componentTypeLess['imageData'] = [{ imageId: '123' }]
-      component.loading = false
+      component.loading.set(false)
       const info = imageInfos.find((i) => i.imageId === '123')!
 
       const result = component.buildImageSrc(info)
@@ -325,7 +344,7 @@ describe('WelcomeOverviewComponent', () => {
 
     it('should return data string if image is found', () => {
       componentTypeLess['imageData'] = [{ imageId: '1234', mimeType: 'image/png', imageData: 'abc123' as any }]
-      component.loading = false
+      component.loading.set(false)
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
@@ -334,7 +353,7 @@ describe('WelcomeOverviewComponent', () => {
 
     it('should return data string if image is found', () => {
       componentTypeLess['imageData'] = [{ imageId: '1234', mimeType: 'image/png', imageData: new Blob() }]
-      component.loading = false
+      component.loading.set(false)
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
@@ -343,7 +362,7 @@ describe('WelcomeOverviewComponent', () => {
 
     it('should return data URI with empty base64 when imageData field is undefined', () => {
       componentTypeLess['imageData'] = [{ imageId: '1234', mimeType: 'image/png', imageData: undefined }]
-      component.loading = false
+      component.loading.set(false)
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 
@@ -352,7 +371,7 @@ describe('WelcomeOverviewComponent', () => {
 
     it('should return base64 string with empty data if image is not matched in loaded imageData', () => {
       componentTypeLess['imageData'] = [{ imageId: 'other', mimeType: 'image/png' }]
-      component.loading = false
+      component.loading.set(false)
 
       const result = component.buildImageSrc(imageInfos.find((i) => i.imageId === '1234')!)
 

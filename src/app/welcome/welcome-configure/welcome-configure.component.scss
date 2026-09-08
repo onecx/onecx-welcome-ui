@@ -5,6 +5,10 @@
 @include page-header-action-spacing(0.5rem);
 
 :host ::ng-deep {
+  .ocx-content > div {
+    margin-bottom: 0 !important;
+  }
+
   /* fixes for p-card */
   --onecx-welcome-onecx-welcome-ui-card-body-padding: 0.5rem;
   --onecx-welcome-onecx-welcome-ui-card-border-radius: 4px;

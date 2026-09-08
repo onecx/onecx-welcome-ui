@@ -1,3 +1,7 @@
+@use 'src/app/_wc-mixins.scss' as *;
+
+@include ocx-p-message;
+
 :host ::ng-deep {
   .dock-top-right-minimized {
     top: 0;

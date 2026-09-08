@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { AsyncPipe, NgClass, NgStyle } from '@angular/common'
 import { animate, style, transition, trigger } from '@angular/animations'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { catchError, filter, map, Observable, of, Subject, Subscription, take, takeUntil, timer } from 'rxjs'
+import { catchError, filter, map, Observable, of, take, tap } from 'rxjs'
 
 import { MenuItem } from 'primeng/api'
 import { DockModule } from 'primeng/dock'
+import { MessageModule } from 'primeng/message'
 
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { AngularRemoteComponentsModule, SlotService } from '@onecx/angular-remote-components'
@@ -14,6 +16,7 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { PortalPageComponent } from '@onecx/angular-utils'
 
 import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/shared/generated'
+import { Utils } from 'src/app/shared/utils'
 
 @Component({
   selector: 'app-welcome-overview',
@@ -25,6 +28,7 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
     AngularAcceleratorModule,
     AngularRemoteComponentsModule,
     DockModule,
+    MessageModule,
     TranslateModule,
     // components
     PortalPageComponent
@@ -39,27 +43,30 @@ import { ImageDataResponse, ImageInfo, ImagesInternalAPIService } from 'src/app/
     ])
   ]
 })
-export class WelcomeOverviewComponent implements OnInit, OnDestroy {
-  private readonly userService = inject(UserService)
+export class WelcomeOverviewComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef)
   private readonly slotService = inject(SlotService)
   private readonly translate = inject(TranslateService)
+  private readonly userService = inject(UserService)
   private readonly imageService = inject(ImagesInternalAPIService)
   private readonly appStateService = inject(AppStateService)
-
-  private readonly destroy$ = new Subject<void>()
   // dialog
   private readonly CAROUSEL_SPEED: number = 15000 // ms
-  public loading = true
-  public currentImagePos = signal<number>(-1)
+  public readonly loading = signal(true) // set to false if image loading was finished
+  public exceptionKey: string | undefined = undefined
   public dockItems$: Observable<MenuItem[]> = of([])
   // data
   public user$ = this.userService.profile$.asObservable()
   public workspace: Workspace | undefined
-  private subscription: Subscription | undefined
   public imageInfo$: Observable<ImageInfo[]> = of([])
   private readonly imageData: ImageDataResponse[] = []
-  private readonly imageUnavailableNumbers: number[] = [] // positions of images that failed to load
-  private readonly imageAvailableNumbers: number[] = [] // positions of visible images
+  private readonly imageAvailableIds = signal<string[]>([]) // positions of visible images
+  private readonly carouselIndex = signal<number>(0)
+  public currentImagePos = computed(() => {
+    const imageIds = this.imageAvailableIds()
+    if (imageIds.length === 0) return -1 // initial, no images yet
+    return this.carouselIndex() % imageIds.length
+  })
   // slots
   public readonly bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public readonly listActiveSlotName = 'onecx-welcome-list-active'
@@ -75,7 +82,8 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
     this.appStateService.currentWorkspace$
       .pipe(
         filter((ws): ws is Workspace => !!ws?.workspaceName),
-        take(1)
+        take(1),
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((ws) => {
         this.workspace = ws
@@ -83,35 +91,34 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
       })
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next()
-    this.destroy$.complete()
-    this.subscription?.unsubscribe()
-  }
-
   private getImages(): void {
-    this.loading = true
     if (!this.workspace?.workspaceName) {
-      this.loading = false
+      this.loading.set(false)
       this.imageInfo$ = of([])
       return
     }
-
+    this.loading.set(true)
     this.imageInfo$ = this.imageService
       .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
       .pipe(
         map((ii: ImageInfo[]) => {
           const iis = ii.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
-          iis.forEach((ii, index) => this.imageAvailableNumbers.push(index))
-          this.fetchImageData(iis) // get real (visible) image data, init carousel for all visible images
+          if (iis.length > 0) {
+            const ids: string[] = []
+            iis.forEach((ii) => ids.push(ii.id!)) // build the id array
+            this.imageAvailableIds.set(ids)
+          }
           return iis
         }),
+        // get the real image data
+        tap((ii) => this.fetchImageData(ii)),
         catchError((err) => {
           console.error('getAllImageInfosByWorkspaceName', err)
-          this.loading = false
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + Utils.mapping_error_status(err.status) + '.IMAGES'
+          this.loading.set(false)
           return of([] as ImageInfo[])
         }),
-        takeUntil(this.destroy$)
+        takeUntilDestroyed(this.destroyRef)
       )
   }
 
@@ -122,63 +129,65 @@ export class WelcomeOverviewComponent implements OnInit, OnDestroy {
     const visibleInfoLength = iis.filter((i) => i.visible).length
     // nothing to do?
     if (iis.length === 0 || visibleInfoLength === 0) {
-      this.loading = false
+      this.loading.set(false)
       return
     }
 
-    // images with URL
-    const urlImageLength = iis.filter((i) => i.visible && i.url).length
     // images uploaded
     const toBeLoadLength = iis.filter((i) => i.visible && !i.url).length
 
     if (toBeLoadLength === 0) {
-      this.loading = false // finish loading
-      this.setCarousel(urlImageLength) // init carousel with sum of URL images only
+      this.loading.set(false) // finish loading
+      this.setCarousel() // init carousel
     } else {
       // get images from BFF and init carousel with sum of images
       iis
         .filter((i) => i.visible && !i.url)
         .forEach((ii) => {
           if (ii.imageId) {
-            this.imageService.getImageById({ id: ii.imageId }).subscribe({
-              next: (img) => {
-                this.imageData.push(img)
-                // if all images loaded then start carousel
-                if (this.imageData.length === toBeLoadLength) {
-                  this.setCarousel(toBeLoadLength + urlImageLength)
-                  this.loading = false
+            this.imageService
+              .getImageById({ id: ii.imageId })
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe({
+                next: (img) => {
+                  this.imageData.push(img)
+                  // if all images loaded then start carousel
+                  if (this.imageData.length === toBeLoadLength) {
+                    this.setCarousel() // re-init carousel
+                    this.loading.set(false)
+                  }
                 }
-              }
-            })
+              })
           }
         })
     }
   }
 
-  // max => number of visible images
-  private setCarousel(max: number) {
-    this.subscription = timer(0, this.CAROUSEL_SPEED).subscribe(() => {
-      this.currentImagePos.set(this.getNextAvailableImagePos(this.currentImagePos()))
-    })
-  }
-  // find next image position form available images
-  private getNextAvailableImagePos(pos: number): number {
-    let nextPos = pos + 1 // normal next image
-    // start again on last image
-    if (this.imageAvailableNumbers.length <= nextPos) nextPos = this.getNextAvailableImagePos(-1)
-    else if (this.imageUnavailableNumbers.includes(nextPos)) nextPos = this.getNextAvailableImagePos(nextPos)
-    return nextPos
+  private setCarousel() {
+    const intervalId = setInterval(() => {
+      this.nextImage()
+    }, this.CAROUSEL_SPEED)
+
+    this.destroyRef.onDestroy(() => clearInterval(intervalId))
   }
 
-  // On image load error (e.g. url is not available) => find the next available image
-  public onImageLoadError(currentPos: number): void {
-    this.imageUnavailableNumbers.push(currentPos)
-    this.currentImagePos.set(this.getNextAvailableImagePos(currentPos))
+  private nextImage() {
+    this.carouselIndex.update((current) => {
+      const length = this.imageAvailableIds().length
+      if (length === 0) return 0
+      return (current + 1) % length
+    })
+  }
+
+  // On image load error (e.g. url is not available) => exclude this from list
+  public onImageLoadError(failedImgId: string) {
+    this.imageAvailableIds.update((images) => images.filter((id) => id !== failedImgId))
+    this.nextImage()
   }
 
   // build a data URL from imageData or return the URL from imageInfo
   public buildImageSrc(ii: ImageInfo): string | undefined {
-    if (this.loading) return undefined
+    if (this.loading()) return undefined
     if (ii.url) return ii.url
     if (this.imageData.length === 0) return undefined
 

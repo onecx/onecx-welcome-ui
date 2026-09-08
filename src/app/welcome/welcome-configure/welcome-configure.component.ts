@@ -1,10 +1,19 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal } from '@angular/core'
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal
+} from '@angular/core'
 import { AsyncPipe, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { BehaviorSubject, catchError, filter, map, Observable, of, Subject, take, takeUntil } from 'rxjs'
+import { BehaviorSubject, catchError, filter, finalize, map, Observable, of, take, tap } from 'rxjs'
 import FileSaver from 'file-saver'
 
 import { ButtonModule } from 'primeng/button'
+import { MessageModule } from 'primeng/message'
 import { TooltipModule } from 'primeng/tooltip'
 
 import { Action, AngularAcceleratorModule } from '@onecx/angular-accelerator'
@@ -12,7 +21,7 @@ import { Workspace } from '@onecx/integration-interface'
 import { AppStateService, PortalMessageService } from '@onecx/angular-integration-interface'
 import { PortalPageComponent } from '@onecx/angular-utils'
 
-import { getCurrentDateTime } from 'src/app/shared/utils'
+import { Utils } from 'src/app/shared/utils'
 import {
   ImageDataResponse,
   ImageInfo,
@@ -24,6 +33,7 @@ import { WelcomeImportComponent } from '../welcome-import/welcome-import.compone
 import { ImageCreateComponent } from '../image-create/image-create.component'
 import { ImageDetailComponent } from '../image-detail/image-detail.component'
 import { ImageItemComponent } from '../image-item/image-item.component'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 
 @Component({
   selector: 'app-welcome-configure',
@@ -32,8 +42,10 @@ import { ImageItemComponent } from '../image-item/image-item.component'
     AsyncPipe,
     AngularAcceleratorModule,
     ButtonModule,
+    MessageModule,
     TooltipModule,
     TranslateModule,
+    // components
     PortalPageComponent,
     ImageCreateComponent,
     ImageDetailComponent,
@@ -44,7 +56,8 @@ import { ImageItemComponent } from '../image-item/image-item.component'
   templateUrl: './welcome-configure.component.html',
   styleUrl: './welcome-configure.component.scss'
 })
-export class WelcomeConfigureComponent implements OnInit, OnDestroy {
+export class WelcomeConfigureComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef)
   private readonly cdr = inject(ChangeDetectorRef)
   private readonly location = inject(Location)
   private readonly translate = inject(TranslateService)
@@ -53,8 +66,9 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   private readonly imageService = inject(ImagesInternalAPIService)
   private readonly eximService = inject(ConfigExportImportAPIService)
 
-  private readonly destroy$ = new Subject<void>()
   // dialog
+  public readonly loading = signal(true)
+  public exceptionKey: string | undefined = undefined
   public actions$: Observable<Action[]> = of([])
   public displayCreateDialog = false
   public displayDetailDialog = false
@@ -68,26 +82,25 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   private readonly imageInfosSubject = new BehaviorSubject<ImageInfo[]>([])
   public imageInfo$ = this.imageInfosSubject.asObservable()
   public readonly imageData = signal<ImageDataResponse[]>([])
-  public readonly blobUrls = new Map<string, string>()
+  public readonly blobUrlsCache = new Map<string, string>()
 
   public ngOnInit(): void {
     this.onReload()
     this.appStateService.currentWorkspace$
       .pipe(
         filter((ws): ws is Workspace => !!ws?.workspaceName),
-        take(1)
+        take(1),
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((ws) => {
         this.workspace = ws
         this.onReload()
       })
-  }
-
-  public ngOnDestroy(): void {
-    this.destroy$.next()
-    this.destroy$.complete()
-    this.blobUrls.forEach((url) => URL.revokeObjectURL(url))
-    this.blobUrls.clear()
+    // cleanup blob URLs on component destroy
+    this.destroyRef.onDestroy(() => {
+      this.blobUrlsCache.forEach((url) => URL.revokeObjectURL(url))
+      this.blobUrlsCache.clear()
+    })
   }
 
   /**
@@ -96,22 +109,28 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
    */
   public fetchImageInfos() {
     if (!this.workspace?.workspaceName) return
-    this.blobUrls.forEach((url) => URL.revokeObjectURL(url))
-    this.blobUrls.clear()
+    // cleanup cache
+    this.blobUrlsCache.forEach((url) => URL.revokeObjectURL(url))
+    this.blobUrlsCache.clear()
+    // let's clear the previous image data before fetching new ones
     this.imageData.set([])
+    this.loading.set(true)
     this.imageService
       .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
       .pipe(
         map((imageInfos) => {
-          imageInfos.sort(this.sortImagesByPosition)
-          this.fetchImageData(imageInfos)
-          return imageInfos
+          return [...imageInfos].sort(this.sortImagesByPosition)
+        }),
+        tap((iis) => {
+          this.fetchImageData(iis)
         }),
         catchError((err) => {
           console.error('getAllImageInfosByWorkspaceName', err)
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + Utils.mapping_error_status(err.status) + '.IMAGES'
+          this.loading.set(false)
           return of([] as ImageInfo[])
         }),
-        takeUntil(this.destroy$)
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((iis) => {
         this.imageInfosSubject.next(iis)
@@ -125,19 +144,33 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
   }
 
   public fetchImageData(ii: ImageInfo[]) {
+    let loaded = 0
+    const toBeLoaded = ii.filter((info) => !!info.imageId).length
     ii.forEach((info) => {
       if (info.imageId) {
-        this.imageService.getImageById({ id: info.imageId }).subscribe({
-          next: (idr: ImageDataResponse) => {
-            this.imageData.update((imgs) => [...imgs, idr])
-          },
-          error: () => this.msgService.error({ summaryKey: 'VALIDATION.ERRORS.IMAGES.NOT_FOUND' })
-        })
+        this.imageService
+          .getImageById({ id: info.imageId })
+          .pipe(
+            finalize(() => {
+              loaded++
+              if (loaded === toBeLoaded) this.loading.set(false) // last image
+            }),
+            takeUntilDestroyed(this.destroyRef)
+          )
+          .subscribe({
+            next: (idr: ImageDataResponse) => {
+              this.imageData.update((imgs) => [...imgs, idr])
+            },
+            error: () => {
+              this.msgService.error({ summaryKey: 'VALIDATION.ERRORS.IMAGES.NOT_FOUND' })
+              // do not raise an exception for individual image load errors
+            }
+          })
       }
     })
   }
 
-  // reorder action
+  // after deletion
   private updatePositions(ii: ImageInfo[]) {
     ii.forEach((info, index) => (info.position = (index + 1).toString()))
     this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: ii } }).subscribe({
@@ -198,7 +231,7 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
             const workspaceJson = JSON.stringify(snapshot, null, 2)
             FileSaver.saveAs(
               new Blob([workspaceJson], { type: 'text/json' }),
-              `onecx-welcome_${this.workspace?.workspaceName}_${getCurrentDateTime()}.json`
+              `onecx-welcome_${this.workspace?.workspaceName}_${Utils.getCurrentDateTime()}.json`
             )
           },
           error: (err) => {
@@ -255,8 +288,9 @@ export class WelcomeConfigureComponent implements OnInit, OnDestroy {
     const imagesToReorder = this.imageInfosSubject.value
     this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: imagesToReorder } }).subscribe({
       next: () => {
-        this.resetReorderState()
         this.msgService.success({ summaryKey: 'ACTIONS.REORDER.SUCCESS' })
+        this.resetReorderState()
+        this.fetchImageInfos() // get images with new modificationCount
       },
       error: (err) => {
         console.error('updateImageOrder', err)

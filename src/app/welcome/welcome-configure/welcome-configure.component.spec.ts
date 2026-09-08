@@ -200,12 +200,19 @@ describe('WelcomeConfigureComponent', () => {
   })
 
   it('should revoke blob URLs on destroy', () => {
-    component['blobUrls'].set('id1', 'blob:test-url')
     spyOn(URL, 'revokeObjectURL')
+    component.blobUrlsCache.set('img1', 'blob:http://localhost/123')
+    component.blobUrlsCache.set('img2', 'blob:http://localhost/456')
 
-    component.ngOnDestroy()
+    // 3. Trigger ngOnInit, damit sich das destroyRef registriert
+    fixture.detectChanges() // ngOnInit()
+    fixture.destroy()
 
-    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:test-url')
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:http://localhost/123')
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:http://localhost/456')
+    expect(URL.revokeObjectURL).toHaveBeenCalledTimes(2)
+
+    expect(component.blobUrlsCache.size).toBe(0)
   })
 
   describe('fetchImageData', () => {
@@ -214,7 +221,7 @@ describe('WelcomeConfigureComponent', () => {
     })
 
     it('should revoke existing blob URLs before fetching new ones', () => {
-      component['blobUrls'].set('id1', 'blob:old-url')
+      component['blobUrlsCache'].set('id1', 'blob:old-url')
       spyOn(URL, 'revokeObjectURL')
       imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of([]))
 
