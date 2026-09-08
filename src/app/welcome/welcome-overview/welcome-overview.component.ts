@@ -52,7 +52,7 @@ export class WelcomeOverviewComponent implements OnInit {
   private readonly appStateService = inject(AppStateService)
   // dialog
   private readonly CAROUSEL_SPEED: number = 5000 // ms
-  public loading = signal(true)
+  public readonly loading = signal(true) // set to false if image loading was finished
   public exceptionKey: string | undefined = undefined
   public dockItems$: Observable<MenuItem[]> = of([])
   // data
@@ -61,13 +61,12 @@ export class WelcomeOverviewComponent implements OnInit {
   public imageInfo$: Observable<ImageInfo[]> = of([])
   private readonly imageData: ImageDataResponse[] = []
   private readonly imageAvailableNumbers = signal<string[]>([]) // positions of visible images
-  private carouselIndex = signal<number>(0)
+  private readonly carouselIndex = signal<number>(0)
   public currentImagePos = computed(() => {
     const images = this.imageAvailableNumbers()
     if (images.length === 0) return -1 // initial, no images yet
     return this.carouselIndex() % images.length
   })
-
   // slots
   public readonly bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public readonly listActiveSlotName = 'onecx-welcome-list-active'
@@ -83,7 +82,8 @@ export class WelcomeOverviewComponent implements OnInit {
     this.appStateService.currentWorkspace$
       .pipe(
         filter((ws): ws is Workspace => !!ws?.workspaceName),
-        take(1)
+        take(1),
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((ws) => {
         this.workspace = ws
@@ -92,13 +92,12 @@ export class WelcomeOverviewComponent implements OnInit {
   }
 
   private getImages(): void {
-    this.loading.set(true)
     if (!this.workspace?.workspaceName) {
       this.loading.set(false)
       this.imageInfo$ = of([])
       return
     }
-
+    this.loading.set(true)
     this.imageInfo$ = this.imageService
       .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
       .pipe(
@@ -113,8 +112,8 @@ export class WelcomeOverviewComponent implements OnInit {
           return iis
         }),
         catchError((err) => {
-          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + Utils.mapping_error_status(err.status) + '.IMAGES'
           console.error('getAllImageInfosByWorkspaceName', err)
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + Utils.mapping_error_status(err.status) + '.IMAGES'
           this.loading.set(false)
           return of([] as ImageInfo[])
         }),
@@ -168,9 +167,7 @@ export class WelcomeOverviewComponent implements OnInit {
       this.nextImage()
     }, this.CAROUSEL_SPEED)
 
-    this.destroyRef.onDestroy(() => {
-      clearInterval(intervalId)
-    })
+    this.destroyRef.onDestroy(() => clearInterval(intervalId))
   }
 
   private nextImage() {
