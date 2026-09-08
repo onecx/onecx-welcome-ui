@@ -135,8 +135,6 @@ export class WelcomeOverviewComponent implements OnInit {
       return
     }
 
-    // images with URL
-    const urlImageLength = iis.filter((i) => i.visible && i.url).length
     // images uploaded
     const toBeLoadLength = iis.filter((i) => i.visible && !i.url).length
 
