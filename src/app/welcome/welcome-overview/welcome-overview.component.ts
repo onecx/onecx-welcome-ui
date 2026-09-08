@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { AsyncPipe, NgClass, NgStyle } from '@angular/common'
 import { animate, style, transition, trigger } from '@angular/animations'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { catchError, filter, map, Observable, of, take } from 'rxjs'
+import { catchError, filter, map, Observable, of, take, tap } from 'rxjs'
 
 import { MenuItem } from 'primeng/api'
 import { DockModule } from 'primeng/dock'
@@ -60,12 +60,12 @@ export class WelcomeOverviewComponent implements OnInit {
   public workspace: Workspace | undefined
   public imageInfo$: Observable<ImageInfo[]> = of([])
   private readonly imageData: ImageDataResponse[] = []
-  private readonly imageAvailableNumbers = signal<string[]>([]) // positions of visible images
+  private readonly imageAvailableIds = signal<string[]>([]) // positions of visible images
   private readonly carouselIndex = signal<number>(0)
   public currentImagePos = computed(() => {
-    const images = this.imageAvailableNumbers()
-    if (images.length === 0) return -1 // initial, no images yet
-    return this.carouselIndex() % images.length
+    const imageIds = this.imageAvailableIds()
+    if (imageIds.length === 0) return -1 // initial, no images yet
+    return this.carouselIndex() % imageIds.length
   })
   // slots
   public readonly bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
@@ -105,12 +105,13 @@ export class WelcomeOverviewComponent implements OnInit {
           const iis = ii.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
           if (iis.length > 0) {
             const ids: string[] = []
-            iis.forEach((ii) => ids.push(ii.id!))
-            this.imageAvailableNumbers.set(ids)
+            iis.forEach((ii) => ids.push(ii.id!)) // build the id array
+            this.imageAvailableIds.set(ids)
           }
-          this.fetchImageData(iis) // get real (visible) image data, init carousel for all visible images
           return iis
         }),
+        // get the real image data
+        tap((ii) => this.fetchImageData(ii)),
         catchError((err) => {
           console.error('getAllImageInfosByWorkspaceName', err)
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + Utils.mapping_error_status(err.status) + '.IMAGES'
@@ -172,7 +173,7 @@ export class WelcomeOverviewComponent implements OnInit {
 
   private nextImage() {
     this.carouselIndex.update((current) => {
-      const length = this.imageAvailableNumbers().length
+      const length = this.imageAvailableIds().length
       if (length === 0) return 0
       return (current + 1) % length
     })
@@ -180,7 +181,7 @@ export class WelcomeOverviewComponent implements OnInit {
 
   // On image load error (e.g. url is not available) => exclude this from list
   public onImageLoadError(failedImgId: string) {
-    this.imageAvailableNumbers.update((images) => images.filter((id) => id !== failedImgId))
+    this.imageAvailableIds.update((images) => images.filter((id) => id !== failedImgId))
     this.nextImage()
   }
 

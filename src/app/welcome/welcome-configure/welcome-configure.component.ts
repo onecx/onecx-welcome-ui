@@ -9,7 +9,7 @@ import {
 } from '@angular/core'
 import { AsyncPipe, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { BehaviorSubject, catchError, filter, finalize, map, Observable, of, Subject, take, takeUntil } from 'rxjs'
+import { BehaviorSubject, catchError, filter, finalize, map, Observable, of, take, tap } from 'rxjs'
 import FileSaver from 'file-saver'
 
 import { ButtonModule } from 'primeng/button'
@@ -112,15 +112,17 @@ export class WelcomeConfigureComponent implements OnInit {
     // cleanup cache
     this.blobUrlsCache.forEach((url) => URL.revokeObjectURL(url))
     this.blobUrlsCache.clear()
+    // let's clear the previous image data before fetching new ones
     this.imageData.set([])
     this.loading.set(true)
     this.imageService
       .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
       .pipe(
         map((imageInfos) => {
-          imageInfos.sort(this.sortImagesByPosition)
-          this.fetchImageData(imageInfos)
-          return imageInfos
+          return [...imageInfos].sort(this.sortImagesByPosition)
+        }),
+        tap((iis) => {
+          this.fetchImageData(iis)
         }),
         catchError((err) => {
           console.error('getAllImageInfosByWorkspaceName', err)
@@ -168,7 +170,7 @@ export class WelcomeConfigureComponent implements OnInit {
     })
   }
 
-  // reorder action
+  // after deletion
   private updatePositions(ii: ImageInfo[]) {
     ii.forEach((info, index) => (info.position = (index + 1).toString()))
     this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: ii } }).subscribe({
@@ -286,8 +288,9 @@ export class WelcomeConfigureComponent implements OnInit {
     const imagesToReorder = this.imageInfosSubject.value
     this.imageService.updateImageOrder({ imageInfoReorderRequest: { imageInfos: imagesToReorder } }).subscribe({
       next: () => {
-        this.resetReorderState()
         this.msgService.success({ summaryKey: 'ACTIONS.REORDER.SUCCESS' })
+        this.resetReorderState()
+        this.fetchImageInfos() // get images with new modificationCount
       },
       error: (err) => {
         console.error('updateImageOrder', err)

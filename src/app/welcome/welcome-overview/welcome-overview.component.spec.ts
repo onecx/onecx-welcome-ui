@@ -238,7 +238,7 @@ describe('WelcomeOverviewComponent', () => {
 
   describe('setCarousel', () => {
     it('should initialize the currentImagePos', fakeAsync(() => {
-      component['imageAvailableNumbers'].set([])
+      component['imageAvailableIds'].set([])
 
       component['setCarousel']()
 
@@ -250,7 +250,7 @@ describe('WelcomeOverviewComponent', () => {
     }))
 
     it('should advance the currentImagePos according to the carousel interval', fakeAsync(() => {
-      component['imageAvailableNumbers'].set(['0', '1', '2'])
+      component['imageAvailableIds'].set(['0', '1', '2'])
 
       component['setCarousel']()
 
@@ -283,7 +283,7 @@ describe('WelcomeOverviewComponent', () => {
     }))
 
     it('should stop the timer via onCleanup when the component is destroyed', fakeAsync(() => {
-      component['imageAvailableNumbers'].set(['0', '1', '2', '3', '4'])
+      component['imageAvailableIds'].set(['0', '1', '2', '3', '4'])
       component['setCarousel']()
       fixture.detectChanges()
 
@@ -306,11 +306,11 @@ describe('WelcomeOverviewComponent', () => {
 
   describe('onImageLoadError', () => {
     it('should filter images', () => {
-      component['imageAvailableNumbers'].set(['11', '22', '33'])
+      component['imageAvailableIds'].set(['11', '22', '33'])
 
       component.onImageLoadError('22')
 
-      expect(component['imageAvailableNumbers']()).toHaveSize(2)
+      expect(component['imageAvailableIds']()).toHaveSize(2)
     })
   })
 
