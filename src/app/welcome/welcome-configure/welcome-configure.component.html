@@ -14,7 +14,7 @@
         [attr.aria-label]="'DIALOG.CONFIGURE.REGIONS.MANAGE_IMAGES' | translate"
       >
         @if (exceptionKey) {
-          <p-message id="ws_search_message_error" severity="error" [text]="exceptionKey | translate"></p-message>
+          <p-message id="wc_configure_message_error" severity="error" [text]="exceptionKey | translate"></p-message>
         } @else {
           @for (info of imageInfos; track info.id; let i = $index) {
             <section
