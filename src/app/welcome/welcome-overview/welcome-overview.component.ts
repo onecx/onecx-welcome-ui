@@ -53,7 +53,7 @@ export class WelcomeOverviewComponent {
   private readonly userService = inject(UserService)
   private readonly imageService = inject(ImagesInternalAPIService)
   // dialog
-  private readonly CAROUSEL_SPEED: number = 3000 // ms
+  private readonly CAROUSEL_SPEED: number = 15000 // ms
   public readonly loading = signal(true) // set to false if image loading was finished
   public exceptionKey: string | undefined = undefined
   public dockItems$: Observable<MenuItem[]> = of([])
