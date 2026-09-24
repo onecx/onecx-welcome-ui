@@ -165,21 +165,6 @@ describe('WelcomeOverviewComponent', () => {
     })
   })
 
-  xit('should reload images on each navigation end', async () => {
-    imageServiceSpy.getAllImageInfosByWorkspaceName.and.returnValue(of([]))
-    const getImagesSpy = spyOn<any>(component, 'getImages')
-    getImagesSpy.and.callThrough()
-
-    appStateSubject.next(ws)
-    await triggerNavigationEnd()
-    getImagesSpy.calls.reset()
-
-    // a second navigation end must trigger another image load
-    await triggerNavigationEnd()
-
-    expect(getImagesSpy).toHaveBeenCalledTimes(1)
-  })
-
   describe('getImages', () => {
     it('should return early and reset loading when workspace has no name', () => {
       component.workspace = undefined
