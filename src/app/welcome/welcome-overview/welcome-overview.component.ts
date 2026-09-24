@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core'
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal } from '@angular/core'
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop'
 import { AsyncPipe, NgClass, NgStyle } from '@angular/common'
 import { animate, style, transition, trigger } from '@angular/animations'
+import { Router, NavigationEnd } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { catchError, filter, map, Observable, of, take, tap } from 'rxjs'
+import { catchError, filter, map, Observable, of, tap } from 'rxjs'
 
 import { MenuItem } from 'primeng/api'
 import { DockModule } from 'primeng/dock'
@@ -43,15 +44,16 @@ import { Utils } from 'src/app/shared/utils'
     ])
   ]
 })
-export class WelcomeOverviewComponent implements OnInit {
+export class WelcomeOverviewComponent {
   private readonly destroyRef = inject(DestroyRef)
+  private readonly router = inject(Router)
+  private readonly appStateService = inject(AppStateService)
   private readonly slotService = inject(SlotService)
   private readonly translate = inject(TranslateService)
   private readonly userService = inject(UserService)
   private readonly imageService = inject(ImagesInternalAPIService)
-  private readonly appStateService = inject(AppStateService)
   // dialog
-  private readonly CAROUSEL_SPEED: number = 15000 // ms
+  private readonly CAROUSEL_SPEED: number = 3000 // ms
   public readonly loading = signal(true) // set to false if image loading was finished
   public exceptionKey: string | undefined = undefined
   public dockItems$: Observable<MenuItem[]> = of([])
@@ -64,9 +66,10 @@ export class WelcomeOverviewComponent implements OnInit {
   private readonly carouselIndex = signal<number>(0)
   public currentImagePos = computed(() => {
     const imageIds = this.imageAvailableIds()
-    if (imageIds.length === 0) return -1 // initial, no images yet
+    if (imageIds.length === 0) return -1 // initial: no images
     return this.carouselIndex() % imageIds.length
   })
+  public readonly imageCount = computed(() => this.imageAvailableIds().length)
   // slots
   public readonly bookmarkListSlotName = 'onecx-welcome-list-bookmarks'
   public readonly listActiveSlotName = 'onecx-welcome-list-active'
@@ -76,30 +79,43 @@ export class WelcomeOverviewComponent implements OnInit {
   public readonly isBookmarkListComponentAvailable$ = this.slotService.isSomeComponentDefinedForSlot(
     this.bookmarkListSlotName
   )
+  // workspace and navigation signals
+  private readonly currentWorkspaceSignal = toSignal(
+    this.appStateService.currentWorkspace$.pipe(filter((ws): ws is Workspace => !!ws?.workspaceName))
+  )
+  private readonly navigationTrigger = signal<number>(0)
+  private readonly activeWorkspace = computed(() => {
+    this.navigationTrigger()
+    return this.currentWorkspaceSignal()
+  })
 
-  ngOnInit(): void {
+  constructor() {
     this.prepareDockItems()
-    this.appStateService.currentWorkspace$
+    // get router events to trigger navigation updates
+    this.router.events
       .pipe(
-        filter((ws): ws is Workspace => !!ws?.workspaceName),
-        take(1),
+        filter((event) => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe((ws) => {
-        this.workspace = ws
-        this.getImages()
+      .subscribe(() => {
+        this.navigationTrigger.update((n) => n + 1)
       })
+    // trigger image reload on navigation end
+    effect(() => {
+      const ws = this.activeWorkspace()
+      if (ws) this.getImages()
+    })
   }
 
   private getImages(): void {
-    if (!this.workspace?.workspaceName) {
+    if (!this.activeWorkspace()?.workspaceName) {
       this.loading.set(false)
       this.imageInfo$ = of([])
       return
     }
     this.loading.set(true)
     this.imageInfo$ = this.imageService
-      .getAllImageInfosByWorkspaceName({ workspaceName: this.workspace.workspaceName })
+      .getAllImageInfosByWorkspaceName({ workspaceName: this.activeWorkspace()!.workspaceName })
       .pipe(
         map((ii: ImageInfo[]) => {
           const iis = ii.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
@@ -165,29 +181,31 @@ export class WelcomeOverviewComponent implements OnInit {
 
   private setCarousel() {
     const intervalId = setInterval(() => {
-      this.nextImage()
+      this.nextImagePos()
     }, this.CAROUSEL_SPEED)
-
     this.destroyRef.onDestroy(() => clearInterval(intervalId))
   }
 
-  private nextImage() {
+  // one image:  length=1, pos=[0] => next = 0
+  // two images: length=2, pos=[0, 1] => next = 1, 0
+  private nextImagePos() {
     this.carouselIndex.update((current) => {
-      const length = this.imageAvailableIds().length
-      if (length === 0) return 0
-      return (current + 1) % length
+      const length = this.imageCount()
+      const next = current + 1
+      if (length === 0 || next + 1 > length) return 0 // start
+      return next
     })
   }
 
   // On image load error (e.g. url is not available) => exclude this from list
   public onImageLoadError(failedImgId: string) {
+    if (this.loading()) return undefined
     this.imageAvailableIds.update((images) => images.filter((id) => id !== failedImgId))
-    this.nextImage()
+    this.nextImagePos()
   }
 
   // build a data URL from imageData or return the URL from imageInfo
   public buildImageSrc(ii: ImageInfo): string | undefined {
-    if (this.loading()) return undefined
     if (ii.url) return ii.url
     if (this.imageData.length === 0) return undefined
 
