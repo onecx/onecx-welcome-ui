@@ -84,7 +84,7 @@ export class WelcomeOverviewComponent {
     this.appStateService.currentWorkspace$.pipe(filter((ws): ws is Workspace => !!ws?.workspaceName))
   )
   private readonly navigationTrigger = signal<number>(0)
-  private readonly activeWorkspace = computed(() => {
+  public readonly activeWorkspace = computed(() => {
     this.navigationTrigger()
     return this.currentWorkspaceSignal()
   })
@@ -117,6 +117,7 @@ export class WelcomeOverviewComponent {
     this.imageInfo$ = this.imageService
       .getAllImageInfosByWorkspaceName({ workspaceName: this.activeWorkspace()!.workspaceName })
       .pipe(
+        filter((ii) => Array.isArray(ii)), // ignore everything else
         map((ii: ImageInfo[]) => {
           const iis = ii.filter((img) => img.visible === true).sort((a, b) => Number(a.position) - Number(b.position))
           if (iis.length > 0) {

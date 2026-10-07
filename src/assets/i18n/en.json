@@ -124,7 +124,7 @@
     "FORMAT": "Format",
     "HINTS": {
       "FORMAT_URL": "Format: ",
-      "FORMAT_IMAGE_URL": "Format: http(s)://path-to-image"
+      "FORMAT_IMAGE_URL": "<br/>Format: http(s)://path-to-image"
     }
   },
   "VALIDATION": {
