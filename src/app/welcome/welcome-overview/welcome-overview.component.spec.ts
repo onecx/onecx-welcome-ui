@@ -4,6 +4,7 @@ import { Component, Directive, inject, input, TemplateRef, ViewContainerRef } fr
 import { ComponentFixture, fakeAsync, TestBed, tick, discardPeriodicTasks, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { ActivatedRoute } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
@@ -122,6 +123,7 @@ describe('WelcomeOverviewComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideNoopAnimations(),
         provideRouter([]),
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: SlotService, useValue: mockSlotService },
