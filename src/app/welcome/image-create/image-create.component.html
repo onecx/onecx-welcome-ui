@@ -60,16 +60,16 @@
               id="wc_image_create_form_url"
               class="w-full pr-5 overflow-hidden white-space-nowrap text-overflow-ellipsis"
               formControlName="url"
+              [escape]="false"
               [ariaLabel]="'ACTIONS.CREATE.URL' | translate"
-              [pTooltip]="'ACTIONS.CREATE.URL.TOOLTIP' | translate"
+              [pTooltip]="
+                ('ACTIONS.CREATE.URL.TOOLTIP' | translate) + ('VALIDATION.HINTS.FORMAT_IMAGE_URL' | translate)
+              "
               tooltipPosition="top"
               tooltipEvent="hover"
             />
             <label for="wc_image_create_form_url">{{ 'ACTIONS.CREATE.URL' | translate }}</label>
           </p-floatlabel>
-          <label for="wc_image_create_form_url" class="ocx-control-hint">
-            {{ 'IMAGE.HINTS.FORMAT_IMAGE_URL' | translate }}
-          </label>
           @if (
             formGroup.controls['url'].errors?.hasOwnProperty('srcMissing') && formGroup.controls['url'].value === ''
           ) {

@@ -115,16 +115,12 @@
     "OBJECT_FIT": "Object Fit",
     "OBJECT_POSITION": "Object Position",
     "BACKGROUND_COLOR": "Background Color",
+    "FORMAT": "Format",
     "TOOLTIPS": {
       "URL": "Image URL",
       "OBJECT_FIT": "Determines how the image should be adjusted to the space in the browser window. CSS: object-fit",
       "OBJECT_POSITION": "Determines where the image should appear in the browser window. CSS: object-position. Content is not validated.",
       "BACKGROUND_COLOR": "Color of the background in the area not covered by the image. Content is not validated."
-    },
-    "FORMAT": "Format",
-    "HINTS": {
-      "FORMAT_URL": "Format: ",
-      "FORMAT_IMAGE_URL": "<br/>Format: http(s)://path-to-image"
     }
   },
   "VALIDATION": {
@@ -132,6 +128,10 @@
       "IMAGES.NOT_FOUND": "Images could not be loaded",
       "MISSING_IMG_SRC": "Upload an Image or add an external URL.",
       "PARSE_ERROR": "Parse error: The contained structure does not match the expected format."
+    },
+    "HINTS": {
+      "FORMAT_URL": "Format: ",
+      "FORMAT_IMAGE_URL": "<br/>Format: http(s)://path-to-image"
     }
   },
   "EXCEPTIONS": {
