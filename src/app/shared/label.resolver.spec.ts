@@ -23,12 +23,12 @@ describe('LabelResolver', () => {
     })
     labelResolver = TestBed.inject(LabelResolver)
     translateServiceSpy.get.calls.reset()
-    const dataSpy = Object.getOwnPropertyDescriptor(activatedRouteSpy, 'data')?.get as jasmine.Spy<() => {}>
+    const dataSpy = Object.getOwnPropertyDescriptor(activatedRouteSpy, 'data')?.get as jasmine.Spy<() => object>
     dataSpy.and.returnValue({})
   })
 
   it('should translate if breadcrumb is present', (done: DoneFn) => {
-    const dataSpy = Object.getOwnPropertyDescriptor(activatedRouteSpy, 'data')?.get as jasmine.Spy<() => {}>
+    const dataSpy = Object.getOwnPropertyDescriptor(activatedRouteSpy, 'data')?.get as jasmine.Spy<() => object>
     dataSpy.and.returnValue({
       breadcrumb: 'defined'
     })
@@ -52,7 +52,7 @@ describe('LabelResolver', () => {
 
   it('should return an empty string if neither breadcrumb nor route.routeConfig.path are present', () => {
     const routeConfigSpy = Object.getOwnPropertyDescriptor(activatedRouteSpy, 'routeConfig')?.get as jasmine.Spy<
-      () => {}
+      () => object
     >
     routeConfigSpy.and.returnValue({})
     const result = labelResolver.resolve(activatedRouteSpy, routerStateSpy)
