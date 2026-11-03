@@ -42,25 +42,28 @@ export class WelcomeImportComponent {
     this.importError = false
   }
   public onImportSelect(event: FileSelectEvent): void {
-    event.files[0].text().then((text) => {
-      this.config = undefined
-      this.importError = false
-      try {
-        const config: WelcomeSnapshot = JSON.parse(text) as WelcomeSnapshot
-        if (this.isImportRequestDTO(config)) {
-          this.config = config
-        } else {
-          console.error('imported welcome configuration parse error', config)
-          this.config = undefined
+    event.files[0]
+      .text()
+      .then((text) => {
+        this.config = undefined
+        this.importError = false
+        try {
+          const config: WelcomeSnapshot = JSON.parse(text) as WelcomeSnapshot
+          if (this.isImportRequestDTO(config)) {
+            this.config = config
+          } else {
+            console.error('imported welcome configuration parse error', config)
+            this.config = undefined
+            this.importError = true
+          }
+        } catch (err) {
+          console.error('imported welcome configuration parse error', err)
           this.importError = true
+        } finally {
+          this.cdr.detectChanges()
         }
-      } catch (err) {
-        console.error('imported welcome configuration parse error', err)
-        this.importError = true
-      } finally {
-        this.cdr.detectChanges()
-      }
-    })
+      })
+      .catch((err) => console.error(err))
   }
   private isImportRequestDTO(obj: unknown): obj is WelcomeSnapshot {
     const dto = obj as WelcomeSnapshot

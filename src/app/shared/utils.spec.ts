@@ -40,15 +40,29 @@ describe('util functions', () => {
 
   describe('copyToClipboard', () => {
     let writeTextSpy: jasmine.Spy
+    let consoleErrorSpy: jasmine.Spy
 
     beforeEach(() => {
-      writeTextSpy = spyOn(navigator.clipboard, 'writeText')
+      writeTextSpy = spyOn(navigator.clipboard, 'writeText').and.returnValue(Promise.resolve())
+      consoleErrorSpy = spyOn(console, 'error')
     })
 
     it('should copy text to clipboard', () => {
       Utils.copyToClipboard('text')
 
       expect(writeTextSpy).toHaveBeenCalledWith('text')
+    })
+
+    it('should log when clipboard write fails', (done) => {
+      const writeError = new Error('clipboard write failed')
+      writeTextSpy.and.returnValue(Promise.reject(writeError))
+
+      Utils.copyToClipboard('text')
+
+      setTimeout(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith(writeError)
+        done()
+      }, 0)
     })
   })
 
