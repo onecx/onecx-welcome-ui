@@ -165,6 +165,21 @@ describe('WelcomeImportComponent', () => {
       }, 0)
     })
 
+    it('should log when reading the selected import file fails', (done) => {
+      const readError = new Error('read failed')
+      const mockFile = new File(['test'], 'test.json', { type: 'application/json' })
+      spyOn(mockFile, 'text').and.returnValue(Promise.reject(readError))
+      const fileList = { 0: mockFile, length: 1, item: () => mockFile }
+      spyOn(console, 'error')
+
+      component.onImportSelect({ files: fileList } as any as FileSelectEvent)
+
+      setTimeout(() => {
+        expect(console.error).toHaveBeenCalledWith(readError)
+        done()
+      }, 0)
+    })
+
     it('should import a and close the dialog', () => {
       eximServiceSpy.importConfiguration.and.returnValue(of({}))
       spyOn(component.importEmitter, 'emit')
